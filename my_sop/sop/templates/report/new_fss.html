@@ -1,0 +1,205 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="{% static 'dist/layui/css/layui.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'dist/CSS/public.css' %}" media="all">
+</head>
+<body>
+<style>
+    .rounded-corner .layui-layer-content {
+    border-radius: 10px; /* 设置圆角的大小 */
+}
+</style>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset ">
+            <legend><label style="color: #4CAF50;">旗舰店搜索信息</label></legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">eid</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="eid" id="eid" required lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">source</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="source" autocomplete="off" class="layui-input" placeholder="source用英文逗号隔开">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">alias_bid</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="alias_bid" autocomplete="off" class="layui-input" placeholder="alias_bid用英文逗号隔开">
+                            </div>
+                        </div>
+                        <div class="layui-inline" style="width: 25%">
+                            <label class="layui-form-label" style="width: 25%">table</label>
+                            <div class="layui-input-inline" style="width: 72%">
+                                <input type="text" name="table" id="table" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <br><br>
+                        <div class="layui-form-item">
+                              <div class="layui-inline">
+                                  <label class="layui-form-label">日期</label>
+                                <div class="layui-input-inline">
+                                  <input type="text" required lay-verify="required" autocomplete="off" id="date" name="date" class="layui-input" placeholder="YYYY-MM">
+                                </div>
+                              </div>
+                            <div class="layui-inline" >
+                                <label class="layui-form-label">检索类型</label>
+                                <div class="layui-input-inline">
+                                    <select name="type" lay-verify="required">
+                                        <option value="新增旗舰">新增旗舰</option>
+                                        <option value="旗舰改名">旗舰改名</option>
+                                        <option value="只看新增">只看新增</option>
+                                        <option value="所有旗舰">所有旗舰</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button type="submit" class="layui-btn" style="background:#4CAF50" lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary" style="background:#ffff66;font-size:12px;text-align: center;color: #2f363c;" id="add_task">
+                  <i class="layui-icon">&#xe61f;</i> 添加旗舰店检查任务
+                </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-download" lay-event="download">下载</a>
+
+        </script>
+
+    </div>
+</div>
+<script src="{% static 'dist/layui/layui.js' %}" charset="utf-8"></script>
+<script>
+function getCSRFToken() {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].trim();
+        var cookieParts = cookie.split('=');
+        if (cookieParts[0] === 'csrftoken') {
+            return cookieParts[1];
+        }
+    }
+    return null;
+};
+
+layui.use(['jquery', 'table', 'laydate', 'form', 'layer'], function () {
+    var $ = layui.jquery;
+    var table = layui.table;
+    var laydate = layui.laydate;
+    var form = layui.form;
+    var layer = layui.layer;
+    
+    var newdate = new Date();
+    var lastMonthDate = new Date(newdate.getFullYear(), newdate.getMonth() - 1, 1);
+      // 日期范围
+    laydate.render({
+        elem: '#date',
+        theme: 'molv',
+        type: 'month',
+        value: lastMonthDate
+      });
+    
+    $(document).ready(function() {
+        $('#eid').on('input', function() {
+            var originalValue = $(this).val();
+            var modifiedValue = "";
+
+            if (originalValue !== "") {
+                modifiedValue = "sop_e.entity_prod_" + originalValue + "_E";
+            }
+
+            $('#table').val(modifiedValue);
+        });
+    });
+    
+    table.render({
+        elem: '#currentTableId',
+        cols: [],
+        data:[],
+        page: true,
+        limit: 15,
+        limits: [10, 15, 20, 25, 50, 100],
+        skin: 'line',
+        toolbar: '#toolbarDemo',
+        defaultToolbar: ['filter', 'exports', 'print', {
+            title: '提示',
+            layEvent: 'LAYTABLE_TIPS',
+            icon: 'layui-icon-tips'
+        }]
+    });
+    
+    form.on('submit(data-search-btn)', function (data) {
+        var searchData = data.field; // 获取表单数据
+        console.log('Search Data:', searchData);
+
+        // 显示加载动画
+        var index = layer.load(1, { // 选择风格，1表示带有透明背景的圆形加载动画
+            shade: [0.1, '#fff'] // 0.1透明度的白色背景
+        });
+
+        // 发送请求以获取表格配置和数据
+        $.ajax({
+            url: '../fss_shop/',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(searchData),
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            },
+            success: function(response) {
+                layer.close(index);
+                var colsConfig = response.cols;
+                table.reload('currentTableId', {
+                    page: true,
+                    cols: [colsConfig],
+                    data: response.data,
+                    count: response.count,
+                    code: response.code,
+                    msg: response.msg
+                });
+            },
+            error: function(xhr, status, error) {
+                layer.close(index);
+                layer.alert('请求数据失败: ' + error, {icon: 2, title: '错误信息'});
+            }
+        });
+
+        return false; // 阻止表单默认提交
+    });
+    
+    $(document).on('click', '#add_task', function() {
+        window.location.href = '/report/check_fss/';
+    });
+});
+
+</script>
+
+</body>
+</html>

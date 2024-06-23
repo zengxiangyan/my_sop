@@ -1,0 +1,46 @@
+import sys
+from os.path import abspath, join, dirname
+
+from sqlalchemy import null, true
+sys.path.insert(0, join(abspath(dirname(__file__)), '../../'))
+# sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='utf8')
+
+import re
+import application as app
+from models import common
+from models.clean_ip import CleanIP
+from models.plugins import calculate_sp
+import collections
+import hashlib
+
+class main(calculate_sp.main):
+    hash_id_info = {}
+
+    def start(self, batch_now, read_data, other_info=None):
+        self.batch_now = batch_now
+        self.read_data = self.one_to_multi(read_data, other_info)
+        self.result_dict = dict()
+
+        for row in self.read_data:
+            self.batch_now.print_log('{line}Printing Clean Process{line}'.format(line=self.batch_now.line))
+            item_id, source, cid, all_bid, alias_all_bid, prop_all, trade_prop_all, f_map = self.get_row_props(row)
+            clean_type, mp, sp, detail = self.process_row(item_id, source, cid, all_bid, alias_all_bid, prop_all, trade_prop_all, f_map)
+
+            self.result_dict[item_id] = self.post_process_row(item_id, all_bid, alias_all_bid, clean_type, mp, sp, detail, f_map)
+            self.result_dict[item_id]['all_bid_sp'] = self.process_dy(f_map['snum'], alias_all_bid, f_map, self.result_dict[item_id]['all_bid_sp'])
+            self.batch_now.print_log('id =', item_id, self.result_dict[item_id])
+
+        return self.result_dict
+
+    # 内存不足,改为实时查询
+    # def init_read_require(self):
+    #     self.split_word = 'Ծ‸ Ծ'
+
+    #     # 读取sp4配置
+    #     self.hash_id_info = {}
+    #     sql = "select hash_id, ner_bid, ner_brand from sop_c.entity_prod_91528_C_tiktok"
+    #     for row in self.batch_now.db_chsop.query_all(sql):
+    #         self.hash_id_info[str(row[0])] = {
+    #             'ner_bid': row[1],
+    #             'ner_brand': row[2],
+    #         }
