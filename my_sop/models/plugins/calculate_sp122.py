@@ -1,0 +1,45 @@
+import sys
+from os.path import abspath, join, dirname
+sys.path.insert(0, join(abspath(dirname(__file__)), '../../'))
+# sys.stdout = io.TextIOWrapper(sys.stdout.buffer,encoding='utf8')
+
+import re
+import application as app
+from models import common
+from models.clean_ip import CleanIP
+from models.plugins import calculate_sp
+import collections
+
+class main(calculate_sp.main):
+
+    def init_read_require(self):
+        self.split_word = 'Ծ‸ Ծ'
+        self.cip = CleanIP(self.batch_now.eid)
+
+    def start(self, batch_now, read_data, other_info=None):
+        self.batch_now = batch_now
+        self.read_data = self.one_to_multi(read_data, other_info)
+        self.result_dict = dict()
+
+        for row in self.read_data:
+            self.batch_now.print_log('{line}Printing Clean Process{line}'.format(line=self.batch_now.line))
+            item_id, source, cid, all_bid, alias_all_bid, prop_all, trade_prop_all, f_map = self.get_row_props(row)
+            clean_type, mp, sp, detail = self.process_row(item_id, source, cid, all_bid, alias_all_bid, prop_all, trade_prop_all, f_map)
+
+            if clean_type >= 0:
+                for n in [15, 16, 17, 18, 19, 20, 21, 22, 23, 24]:
+                    if mp[n]:
+                        sp[n] = self.split_word.join(sorted(mp[n].split(' & ')))
+                        self.batch_now.print_log(self.batch_now.line, 'sp' + str(n), self.batch_now.pos[n]['name'], '中间结果：', mp[n], '最终结果：', sp[n], '\n')
+
+                ipd = self.cip.get_ip(name=prop_all['name'], trade_props=trade_prop_all, alias_all_bid=alias_all_bid)
+                for n in [25, 26, 27]:
+                    mp[n] = str(ipd[self.batch_now.pos[n]['name']])
+                    sp[n] = self.split_word.join(ipd[self.batch_now.pos[n]['name']])
+                    self.batch_now.print_log(self.batch_now.line, 'sp' + str(n), self.batch_now.pos[n]['name'], '中间结果：', mp[n], '最终结果：', sp[n], '\n')
+
+            self.result_dict[item_id] = self.post_process_row(item_id, all_bid, alias_all_bid, clean_type, mp, sp, detail, f_map)
+            self.result_dict[item_id]['all_bid_sp'] = self.process_dy(f_map['snum'], alias_all_bid, f_map, self.result_dict[item_id]['all_bid_sp'])
+            self.batch_now.print_log('id =', item_id, self.result_dict[item_id])
+
+        return self.result_dict

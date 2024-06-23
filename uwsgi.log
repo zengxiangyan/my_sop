@@ -1,0 +1,566 @@
+15:12:29 Cleaning registries for queue: default
+15:12:29 Cleaning registries for queue: default
+*** Starting uWSGI 2.0.20-debian (64bit) on [Fri Jun 21 15:12:30 2024] ***
+compiled with version: 11.2.0 on 21 March 2022 11:00:44
+os: Linux-4.4.0-19041-Microsoft #4355-Microsoft Thu Apr 12 17:37:00 PST 2024
+nodename: zengxiangyan
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 16
+current working directory: /mnt/d/my_sop/my_sop
+writing pidfile to /mnt/d/my_sop/my_sop/uwsgi.pid
+detected binary path: /usr/bin/uwsgi-core
+chdir() to /mnt/d/my_sop/my_sop
+your processes number limit is 8041
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+building mime-types dictionary from file /etc/mime.types...1516 entry found
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+Python version: 3.10.12 (main, Nov 20 2023, 15:14:05) [GCC 11.4.0]
+Set PythonHome to /usr
+Python main interpreter initialized at 0x7fffd9a2b860
+python threads support enabled
+your mercy for graceful operations on workers is 60 seconds
+*** Operational MODE: no-workers ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x7fffd9a2b860 pid: 3613 (default app)
+spawned uWSGI master process (pid: 3613)
+running "exec:rqworker default" (master-start)...
+[uwsgi-daemons] spawning "rqworker default" (uid: 1000 gid: 1000)
+15:12:31 Worker rq:worker:6070bdb646014294871d86dbf7fb4798 started with PID 3616, version 1.16.2
+15:12:31 Subscribing to channel rq:pubsub:6070bdb646014294871d86dbf7fb4798
+15:12:31 Worker rq:worker:cccbf655deb242048b9dff8f56de5b4c started with PID 3617, version 1.16.2
+15:12:31 Subscribing to channel rq:pubsub:cccbf655deb242048b9dff8f56de5b4c
+15:12:31 *** Listening on default...
+15:12:31 Cleaning registries for queue: default
+15:12:31 *** Listening on default...
+15:12:56 Cleaning registries for queue: default
+15:13:25 Cleaning registries for queue: default
+15:13:26 Cleaning registries for queue: default
+15:13:36 Cleaning registries for queue: default
+15:13:46 Cleaning registries for queue: default
+*** Starting uWSGI 2.0.20-debian (64bit) on [Fri Jun 21 15:14:31 2024] ***
+compiled with version: 11.2.0 on 21 March 2022 11:00:44
+os: Linux-4.4.0-19041-Microsoft #4355-Microsoft Thu Apr 12 17:37:00 PST 2024
+nodename: zengxiangyan
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 16
+current working directory: /mnt/d/my_sop/my_sop
+writing pidfile to /mnt/d/my_sop/my_sop/uwsgi.pid
+detected binary path: /usr/bin/uwsgi-core
+chdir() to /mnt/d/my_sop/my_sop
+your processes number limit is 8041
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+building mime-types dictionary from file /etc/mime.types...1516 entry found
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+Python version: 3.10.12 (main, Nov 20 2023, 15:14:05) [GCC 11.4.0]
+Set PythonHome to /usr
+Python main interpreter initialized at 0x7ffff6ef7860
+python threads support enabled
+your mercy for graceful operations on workers is 60 seconds
+*** Operational MODE: no-workers ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x7ffff6ef7860 pid: 3630 (default app)
+spawned uWSGI master process (pid: 3630)
+running "exec:rqworker default" (master-start)...
+[uwsgi-daemons] spawning "rqworker default" (uid: 1000 gid: 1000)
+15:14:32 Worker rq:worker:03d113d9af814c10bdf395aba5734b22 started with PID 3633, version 1.16.2
+15:14:32 Worker rq:worker:4c3cf02b3b3c46079644210da506f448 started with PID 3634, version 1.16.2
+15:14:32 Subscribing to channel rq:pubsub:03d113d9af814c10bdf395aba5734b22
+15:14:32 Subscribing to channel rq:pubsub:4c3cf02b3b3c46079644210da506f448
+15:14:32 *** Listening on default...
+15:14:32 *** Listening on default...
+15:14:32 Cleaning registries for queue: default
+15:14:38 Cleaning registries for queue: default
+15:15:16 Cleaning registries for queue: default
+15:15:17 Cleaning registries for queue: default
+15:16:57 Cleaning registries for queue: default
+15:18:24 Cleaning registries for queue: default
+15:18:33 Cleaning registries for queue: default
+15:18:58 Cleaning registries for queue: default
+15:20:28 Cleaning registries for queue: default
+15:20:33 Cleaning registries for queue: default
+15:20:54 Cleaning registries for queue: default
+15:20:59 Cleaning registries for queue: default
+15:21:26 Cleaning registries for queue: default
+15:21:28 Cleaning registries for queue: default
+15:21:39 Cleaning registries for queue: default
+15:22:05 Cleaning registries for queue: default
+15:22:25 Cleaning registries for queue: default
+15:22:25 Cleaning registries for queue: default
+15:22:40 Cleaning registries for queue: default
+15:25:16 Cleaning registries for queue: default
+15:26:00 Cleaning registries for queue: default
+15:26:01 Cleaning registries for queue: default
+15:26:27 Cleaning registries for queue: default
+15:26:55 Cleaning registries for queue: default
+15:26:56 Cleaning registries for queue: default
+15:27:07 Cleaning registries for queue: default
+15:27:07 Cleaning registries for queue: default
+15:27:16 Cleaning registries for queue: default
+15:28:03 Cleaning registries for queue: default
+15:28:09 Cleaning registries for queue: default
+15:28:48 Cleaning registries for queue: default
+15:28:48 Cleaning registries for queue: default
+15:30:27 Cleaning registries for queue: default
+*** Starting uWSGI 2.0.20-debian (64bit) on [Fri Jun 21 15:30:42 2024] ***
+compiled with version: 11.2.0 on 21 March 2022 11:00:44
+os: Linux-4.4.0-19041-Microsoft #4355-Microsoft Thu Apr 12 17:37:00 PST 2024
+nodename: zengxiangyan
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 16
+current working directory: /mnt/d/my_sop/my_sop
+writing pidfile to /mnt/d/my_sop/my_sop/uwsgi.pid
+detected binary path: /usr/bin/uwsgi-core
+chdir() to /mnt/d/my_sop/my_sop
+your processes number limit is 8041
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+building mime-types dictionary from file /etc/mime.types...1516 entry found
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+Python version: 3.10.12 (main, Nov 20 2023, 15:14:05) [GCC 11.4.0]
+Set PythonHome to /usr
+Python main interpreter initialized at 0x7fffb8eba860
+python threads support enabled
+your mercy for graceful operations on workers is 60 seconds
+*** Operational MODE: no-workers ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x7fffb8eba860 pid: 3675 (default app)
+spawned uWSGI master process (pid: 3675)
+running "exec:rqworker default" (master-start)...
+[uwsgi-daemons] spawning "rqworker default" (uid: 1000 gid: 1000)
+15:30:43 Worker rq:worker:25e88dc982d44be88890f83f85ea5159 started with PID 3679, version 1.16.2
+15:30:43 Worker rq:worker:b4a2417568a2495d859e4b64e9a59f64 started with PID 3678, version 1.16.2
+15:30:43 Subscribing to channel rq:pubsub:25e88dc982d44be88890f83f85ea5159
+15:30:43 Subscribing to channel rq:pubsub:b4a2417568a2495d859e4b64e9a59f64
+15:30:43 *** Listening on default...
+15:30:43 *** Listening on default...
+15:30:43 Cleaning registries for queue: default
+15:31:55 Cleaning registries for queue: default
+15:32:04 Cleaning registries for queue: default
+15:32:29 Cleaning registries for queue: default
+15:33:59 Cleaning registries for queue: default
+15:34:04 Cleaning registries for queue: default
+15:34:25 Cleaning registries for queue: default
+15:34:30 Cleaning registries for queue: default
+15:34:56 Cleaning registries for queue: default
+15:34:58 Cleaning registries for queue: default
+15:35:09 Cleaning registries for queue: default
+15:35:35 Cleaning registries for queue: default
+15:35:55 Cleaning registries for queue: default
+15:35:55 Cleaning registries for queue: default
+15:36:10 Cleaning registries for queue: default
+15:38:48 Cleaning registries for queue: default
+15:39:31 Cleaning registries for queue: default
+15:39:32 Cleaning registries for queue: default
+15:39:33 Cleaning registries for queue: default
+15:39:58 Cleaning registries for queue: default
+15:40:26 Cleaning registries for queue: default
+15:40:27 Cleaning registries for queue: default
+15:40:38 Cleaning registries for queue: default
+15:40:48 Cleaning registries for queue: default
+15:41:35 Cleaning registries for queue: default
+15:41:40 Cleaning registries for queue: default
+15:42:18 Cleaning registries for queue: default
+15:42:18 Cleaning registries for queue: default
+*** Starting uWSGI 2.0.20-debian (64bit) on [Fri Jun 21 15:43:10 2024] ***
+compiled with version: 11.2.0 on 21 March 2022 11:00:44
+os: Linux-4.4.0-19041-Microsoft #4355-Microsoft Thu Apr 12 17:37:00 PST 2024
+nodename: zengxiangyan
+machine: x86_64
+clock source: unix
+pcre jit disabled
+detected number of CPU cores: 16
+current working directory: /mnt/d/my_sop/my_sop
+writing pidfile to /mnt/d/my_sop/my_sop/uwsgi.pid
+detected binary path: /usr/bin/uwsgi-core
+chdir() to /mnt/d/my_sop/my_sop
+your processes number limit is 8041
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+building mime-types dictionary from file /etc/mime.types...1516 entry found
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+Python version: 3.10.12 (main, Nov 20 2023, 15:14:05) [GCC 11.4.0]
+Set PythonHome to /usr
+Python main interpreter initialized at 0x7fffcbc68860
+python threads support enabled
+your mercy for graceful operations on workers is 60 seconds
+*** Operational MODE: no-workers ***
+WSGI app 0 (mountpoint='') ready in 1 seconds on interpreter 0x7fffcbc68860 pid: 4364 (default app)
+spawned uWSGI master process (pid: 4364)
+running "exec:rqworker default" (master-start)...
+[uwsgi-daemons] spawning "rqworker default" (uid: 1000 gid: 1000)
+15:43:11 Worker rq:worker:7c63c3fb87ba4c81b91d632914edffef started with PID 4368, version 1.16.2
+15:43:11 Worker rq:worker:42e065e882b64aeda8f396a3cf44733a started with PID 4367, version 1.16.2
+15:43:11 Subscribing to channel rq:pubsub:7c63c3fb87ba4c81b91d632914edffef
+15:43:11 Subscribing to channel rq:pubsub:42e065e882b64aeda8f396a3cf44733a
+15:43:11 *** Listening on default...
+15:43:11 *** Listening on default...
+15:43:11 Cleaning registries for queue: default
+15:43:57 Cleaning registries for queue: default
+15:44:15 Cleaning registries for queue: default
+15:45:26 Cleaning registries for queue: default
+15:45:35 Cleaning registries for queue: default
+15:46:01 Cleaning registries for queue: default
+15:47:30 Cleaning registries for queue: default
+15:47:35 Cleaning registries for queue: default
+15:47:56 Cleaning registries for queue: default
+15:48:01 Cleaning registries for queue: default
+15:48:27 Cleaning registries for queue: default
+15:48:28 Cleaning registries for queue: default
+15:48:40 Cleaning registries for queue: default
+15:49:07 Cleaning registries for queue: default
+15:49:25 Cleaning registries for queue: default
+15:49:26 Cleaning registries for queue: default
+15:49:42 Cleaning registries for queue: default
+15:52:19 Cleaning registries for queue: default
+15:53:02 Cleaning registries for queue: default
+15:53:04 Cleaning registries for queue: default
+15:53:05 Cleaning registries for queue: default
+15:53:30 Cleaning registries for queue: default
+15:53:57 Cleaning registries for queue: default
+15:53:59 Cleaning registries for queue: default
+15:54:09 Cleaning registries for queue: default
+15:54:19 Cleaning registries for queue: default
+15:55:06 Cleaning registries for queue: default
+15:55:11 Cleaning registries for queue: default
+15:55:50 Cleaning registries for queue: default
+15:55:50 Cleaning registries for queue: default
+15:56:42 Cleaning registries for queue: default
+15:56:42 Cleaning registries for queue: default
+15:57:29 Cleaning registries for queue: default
+15:57:46 Cleaning registries for queue: default
+15:58:58 Cleaning registries for queue: default
+15:59:06 Cleaning registries for queue: default
+15:59:32 Cleaning registries for queue: default
+16:01:01 Cleaning registries for queue: default
+16:01:06 Cleaning registries for queue: default
+16:01:27 Cleaning registries for queue: default
+16:01:32 Cleaning registries for queue: default
+16:01:58 Cleaning registries for queue: default
+16:02:00 Cleaning registries for queue: default
+16:02:12 Cleaning registries for queue: default
+16:02:38 Cleaning registries for queue: default
+16:02:57 Cleaning registries for queue: default
+16:02:57 Cleaning registries for queue: default
+16:03:13 Cleaning registries for queue: default
+16:05:50 Cleaning registries for queue: default
+16:06:33 Cleaning registries for queue: default
+16:06:34 Cleaning registries for queue: default
+16:06:35 Cleaning registries for queue: default
+16:07:00 Cleaning registries for queue: default
+16:07:28 Cleaning registries for queue: default
+16:07:29 Cleaning registries for queue: default
+16:07:40 Cleaning registries for queue: default
+16:07:40 Cleaning registries for queue: default
+16:07:49 Cleaning registries for queue: default
+16:08:37 Cleaning registries for queue: default
+16:08:42 Cleaning registries for queue: default
+16:09:21 Cleaning registries for queue: default
+16:09:21 Cleaning registries for queue: default
+16:10:13 Cleaning registries for queue: default
+16:10:59 Cleaning registries for queue: default
+16:11:17 Cleaning registries for queue: default
+16:12:28 Cleaning registries for queue: default
+16:12:37 Cleaning registries for queue: default
+16:13:02 Cleaning registries for queue: default
+16:14:32 Cleaning registries for queue: default
+16:14:37 Cleaning registries for queue: default
+16:14:58 Cleaning registries for queue: default
+16:15:03 Cleaning registries for queue: default
+16:15:29 Cleaning registries for queue: default
+16:15:30 Cleaning registries for queue: default
+16:15:42 Cleaning registries for queue: default
+16:16:09 Cleaning registries for queue: default
+16:16:27 Cleaning registries for queue: default
+16:16:28 Cleaning registries for queue: default
+16:16:44 Cleaning registries for queue: default
+16:19:20 Cleaning registries for queue: default
+16:20:04 Cleaning registries for queue: default
+16:20:05 Cleaning registries for queue: default
+16:20:06 Cleaning registries for queue: default
+16:20:31 Cleaning registries for queue: default
+16:20:59 Cleaning registries for queue: default
+16:21:00 Cleaning registries for queue: default
+16:21:11 Cleaning registries for queue: default
+16:21:20 Cleaning registries for queue: default
+16:22:08 Cleaning registries for queue: default
+16:22:13 Cleaning registries for queue: default
+16:22:52 Cleaning registries for queue: default
+16:22:52 Cleaning registries for queue: default
+16:23:44 Cleaning registries for queue: default
+16:24:31 Cleaning registries for queue: default
+16:24:48 Cleaning registries for queue: default
+16:26:00 Cleaning registries for queue: default
+16:26:08 Cleaning registries for queue: default
+16:26:33 Cleaning registries for queue: default
+16:28:03 Cleaning registries for queue: default
+16:28:08 Cleaning registries for queue: default
+16:28:29 Cleaning registries for queue: default
+16:28:33 Cleaning registries for queue: default
+16:29:00 Cleaning registries for queue: default
+16:29:01 Cleaning registries for queue: default
+16:29:13 Cleaning registries for queue: default
+16:29:39 Cleaning registries for queue: default
+16:29:58 Cleaning registries for queue: default
+16:29:58 Cleaning registries for queue: default
+16:30:15 Cleaning registries for queue: default
+16:32:51 Cleaning registries for queue: default
+16:33:35 Cleaning registries for queue: default
+16:33:36 Cleaning registries for queue: default
+16:33:37 Cleaning registries for queue: default
+16:34:02 Cleaning registries for queue: default
+16:34:30 Cleaning registries for queue: default
+16:34:31 Cleaning registries for queue: default
+16:34:42 Cleaning registries for queue: default
+16:34:51 Cleaning registries for queue: default
+16:35:39 Cleaning registries for queue: default
+16:35:39 Cleaning registries for queue: default
+16:35:43 Cleaning registries for queue: default
+16:36:23 Cleaning registries for queue: default
+16:37:15 Cleaning registries for queue: default
+16:38:01 Cleaning registries for queue: default
+16:38:19 Cleaning registries for queue: default
+16:39:30 Cleaning registries for queue: default
+16:39:39 Cleaning registries for queue: default
+16:40:04 Cleaning registries for queue: default
+16:41:34 Cleaning registries for queue: default
+16:41:39 Cleaning registries for queue: default
+16:42:00 Cleaning registries for queue: default
+16:42:05 Cleaning registries for queue: default
+16:42:31 Cleaning registries for queue: default
+16:42:32 Cleaning registries for queue: default
+16:42:44 Cleaning registries for queue: default
+16:43:11 Cleaning registries for queue: default
+16:43:29 Cleaning registries for queue: default
+16:43:30 Cleaning registries for queue: default
+16:43:46 Cleaning registries for queue: default
+16:46:23 Cleaning registries for queue: default
+16:47:06 Cleaning registries for queue: default
+16:47:06 Cleaning registries for queue: default
+16:47:07 Cleaning registries for queue: default
+16:47:08 Cleaning registries for queue: default
+16:47:33 Cleaning registries for queue: default
+16:47:33 Cleaning registries for queue: default
+16:48:01 Cleaning registries for queue: default
+16:48:02 Cleaning registries for queue: default
+16:48:13 Cleaning registries for queue: default
+16:48:22 Cleaning registries for queue: default
+16:49:10 Cleaning registries for queue: default
+16:49:14 Cleaning registries for queue: default
+16:49:53 Cleaning registries for queue: default
+16:49:53 Cleaning registries for queue: default
+16:50:46 Cleaning registries for queue: default
+16:51:32 Cleaning registries for queue: default
+16:51:50 Cleaning registries for queue: default
+16:53:01 Cleaning registries for queue: default
+16:53:09 Cleaning registries for queue: default
+16:53:35 Cleaning registries for queue: default
+16:55:04 Cleaning registries for queue: default
+16:55:09 Cleaning registries for queue: default
+16:55:30 Cleaning registries for queue: default
+16:55:35 Cleaning registries for queue: default
+16:56:01 Cleaning registries for queue: default
+16:56:03 Cleaning registries for queue: default
+16:56:15 Cleaning registries for queue: default
+16:56:41 Cleaning registries for queue: default
+16:57:00 Cleaning registries for queue: default
+16:57:00 Cleaning registries for queue: default
+16:57:16 Cleaning registries for queue: default
+16:59:53 Cleaning registries for queue: default
+16:59:53 Cleaning registries for queue: default
+17:00:36 Cleaning registries for queue: default
+17:00:37 Cleaning registries for queue: default
+17:00:38 Cleaning registries for queue: default
+17:01:04 Cleaning registries for queue: default
+17:01:31 Cleaning registries for queue: default
+17:01:32 Cleaning registries for queue: default
+17:01:43 Cleaning registries for queue: default
+17:01:44 Cleaning registries for queue: default
+17:01:52 Cleaning registries for queue: default
+17:02:40 Cleaning registries for queue: default
+17:02:45 Cleaning registries for queue: default
+17:03:23 Cleaning registries for queue: default
+17:03:24 Cleaning registries for queue: default
+17:04:17 Cleaning registries for queue: default
+17:05:04 Cleaning registries for queue: default
+17:05:21 Cleaning registries for queue: default
+17:06:32 Cleaning registries for queue: default
+17:06:40 Cleaning registries for queue: default
+17:07:06 Cleaning registries for queue: default
+17:08:35 Cleaning registries for queue: default
+17:08:40 Cleaning registries for queue: default
+17:09:02 Cleaning registries for queue: default
+17:09:06 Cleaning registries for queue: default
+17:09:32 Cleaning registries for queue: default
+17:09:34 Cleaning registries for queue: default
+17:09:46 Cleaning registries for queue: default
+17:10:12 Cleaning registries for queue: default
+17:10:30 Cleaning registries for queue: default
+17:10:30 Cleaning registries for queue: default
+17:10:48 Cleaning registries for queue: default
+17:13:24 Cleaning registries for queue: default
+17:14:07 Cleaning registries for queue: default
+17:14:07 Cleaning registries for queue: default
+17:14:09 Cleaning registries for queue: default
+17:14:10 Cleaning registries for queue: default
+17:14:35 Cleaning registries for queue: default
+17:14:35 Cleaning registries for queue: default
+17:15:02 Cleaning registries for queue: default
+17:15:04 Cleaning registries for queue: default
+17:15:15 Cleaning registries for queue: default
+17:15:16 Cleaning registries for queue: default
+17:15:24 Cleaning registries for queue: default
+17:16:12 Cleaning registries for queue: default
+17:16:16 Cleaning registries for queue: default
+17:16:54 Cleaning registries for queue: default
+17:17:48 Cleaning registries for queue: default
+17:18:36 Cleaning registries for queue: default
+17:18:52 Cleaning registries for queue: default
+17:20:03 Cleaning registries for queue: default
+17:20:12 Cleaning registries for queue: default
+17:20:37 Cleaning registries for queue: default
+17:22:07 Cleaning registries for queue: default
+17:22:12 Cleaning registries for queue: default
+17:22:34 Cleaning registries for queue: default
+17:22:38 Cleaning registries for queue: default
+17:23:03 Cleaning registries for queue: default
+17:23:05 Cleaning registries for queue: default
+17:23:17 Cleaning registries for queue: default
+17:23:43 Cleaning registries for queue: default
+17:24:01 Cleaning registries for queue: default
+17:24:01 Cleaning registries for queue: default
+17:24:19 Cleaning registries for queue: default
+17:26:56 Cleaning registries for queue: default
+17:27:39 Cleaning registries for queue: default
+17:27:40 Cleaning registries for queue: default
+17:27:41 Cleaning registries for queue: default
+17:28:06 Cleaning registries for queue: default
+17:28:34 Cleaning registries for queue: default
+17:28:35 Cleaning registries for queue: default
+17:28:46 Cleaning registries for queue: default
+17:28:47 Cleaning registries for queue: default
+17:28:55 Cleaning registries for queue: default
+17:29:43 Cleaning registries for queue: default
+17:29:43 Cleaning registries for queue: default
+17:29:47 Cleaning registries for queue: default
+17:30:25 Cleaning registries for queue: default
+17:30:25 Cleaning registries for queue: default
+17:31:20 Cleaning registries for queue: default
+17:32:07 Cleaning registries for queue: default
+17:32:24 Cleaning registries for queue: default
+17:33:35 Cleaning registries for queue: default
+17:33:43 Cleaning registries for queue: default
+17:34:09 Cleaning registries for queue: default
+17:35:38 Cleaning registries for queue: default
+17:35:43 Cleaning registries for queue: default
+17:36:05 Cleaning registries for queue: default
+17:36:09 Cleaning registries for queue: default
+17:36:35 Cleaning registries for queue: default
+17:36:36 Cleaning registries for queue: default
+17:36:48 Cleaning registries for queue: default
+17:37:15 Cleaning registries for queue: default
+17:37:32 Cleaning registries for queue: default
+17:37:32 Cleaning registries for queue: default
+17:37:50 Cleaning registries for queue: default
+17:40:27 Cleaning registries for queue: default
+17:41:09 Cleaning registries for queue: default
+17:41:12 Cleaning registries for queue: default
+17:41:37 Cleaning registries for queue: default
+17:42:04 Cleaning registries for queue: default
+17:42:07 Cleaning registries for queue: default
+17:42:17 Cleaning registries for queue: default
+17:42:18 Cleaning registries for queue: default
+17:42:26 Cleaning registries for queue: default
+17:43:14 Cleaning registries for queue: default
+17:43:18 Cleaning registries for queue: default
+17:43:56 Cleaning registries for queue: default
+17:43:56 Cleaning registries for queue: default
+17:44:52 Cleaning registries for queue: default
+17:45:39 Cleaning registries for queue: default
+17:45:55 Cleaning registries for queue: default
+17:45:55 Cleaning registries for queue: default
+17:47:07 Cleaning registries for queue: default
+17:47:15 Cleaning registries for queue: default
+17:47:40 Cleaning registries for queue: default
+17:49:08 Cleaning registries for queue: default
+17:49:13 Cleaning registries for queue: default
+17:49:35 Cleaning registries for queue: default
+17:49:39 Cleaning registries for queue: default
+17:50:05 Cleaning registries for queue: default
+17:50:07 Cleaning registries for queue: default
+17:50:19 Cleaning registries for queue: default
+17:50:45 Cleaning registries for queue: default
+17:51:03 Cleaning registries for queue: default
+17:51:03 Cleaning registries for queue: default
+17:51:22 Cleaning registries for queue: default
+17:53:59 Cleaning registries for queue: default
+17:54:40 Cleaning registries for queue: default
+17:54:41 Cleaning registries for queue: default
+17:54:42 Cleaning registries for queue: default
+17:55:08 Cleaning registries for queue: default
+17:55:09 Cleaning registries for queue: default
+17:55:35 Cleaning registries for queue: default
+17:55:38 Cleaning registries for queue: default
+17:55:48 Cleaning registries for queue: default
+17:55:56 Cleaning registries for queue: default
+17:56:44 Cleaning registries for queue: default
+17:56:50 Cleaning registries for queue: default
+17:57:27 Cleaning registries for queue: default
+17:57:27 Cleaning registries for queue: default
+17:58:23 Cleaning registries for queue: default
+17:59:11 Cleaning registries for queue: default
+17:59:27 Cleaning registries for queue: default
+18:00:38 Cleaning registries for queue: default
+18:00:47 Cleaning registries for queue: default
+18:01:11 Cleaning registries for queue: default
+18:02:39 Cleaning registries for queue: default
+18:02:45 Cleaning registries for queue: default
+18:03:07 Cleaning registries for queue: default
+18:03:10 Cleaning registries for queue: default
+18:03:36 Cleaning registries for queue: default
+18:03:38 Cleaning registries for queue: default
+18:03:50 Cleaning registries for queue: default
+18:04:16 Cleaning registries for queue: default
+18:04:34 Cleaning registries for queue: default
+18:04:34 Cleaning registries for queue: default
+18:04:53 Cleaning registries for queue: default
+18:07:30 Cleaning registries for queue: default
+18:08:11 Cleaning registries for queue: default
+18:08:12 Cleaning registries for queue: default
+18:08:13 Cleaning registries for queue: default
+18:08:14 Cleaning registries for queue: default
+18:08:39 Cleaning registries for queue: default
+18:08:40 Cleaning registries for queue: default
+18:09:06 Cleaning registries for queue: default
+18:09:09 Cleaning registries for queue: default
+18:09:20 Cleaning registries for queue: default
+18:09:28 Cleaning registries for queue: default
+18:10:14 Cleaning registries for queue: default
+18:10:21 Cleaning registries for queue: default
+18:10:59 Cleaning registries for queue: default
+18:10:59 Cleaning registries for queue: default
+18:11:55 Cleaning registries for queue: default
+18:12:42 Cleaning registries for queue: default
+18:12:58 Cleaning registries for queue: default
+18:14:10 Cleaning registries for queue: default
+18:14:18 Cleaning registries for queue: default
+18:14:42 Cleaning registries for queue: default
+18:16:11 Cleaning registries for queue: default
+18:16:16 Cleaning registries for queue: default
+18:16:38 Cleaning registries for queue: default
+18:16:41 Cleaning registries for queue: default
+18:17:07 Cleaning registries for queue: default
+18:17:09 Cleaning registries for queue: default
+18:17:22 Cleaning registries for queue: default
+18:17:49 Cleaning registries for queue: default
+18:18:06 Cleaning registries for queue: default
+18:18:06 Cleaning registries for queue: default
+18:18:25 Cleaning registries for queue: default

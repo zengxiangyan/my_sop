@@ -1,0 +1,148 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="{% static 'dist/layui/css/layui.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'dist/CSS/public.css' %}" media="all">
+    <style>
+        body {
+            background-color: #ffffff;
+        }
+    </style>
+</head>
+<body>
+<!-- TODO 机洗弹窗 -->
+
+<div class="layui-form layuimini-form" width="60px">
+    {% csrf_token %}
+    <div class="modal-dialog modal-md" role="document">
+<!--    <div class="modal-content" style=" border-radius: 10px;">-->
+      <div class="modal-header">
+        <h4 class="modal-title">请填入时间和BatchId</h4>
+      </div>
+      <div class="modal-body" id="importCleanInputDisplay">
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="basic-addon">BatchId</span>
+          <input class="form-control" id="batchid" type="text" aria-describedby="basic-addon1" autocomplete="off" required>
+        </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="start_date">开始时间</span>
+          <input class="form-control input-date" id="CleanstartTime" type="text" aria-describedby="basic-addon1" autocomplete="off" required>
+        </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="end_date">结束时间</span>
+          <input class="form-control input-date" id="CleanendTime" type="text" aria-describedby="basic-addon1" autocomplete="off" required>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="confirm-report" lay-submit lay-filter="saveBtn" data-id="">Confirm</button>
+      </div>
+    </div>
+</div>
+<!--    </div>-->
+
+<script src="{% static 'dist/layui/layui.js' %}" charset="utf-8"></script>
+<script>
+    layui.use(['form'], function () {
+        var form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+
+        form.on('submit(saveBtn)', function (data) {
+            var batch_id = document.getElementById('batchid');
+            var start_date = document.getElementById('CleanstartTime');
+            var end_date = document.getElementById('CleanendTime');
+            if (!batch_id.checkValidity()) {
+                batch_id.reportValidity();
+                return false;
+            }
+            if (!start_date.checkValidity()) {
+                start_date.reportValidity();
+                return false;
+            }
+            if (!end_date.checkValidity()) {
+                end_date.reportValidity();
+                return false;
+            };
+            // 获取 CSRF 令牌值
+            var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            // 使用fetch发送POST请求
+            fetch('../add/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    // 在请求头中包含 CSRF 令牌
+                    'X-CSRFToken': csrftoken
+                },
+                body: 'batchid=' + encodeURIComponent(batch_id.value) + '&start_date=' + encodeURIComponent(start_date.value) + '&end_date=' + encodeURIComponent(end_date.value)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text(); // 或者 response.json() 如果服务器返回JSON格式
+            })
+            .then(data => {
+                layer.msg("添加报告任务成功"); // 请求成功的处理
+                  // window.location.href = window.location.protocol + '//' + window.location.host + '/report/save/?batchid=' + batchid;
+            })
+            .catch(error => {
+                layer.msg('Error:', error); // 请求失败的处理
+            });
+
+            return false; // 阻止表单默认提交
+        });
+
+
+    });
+    var laydate = layui.laydate;
+    // 获取当前日期
+    var currentDate = new Date();
+    var currentYear = currentDate.getFullYear();
+    var currentMonth = currentDate.getMonth();
+
+    // 如果当前月份是1月，年份减1，月份设置为12月
+    if (currentMonth === 0) {
+        currentYear -= 1;
+        currentMonth = 11; // 11表示12月
+    } else {
+        // 否则，只需月份减1
+        currentMonth -= 1;
+    }
+
+    // 创建上一个月第一天的日期对象
+    var previousMonthFirstDay = new Date(currentYear, currentMonth, 1);
+
+    // 使用Laydate渲染日期选择器
+    laydate.render({
+        elem: '#CleanstartTime',
+        type: 'date',
+        format: 'yyyy-MM-dd',
+        // 设置value为上一个月第一天
+        value: previousMonthFirstDay
+    });
+    laydate.render({
+    elem: '#CleanendTime',
+    type: 'date',
+    format: 'yyyy-MM-dd',
+    // 使用JavaScript获取当月第一天的日期
+    value: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+    });
+
+
+</script>
+<script src="{% static 'dist/JS/model.js' %}" charset="utf-8"></script>
+
+</body>
+</html>

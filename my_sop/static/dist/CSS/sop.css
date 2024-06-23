@@ -1,0 +1,104 @@
+.container{
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    grid-gap: 10px;
+  }
+
+.layui-card {
+    display: grid;
+    width:450px;
+    max-height: 300px;
+    max-width: 100%; /* 设置卡片的宽度为容器的宽度 */
+    transition: grid-template-columns 0.3s;
+    /* 其他样式属性 */
+  }
+/* 自定义 CodeMirror 样式 */
+.CodeMirror{
+      height: 300px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+      width: 100%;
+    }
+
+.CodeMirror-scroll {
+      overflow: auto !important;
+    }
+
+.layui-tab-content{
+        height: 100vh;
+    }
+    .layui-table-cell{
+        height:auto!important;
+        white-space:normal;
+          }
+    .layui-form-label{
+    width:80px;
+    font-weight: bold;
+    }
+    .layui-table-link{
+                font-color:#01AAED;
+                color:#01AAED;
+            }
+            a:visited {
+                color:#01AAED;
+                text-decoration:underline;
+            }
+            a:hover {
+                color:blue;
+                text-decoration:underline;
+            }
+            a:active {
+                color:#01AAED;
+                text-decoration:underline;
+            }
+    .layui-table-page {
+        position: relative;
+        width: 100%;
+        padding: 7px 7px 0;
+        height: 41px;
+        font-size: 12px;
+        text-align: right;
+        white-space: nowrap;
+        text-align: right;
+}
+.loading{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin: 0 auto;
+    margin-top:100px;
+    position: relative;
+    border:5px solid lightgreen;
+    -webkit-animation: turn 2s linear infinite;
+}
+.loadingEight span{
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: lightgreen;
+    position: absolute;
+    left: 50%;
+    margin-top: -15px;
+    margin-left: -15px;
+    -webkit-animation: changeBgColor 2s linear infinite;
+}
+
+@-webkit-keyframes changeBgColor{
+    0%{
+        background: lightgreen;
+    }
+    100%{
+        background: lightblue;
+    }
+}
+@-webkit-keyframes turn{
+    0%{
+        -webkit-transform: rotate(0deg);
+        border-color: lightgreen;
+    }
+    100%{
+        -webkit-transform: rotate(360deg);
+        border-color: lightblue;
+    }
+}
