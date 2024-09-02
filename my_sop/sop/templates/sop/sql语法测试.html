@@ -2,61 +2,72 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="stylesheet" href="{% static 'dist/layui/css/layui.css' %}" media="all">
+  <link rel="stylesheet" href="{% static 'dist/CSS/sop.css' %}" media="all">
   <link rel="stylesheet" href="{% static 'dist/CSS/codemirror.css' %}" media="all">
-  <script src="{% static 'dist/JS/codemirror.js' %}"></script>
-  <script src="{% static 'dist/JS/sql.js' %}"></script> <!-- SQL 语法模式文件 -->
-  <style>
-    /* 自定义 CodeMirror 样式 */
-    .CodeMirror {
-      height: 300px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
-
-    .CodeMirror-scroll {
-      overflow: auto !important;
-    }
-  .card {
-    width: 100px; /* 设置卡片的宽度 */
-    /* 其他样式属性 */
-  }
-
-  .editor-container {
-    width: 100%; /* 编辑器容器宽度设置为卡片宽度 */
-    /* 其他样式属性 */
-  }
-  </style>
 </head>
 <body>
-  <div class="card">
-    <div class="layui-card-header">提交SQL:</div>
-    <div class="editor-container">
-      <div id="editor"></div>
+{% csrf_token %}
+  <div class="divider">
+        <span class="layui-icon layui-icon-left divider-icon" id="togglesqlBtn"></span>
     </div>
-  </div>
-
-  <script>
-  // 初始化 CodeMirror
-var editor = CodeMirror(document.getElementById('editor'), {
-  mode: 'text/x-sql', // 设置语法模式为 SQL
-  theme: 'default', // 设置主题样式
-  lineNumbers: true, // 显示行号
-  indentUnit: 2, // 缩进单位为 2 个空格
-  autofocus: true, // 自动聚焦
-  viewportMargin: Infinity // 设置 viewportMargin 为 Infinity
-});
-
-// 设置编辑器高度随内容自动调整
-function resizeEditor() {
-  editor.setSize(null, 'auto');
-}
-resizeEditor(); // 初始化时调整一次高度
-
-// 监听编辑器内容变化事件，实时调整高度
-editor.on('change', resizeEditor);
-
-
-  </script>
+        <div class="layui-card" id="sqlreview" style="width:100%">
+            <div class="layui-card-header">查询SQL:</div>
+            <div class="layui-card-body layui-text" >
+                <blockquote class="layui-elem-quote layui-quote-nm">
+                    <div class="save-button-container" align="right">
+                        <a class="save-button" lay-skin="switch" lay-event="copy-reviewsql" lay-id="undefined" id="copy-sqlreview">
+                            <i class="layui-icon layui-icon-print"></i>
+                            copy
+                        </a>
+                        <a class="save-button" lay-skin="switch" lay-event="save-reviewsql" lay-id="undefined">
+                            <i class="layui-icon layui-icon-ok-circle"></i>
+                            save
+                        </a>
+                    </div>
+                    <div id="sqlResult" width="300px"><pre><span class="layui-word-aux">本次查询SQL详情……</span></pre></div>
+                </blockquote>
+            </div>
+        </div>
+        <div class="layui-card" id="editorContainer" style="width:100%">
+            <div class="layui-card-header">提交SQL:</div>
+            <div class="layui-card-body layui-text">
+                <blockquote class="layui-elem-quote layui-quote-nm" id="editor-bk">
+                    <div class="save-button-container" align="right">
+                        <a class="save-button" lay-skin="switch" lay-event="copy-editsql" lay-id="undefined" id="copy-sqledit">
+                            <i class="layui-icon layui-icon-print"></i>
+                            copy
+                        </a>
+                        <a class="save-button" lay-skin="switch" lay-event="save-reviewsql" lay-id="undefined">
+                            <i class="layui-icon layui-icon-ok-circle"></i>
+                            save
+                        </a>
+                    </div>
+                    <div id="editor"></div>
+                    <div class="run-button-container" align="center">
+                        <br>
+                        <a type="submit" lay-submit lay-filter="data-search-btn" class="save-button layui-btn layui-btn-primary layui-btn-sm layui-border-blue" lay-skin="switch" lay-event="copy-editsql" lay-id="undefined" id="Run-sqledit">
+                            <i class="layui-icon layui-icon-play"></i>
+                            Run
+                        </a>
+                        <br><br>
+                    </div>
+                </blockquote>
+            </div>
+            <div class="layui-card" style="width:99.1%">
+                <script type="text/html" id="toolbarDemo" >
+                    <div class="layui-btn-container right-toolbar">
+                        <button class="layui-btn layui-btn-sm" lay-event="save"><i class="layui-icon layui-icon-file"></i>保存</button>
+                        <button class="layui-btn layui-btn-sm" lay-event="exportAll"><i class="layui-icon layui-icon-download-circle"></i>下载</button>
+                    </div>
+                </script>
+                <div class="layui-hide" id="currentTableId" lay-filter="demo"></div>
+            </div>
+        </div>
+<script src="{% static 'dist/layui/layui.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/codemirror.js' %}"></script>
+<script src="{% static 'dist/JS/sql.js' %}"></script>
+<script src="{% static 'dist/layui/sql_index.js' %}" charset="utf-8"></script>
 </body>
 </html>
 

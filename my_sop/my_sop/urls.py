@@ -25,6 +25,8 @@ urlpatterns = [
     path('report/', include('report.urls')),
     path('', include('cleaning.urls')),
     path('django-rq/', include('django_rq.urls')),
+    path('my-console/', include('my_console.urls')),
+    path('user/', include('user.urls')),
     # path('user/', include('user.urls')),
     # path('code/',views.code),
     # path('',views.home)

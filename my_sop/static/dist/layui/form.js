@@ -2,36 +2,29 @@
 var isFormHidden = false;
 
 // 获取按钮元素
-var toggleFormBtn = document.getElementById("toggleFormBtn");
+//var toggleFormBtn = document.getElementById("toggleFormBtn");
 var togglesqlBtn = document.getElementById("togglesqlBtn");
 var container = document.querySelector('.container');
 var dividerIcon = document.querySelector('.divider-icon');
 var sqlreview = document.getElementById("sqlreview");
 var sql_card = document.getElementById("editorContainer");
 // 注册点击事件监听器
-toggleFormBtn.addEventListener("click", function() {
-  // 获取表单元素
-  var form = document.getElementById("myForm");
-  // 切换表单状态
-  if (isFormHidden) {
-    // 显示表单
-    form.style.display = "block";
-    // 更新按钮文本
-    toggleFormBtn.innerHTML = '<i class="layui-icon layui-icon-up">隐藏筛选</i>';
-    // 更新表单状态
-    isFormHidden = false;
-  } else {
-    // 隐藏表单
-    form.style.display = "none";
-    // 更新按钮文本
-    toggleFormBtn.innerHTML = '<i class="layui-icon layui-icon-down">展开筛选</i>';
-    container.classList.toggle('columns-1-10');
-    // 更新表单状态
-    isFormHidden = true;
-  }
-});
+//toggleFormBtn.addEventListener("click", function(event) {
+//  event.preventDefault();
+//  var form = document.getElementById("myForm");
+//  if (isFormHidden) {
+//    form.style.display = "block";
+//    toggleFormBtn.innerHTML = '<i class="layui-icon layui-icon-up">隐藏筛选</i>';
+//    isFormHidden = false;
+//  } else {
+//    form.style.display = "none";
+//    toggleFormBtn.innerHTML = '<i class="layui-icon layui-icon-down">展开筛选</i>';
+//    container.classList.toggle('columns-1-10');
+//    isFormHidden = true;
+//  }
+//});
 togglesqlBtn.addEventListener('click', function() {
-  var form = document.getElementById("myForm");
+  var form = document.getElementById("rule");
   // 切换表单状态
   if (isFormHidden) {
     setTimeout(function() {
@@ -62,8 +55,7 @@ togglesqlBtn.addEventListener('click', function() {
     isFormHidden = true;
   }
 });
-// 监听查询按钮的点击事件
-// 获取按钮元素
+
 var addButton = document.getElementById('add_sp');
 // 监听按钮的点击事件
 addButton.addEventListener('click', function(event) {

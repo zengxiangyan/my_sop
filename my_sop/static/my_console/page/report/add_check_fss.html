@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../lib/layui-v2.6.3/css/public.css" media="all">
+</head>
+<body>
+<style>
+    .rounded-corner .layui-layer-content {
+        border-radius: 10px; 
+        border: 2px solid #000; 
+    }
+
+    .filter-row th {
+        padding: 4px 10px; 
+    }
+    
+    .filter-row th input {
+        width: 85%; 
+        border-radius: 10px; 
+        border: 1px solid #ccc; 
+        padding: 4px 6px; 
+        box-sizing: border-box; 
+    }
+    
+    .deep-border .layui-table-header {
+        border-tom:2px solid #000; 
+    }
+    
+    .deep-border .layui-table-cell {
+        border: 2px solid #000; 
+    }
+    
+    .deep-border .layui-table-main {
+        border-top: 2px solid #000; 
+    }
+</style>
+{% csrf_token %}
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset ">
+            <legend><label style="color: #4CAF50;">添加店铺检查任务</label></legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">eid</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="eid" id="eid" required lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">source</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="source" autocomplete="off" class="layui-input" placeholder="source用英文逗号隔开">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">alias_bid</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="alias_bid" autocomplete="off" class="layui-input" placeholder="alias_bid用英文逗号隔开">
+                            </div>
+                        </div>
+                        <div class="layui-inline" style="width: 25%">
+                            <label class="layui-form-label" style="width: 25%">table</label>
+                            <div class="layui-input-inline" style="width: 72%">
+                                <input type="text" name="table" id="table" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <br><br>
+                        <div class="layui-form-item">
+                              <div class="layui-inline">
+                                  <label class="layui-form-label">开始时间</label>
+                                <div class="layui-input-inline">
+                                  <input type="text" required lay-verify="required" autocomplete="off" id="s_date" name="s_date" class="layui-input" placeholder="YYYY-MM-DD">
+                                </div>
+                              </div>
+                              <div class="layui-inline">
+                                <label class="layui-form-label">结束时间</label>
+                              <div class="layui-input-inline">
+                                <input type="text" required lay-verify="required" autocomplete="off" id="e_date" name="e_date" class="layui-input" placeholder="YYYY-MM-DD">
+                              </div>
+                            </div>
+                            <div class="layui-inline">
+                                <label class="layui-form-label">rank</label>
+                                <div class="layui-input-inline">
+                                    <input type="text" name="rank" autocomplete="off" class="layui-input" placeholder="越大优先级越高">
+                                </div>
+                            </div>
+                            <div class="layui-inline">
+                                <button type="button" class="layui-btn layui-btn-primary" style="background:#ffff66;font-size:12px;text-align: center;color: #2f363c;" lay-submit lay-filter="add_task">
+                                    <i class="layui-icon">&#xe61f;</i> 添加任务
+                                  </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button type="button" class="layui-btn layui-btn-sm " style="background:#4CAF50;font-size:12px;text-align: center;color: #FFFFFF;" id="search_fss_shop">
+                  <i class="layui-icon">&#xe65c;</i> 旗舰店相关检查
+                </button>
+            </div>
+        </script>
+
+        <script type="text/html" id="filterBar">
+          <input class="layui-input" data-field="{{d.field}}" placeholder="筛选{{d.title}}" onkeyup="applyFilter(this, '{{d.field}}')">
+        </script>
+        
+        <table class="layui-table deep-border" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">查看</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">修改</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-download" lay-event="download">保存</a>
+
+        </script>
+
+    </div>
+</div>
+<script src="../../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script>
+ function getCSRFToken() {
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i].trim();
+        var cookieParts = cookie.split('=');
+        if (cookieParts[0] === 'csrftoken') {
+            return cookieParts[1];
+        }
+    }
+    return null;
+};
+
+layui.use(['jquery', 'table', 'laydate', 'form', 'layer'], function(){
+    var $ = layui.jquery;
+    var table = layui.table;
+    var laydate = layui.laydate;
+    var form = layui.form;
+    var layer = layui.layer;
+
+    // 初始化日期选择
+    var newdate = new Date();
+    var lastMonthDate = new Date(newdate.getFullYear(), newdate.getMonth() - 1, 1);
+    var currentMonthDate = new Date(newdate.getFullYear(), newdate.getMonth(), 1);
+    $(document).ready(function() {
+        $('#eid').on('input', function() {
+            var originalValue = $(this).val();  // 获取第一个输入框的值
+            var modifiedValue = "";  // Initialize modifiedValue as an empty string
+
+            if (originalValue !== "") {  // Check if the input is not empty
+                modifiedValue = "sop_e.entity_prod_" + originalValue + "_E";  // 添加规则，例如前缀和后缀
+            }
+
+            $('#table').val(modifiedValue);  // 设置第二个输入框的值
+        });
+    });
+        
+    laydate.render({
+        elem: '#s_date',
+        theme: 'molv',
+        type: 'date',
+        value: lastMonthDate
+    });
+
+    laydate.render({
+        elem: '#e_date',
+        theme: 'molv',
+        type: 'date',
+        value: currentMonthDate
+    });
+
+    // 渲染表格并添加筛选行
+    table.render({
+        elem: '#currentTableId',
+        url: '../fss_task/',
+        method: 'get',
+        toolbar: '#toolbarDemo',
+        defaultToolbar: ['filter', 'exports', 'print', {
+            title: '提示',
+            layEvent: 'LAYTABLE_TIPS',
+            icon: 'layui-icon-tips'
+        }],
+        cols: [[
+            {type: "checkbox", width: 50},
+            {field: 'id', width: 100, title: 'task_id', sort: true},
+            {field: 'eid', width: 100, title: 'eid', sort: true},
+            {field: 'tbl', title: 'tbl'},
+            {field: 'param', title: 'param',width: 250},
+            {field: 'status', title: 'status',width: 100, sort: true},
+            {field: 'rank', title: 'rank',width: 100,},
+            {field: 'createtime', title: 'createtime', sort: true},
+            {field: 'updatetime', title: 'updatetime', sort: true},
+            {field: 'msg', title: 'msg',width: 250}
+            // {field: 'PersonInCharge', title: '负责人'},
+            // {title: '操作', minWidth: 250, align: "center"}
+        ]],
+        limits: [10, 15, 20, 25, 50, 100],
+        limit: 15,
+        page: true,
+        skin: 'line',
+        done: function () {
+            addFilterRow();
+        }
+    });
+
+    form.on('submit(add_task)', function (data) {
+        var taskData = data.field;
+        console.log('taskData:', taskData);
+        var index = layer.load(1, {
+            shade: [0.1, '#fff']
+        });
+
+        $.ajax({
+            url: '../check_fss/',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(taskData),
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            },
+            success: function(response) {
+                var iconNumber = response.code === 200 ? 1 : 2;
+                layer.close(index);
+                layer.alert(response.msg, {icon: iconNumber, title: '提示：'});
+            },
+            error: function(xhr, status, error) {
+                layer.close(index);
+                layer.alert('请求数据失败: ' + error, {icon: 2, title: '错误信息'});
+            }
+        });
+        addFilterRow();
+        applyFilter();
+    
+        return false; 
+    });
+
+    function addFilterRow() {
+        var $header = $('#currentTableId').next('.layui-table-view').find('.layui-table-header');
+        var $thead = $header.find('thead');
+        var $filterRow = $('<tr class="filter-row"></tr>');
+    
+        $header.find('th').each(function () {
+            var $th = $(this);
+            var field = $th.data('field');
+    
+            if (field) {
+                // Retrieve the saved value from sessionStorage
+                var savedValue = sessionStorage.getItem(field) || '';
+                $filterRow.append('<th><input type="text" class="layui-input filter-input" data-field="' + field + '" placeholder="" value="' + savedValue + '"/></th>');
+            } else {
+                $filterRow.append('<th></th>');
+            }
+        });
+    
+        $thead.append($filterRow);
+    };
+
+    $(document).on('keyup', '.filter-input', function(event) {
+        if (event.keyCode === 13) {
+            // 更新 sessionStorage
+            var field = $(this).data('field');
+            var value = $(this).val();
+            sessionStorage.setItem(field, value);
+    
+            // 应用所有筛选器
+            applyFilter();
+        }
+    });
+
+    function applyFilter() {
+        var filters = {};
+        $('.filter-input').each(function() {
+            var field = $(this).data('field');
+            var value = $(this).val();
+            if (value) {  // 可以选择只添加有值的筛选条件
+                filters[field] = value;
+            }
+        });
+    
+        table.reload('currentTableId', {
+            where: filters,
+            page: { curr: 1 }
+        });
+    };
+    
+
+    $('#search_fss_shop').on('click', function() {
+        window.location.href = '/report/fss_shop/';
+    });
+});
+</script>
+
+
+</body>
+</html>

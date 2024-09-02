@@ -37,6 +37,27 @@ def sql_date_info(start_date,end_date):
         AND num>0
         GROUP BY `时间`,`平台`,`子品类`,`系列`,alias_all_bid,`tb_item_id`,`链接`
         ORDER BY `销售额` desc;"""
+
+    sql = f"""
+            SELECT toStartOfMonth(pkey) AS `时间`,
+            case
+                when source*100+shop_type in (109,121,122,123,124,125,126,127,128) then 'tmall'
+                when source = 2 then 'jd'
+                when source = 11 then 'dy' 
+                else '其他' end as `平台`,`sp子品类` as `子品类`,IF(source=11,CONCAT('''',toString(item_id)),item_id) as `tb_item_id`,alias_all_bid,dictGetOrDefault('all_brand', 'name', tuple(toUInt32(alias_all_bid)), '') as `品牌名`,`sp系列` `系列`,argMax(name,num)`名称`,
+                case
+                    when source = 1 and shop_type > 20 then CONCAT('https://detail.tmall.com/item.htm?id=',item_id)
+                    when source = 2 then CONCAT('https://item.jd.com/',item_id,'.html')
+                    when source = 11 then CONCAT('https://haohuo.jinritemai.com/views/product/detail?id=',item_id)
+                    else '其他' end as `链接`,argMax(img,`date`) `图片`,SUM(num)`销量`,SUM(sales)/100`销售额`
+            FROM sop_e.entity_prod_92192_E
+            WHERE `date`>='{start_date}'
+            AND `date`<'{end_date}'
+            AND `sp子品类`!='其它'
+            AND `sp是否人工答题`!='否'
+            AND num>0
+            GROUP BY `时间`,`平台`,`子品类`,`系列`,alias_all_bid,`tb_item_id`,`链接`
+            ORDER BY `销售额` desc;"""
     return sql
 
 
@@ -51,7 +72,9 @@ def get_price_of_pie(file, mydata):
     mydata['alias_all_bid&系列'] = mydata['alias_all_bid'] + mydata['系列']
     mydata['片单价'], mydata['价位段'],mydata['是否映射'] = '', '',''
     pkey = [['aliasbid', 'alias_all_bid'], ['aliasbid&系列','alias_all_bid&系列']]
-
+    print(mydata['alias_all_bid'].str.lower()[1],df['aliasbid'].lower()[0])
+    if mydata['alias_all_bid'].str.lower()[1] == df['aliasbid'].lower()[0]:
+        print(111)
     for p in pkey:
         for r in range(df.shape[0]):
             # 使用临时小写转换进行比较
@@ -88,7 +111,7 @@ def get_newdata(start_date,end_date,file):
 
 def run(start_date,end_date):
     # try:
-    file_path = r'C:/Users/zeng.xiangyan/Desktop/my_sop/my_sop/media/batch323/'
+    file_path = r'/mnt/d/my_sop/my_sop/media/batch323/'
     file_name = 'bbc纸尿裤系列线价位段24年版.xlsx'
     file = file_path + file_name
     result = get_newdata(start_date,end_date,file)
@@ -100,5 +123,5 @@ def run(start_date,end_date):
     # except Exception as e:
     #     print(e)
     #     return 0,'_'
-if __name__ == '__main__':
-    run('2023-10-01','2024-01-01')
+# if __name__ == '__main__':
+    # run('2024-01-01','2024-06-01')

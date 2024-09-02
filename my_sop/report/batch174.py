@@ -208,7 +208,7 @@ def get_uuid2(start_date,end_date):
                 else '其他' end as `平台`,`sp一级品类`,`sp品牌定位`,item_id,argMax(name,num) as `name`,argMax(uuid2,num) as uuid2,sum(num) as `销量`,sum(sales)/100 as `销售额`
             FROM sop_e.entity_prod_91363_E_20210804
             WHERE (pkey>='{start_date}' and pkey<'{end_date}'
-            and (source*100+shop_type in (109,121,122,123,124,125,126,127,128) or source in (2,11,12,16))
+            and (source*100+shop_type in (109,121,122,123,124,125,126,127,128) or source in (2,11,8,25))
             and `sp一级品类` in ['Cleansing','Cream','Devices','Emulsion& Fluids','Essence & Serum','Eye & Lip Care','Lotion& Toner','Mask','Men Skincare','Skincare Set','Suncare']
             and `sp品牌定位`='Prestige')
             GROUP BY `平台`,`sp一级品类`,`sp品牌定位`,item_id) subquery)
@@ -217,7 +217,7 @@ def get_uuid2(start_date,end_date):
     """]
     # -*- coding: utf-8 -*-
     from clickhouse_sqlalchemy import make_session
-    from sqlalchemy import create_engine
+    from sqlalchemy import create_engine,text
     import pandas as pd
     import concurrent.futures
     conf = {
@@ -245,7 +245,7 @@ def get_uuid2(start_date,end_date):
 
     # 使用线程池执行 SQL 查询
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        futures = [executor.submit(execute_sql, sql) for sql in sql_list]
+        futures = [executor.submit(execute_sql, text(sql)) for sql in sql_list]
         results = [future.result() for future in concurrent.futures.as_completed(futures)]
     # 将结果合并
     uuid2_list = pd.concat(results, axis=0, ignore_index=True)
