@@ -1,0 +1,115 @@
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,minimal-ui">
+    <script src="/static/my_console/js/wecom.js"></script>
+    <script>
+        function trigger(show) {
+            if (show) {
+                document.getElementById("overlay").style.display = "flex";
+            } else {
+                document.getElementById("overlay").style.display = "none";
+            }
+        }
+        function initPanel() {
+            const wwLogin = ww.createWWLoginPanel({
+                el: '#ww_login',
+                params: {
+                    login_type: 'CorpApp',
+                    appid: 'ww65d0a50088a800c4',
+                    agentid: '1000133',
+                    redirect_uri: 'https:\/\/auth.sh.nint.com',
+                    state: '43b9da1051822cb11d36a1e01229b89b22c325298fb17e02f4cea9481c0',
+                    panel_size: 'small',
+                },
+                onCheckWeComLogin({ isWeComLogin }) {
+                    if (isWeComLogin) {
+                        trigger(true);
+                    }
+                },
+            })
+        }
+    </script>
+    <title>Nint网站企业微信认证</title>
+    <style type="text/css">
+        main {
+            margin: 0 auto;
+            padding: 20px 5px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            overflow: auto;
+            flex-direction: column;
+        }
+
+        .center {
+            display: flex;
+            justify-content: center;
+        }
+
+        .layout {
+            padding: 10px;
+            overflow: auto;
+            text-align: center;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25), 0 10px 10px rgba(0, 0, 0, 0.22);
+        }
+
+        h1 {
+            color: #0000E6;
+            font-family: 'Poppins', 'Source Han Sans SC';
+        }
+
+        #overlay {
+            position: absolute;
+            top: 250px;
+            left: 30px;
+            width: 260px;
+            height: 70px;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 2;
+            color: orange;
+            font-size: 24px;
+            justify-content: center;
+            align-items: center;
+            display: none;
+        }
+
+        #ww_login {
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+        }
+    </style>
+</head>
+
+<body onload="initPanel()">
+    <main>
+        <div class="layout">
+            <h1>Nint 企业微信认证</h1>
+            <p>网站 my-console <br> 需要进行企业微信认证</p>
+            <div class="center">
+                <div class="container">
+                    <div id="ww_login"></div>
+                    <div id="overlay" onclick="trigger(false)">
+                        <div>
+                            请点击下面的链接
+                            <div style="font-size: 12px">切换扫码时可点击去除此提示</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+
+</html>

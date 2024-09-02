@@ -24,7 +24,7 @@ SECRET_KEY = '-f4qc84e++2gxp#z+c9nj0m6tpq654a+4%io5d9sjg!z@b8mba'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','www.zxy-console.cn','zxy-console.cn']
+ALLOWED_HOSTS = ['*','www.zxy-console.cn','zxy-console.cn','nint.zxy-console.cn', 'localhost', '127.0.0.1']
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_TRUSTED_ORIGINS = [
     'http://123.249.120.233:3002',
@@ -70,6 +70,8 @@ MIDDLEWARE = [
     # 'websocket.middleware.WebSocketMiddleware',
 ]
 
+X_FRAME_OPTIONS = 'SAMEORIGIN'
+
 ROOT_URLCONF = 'my_sop.urls'
 
 TEMPLATES = [
@@ -113,16 +115,19 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'my_sop',
-        'USER': 'zeng.xiangyan',
-        'PASSWORD': 'nint@2024',
-        'HOST': '123.249.120.233',
+        # 'USER': 'zeng.xiangyan',
+        # 'PASSWORD': 'nint@2024',
+        # 'HOST': '123.249.120.233',
+        'USER': 'zxy',
+        'PASSWORD': '13639054279zxy',
+        'HOST': '10.21.90.130',
         'PORT': '3306',
     }
 }
 
-# STATICFILES_DIRS = (
-#     os.path.join(BASE_DIR, "static"),
-# )
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -145,9 +150,8 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
-# settings.py
 
-# settings.py
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
@@ -169,8 +173,13 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+LOGIN_URL='/admin/login/'
+
+WECHAT_CORP_ID = 'wwae2c132f1c16f837'
+WECHAT_AGENT_ID = '1000002'
+WECHAT_SECRET = 'eZbsQYfQ4MjJXDl7MRYvxBFpbuLe8zzkGLPOz673Qjs'
 

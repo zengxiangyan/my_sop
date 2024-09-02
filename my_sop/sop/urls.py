@@ -12,8 +12,10 @@ websocket_urlpatterns = [
 urlpatterns = [
     path('', views.index, name='index'),
     path('test/', views.test, name='test'),
-    path('search/', views.search, name='search'),
+    # path('search/', views.search, name='search'),
+    path('sql_search/', views.sql_search, name='sql_search'),
     # path('data/', views.data, name='data'),
     path('set_view_sp/', views.set_view_sp, name='set_view_sp'),
+    path('get_view_sp/', views.get_view_sp, name='set_view_sp'),
     re_path(r'ws/sop_e/$', MyWebSocketConsumer.as_asgi()),
 ]

@@ -88,7 +88,7 @@ async def get_newdata(start_date,end_date,work_book,start_row):
 def run(start_date,end_date):
 
     try:
-        file_path = r'C:/Users/zeng.xiangyan/Desktop/my_sop/my_sop/media/batch309/'
+        file_path = r'/mnt/d/my_sop/my_sop/media/batch309/'
         report_date = end_date
         tt1 = (datetime.strptime(report_date, '%Y-%m-%d') - relativedelta(months=2)).strftime('%Y%m')
         tt2 = (datetime.strptime(report_date, '%Y-%m-%d') - relativedelta(months=1)).strftime('%Y%m')

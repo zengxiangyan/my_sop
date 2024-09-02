@@ -51,7 +51,7 @@ def save(filenames, dataframes):
         'font_color': 'black',
         'font_size': 11,
     }
-    file_path = r'C:/Users/zeng.xiangyan/Desktop/my_sop/my_sop/media/batch273/'
+    file_path = r'/mnt/d/my_sop/my_sop/media/batch273/'
     file_name = '美发Nourish & repair分类目top10sku-23Q3.xlsx'
     df_map = dict(zip(filenames, dataframes))
     with pd.ExcelWriter(file_path+file_name,engine='xlsxwriter',options={'strings_to_urls': False,'constant_memory':False}) as writer:

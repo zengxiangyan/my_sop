@@ -11,6 +11,9 @@ from django.urls import reverse
 import json
 import pandas as pd
 # Create your views here.
+
+def cleaner(request):
+    return render(request, 'cleaning/flow.html', locals())
 def save(request):
     if request.method == 'POST':
         # print("eid",request.GET.get('sql'))

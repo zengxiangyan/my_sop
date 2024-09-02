@@ -1,4 +1,3 @@
-	//layui 模块化引用
 	layui.use(['jquery', 'table', 'layer'], function(){
 		var $ = layui.$, table = layui.table, form = layui.form, layer = layui.layer;
 

@@ -87,7 +87,7 @@ def search(request):
 
 def download_file(request):
     path = request.GET.get('path')
-    file_path = os.path.join(settings.MEDIA_ROOT, path)  # 构建文件的绝对路径
+    file_path = os.path.join(settings.MEDIA_ROOT, path).replace('\\','/')  # 构建文件的绝对路径
     print(file_path)
     if os.path.exists(file_path):
         response = FileResponse(open(file_path, 'rb'))  # 打开文件进行读取
@@ -97,7 +97,7 @@ def download_file(request):
         response['Content-Disposition'] = 'attachment; filename="{}"'.format(quote(filename))# 设置为附件形式并指定默认文件名
         return response
     else:
-        # 如果文件不存在，你可以返回404或其他消息
+        # 如果文件不存在，返回404
         return render(request, 'sop/404.html',locals())
 
 
@@ -111,23 +111,22 @@ def add(request):
         batchid = request.POST.get('batchid')
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
-
-        try:
-            # 使用 batch_id 动态导入模块
-            module = dynamic_import(batchid)
-            if module:
-                # 如果模块导入成功，可以使用该模块
-                Status,fileUrl = module.run(start_date,end_date)
-                UpdateTime = datetime.datetime.now()
-                pvPanelInfo = report_task.objects.filter(BatchId=batchid).order_by('-UpdateTime').values("UseModel","ReportName","PersonInCharge").first()
-                UseModel, ReportName, PersonInCharge = pvPanelInfo['UseModel'],pvPanelInfo['ReportName'],pvPanelInfo['PersonInCharge']
-                report_task.objects.create(BatchId=batchid, UseModel=UseModel, ReportName=ReportName,DateRange=start_date + '~' + end_date
-                                           ,Status=Status,UpdateTime=UpdateTime,PersonInCharge=PersonInCharge,fileUrl='../media/?path=batch'+batchid+'/'+fileUrl)
-                print("okk")
-            #         pass
-                return JsonResponse({'code': 200, "msg":"正在制作报告"})
-        except:
-            return render(request, 'sop/404.html',locals())
+        print(batchid,start_date,end_date)
+        # try:
+        # 使用 batch_id 动态导入模块
+        module = dynamic_import(batchid)
+        if module:
+            # 如果模块导入成功，可以使用该模块
+            Status,fileUrl = module.run(start_date,end_date)
+            UpdateTime = datetime.datetime.now()
+            pvPanelInfo = report_task.objects.filter(BatchId=batchid).order_by('-UpdateTime').values("UseModel","ReportName","PersonInCharge").first()
+            UseModel, ReportName, PersonInCharge = pvPanelInfo['UseModel'],pvPanelInfo['ReportName'],pvPanelInfo['PersonInCharge']
+            report_task.objects.create(BatchId=batchid, UseModel=UseModel, ReportName=fileUrl,DateRange=start_date + '~' + end_date
+                                       ,Status=Status,UpdateTime=UpdateTime,PersonInCharge=PersonInCharge,fileUrl='../media/?path=batch'+batchid+'/'+fileUrl)
+        #         pass
+            return JsonResponse({'code': 200, "msg":"正在制作报告"})
+        # except:
+        #     return JsonResponse({'code': 404, "msg":"报告添加异常"})
 
 def save(request):
     if request.method == 'POST':
