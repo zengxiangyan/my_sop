@@ -2,12 +2,7 @@ import logging
 import os
 import django
 import sys
-import time
-import json
-import socket
-import datetime
-import argparse
-import traceback
+
 from django.utils import timezone
 from django.http import JsonResponse
 from os.path import abspath, join, dirname

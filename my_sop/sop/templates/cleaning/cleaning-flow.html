@@ -1,0 +1,1128 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="{% static 'dist/JS/jquery.min.js' %}" charset="utf-8"></script>
+    <title>{{eid}}-{{batchName}}</title>
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-table.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-datetimepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-datepicker3.standalone.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/jquery-ui.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/site.css' %}">
+    <style>
+    .submenu a {
+        background: #f5f5f5;
+        border-radius: 0;
+    }
+
+    .submenu a:hover,
+    .submenu a:active,
+    .submenu a.active,
+    .submenu a.active:hover,
+    .submenu a.active:active {
+        background: #44b5f6;
+        border-color: #44b5f6;
+        border-radius: 0;
+        color: #fff;
+    }
+
+    .container {
+        width: 100%;
+    }
+</style></head>
+
+
+<body>
+    
+    <div class="wrap">
+        <nav id="w1" class="navbar-inverse navbar-fixed-top navbar"><div class="container"><div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#w1-collapse"><span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span></button><a class="navbar-brand" href="https://cleaner.ecdataway.com/cleaner/index.php">Data Cleaner</a></div><div id="w1-collapse" class="collapse navbar-collapse"><ul id="w2" class="navbar-nav navbar-right nav"><li><a href="https://cleaner.ecdataway.com/cleaner/index.php?r=site%2Findex">Home</a></li>
+<li><form action="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdefault%2Flogout" method="post"><button type="submit" class="btn btn-link logout">Logout (zeng.xiangyan)</button></form></li></ul></div></div></nav>
+        <div class="container">
+
+            <ul class="breadcrumb"><li><a href="https://cleaner.ecdataway.com/cleaner/index.php">Home</a></li>
+<li class="active">{{eid}}-{{batchName}}</li>
+</ul>                        <div class="row">
+<div class="col-md-2" style="display:none">
+    <div id="navigation" class="list-group"><a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdefault%2Findex">首页</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-batch%2Findex">项目列表 CleanBatch</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-task%2Findex">清洗任务</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdashboard%2Findex&amp;id=174#navigation-4" data-toggle="collapse" data-parent="#navigation">CleanOutput <b class="caret"></b></a><div id="navigation-4" class="submenu panel-collapse collapse"><a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Frule-test%2Findex">采样和重跑宝贝 RandomTest</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fprocess-log%2Findex">机洗过程查询 ProcessLog</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Feid-modify%2Findex">人工答案修正 CheckResult</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fsearch-sp-value%2Findex">获取指定属性值宝贝 SearchSpValue</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fsp-distribution%2Findex">属性值分布表 SpDistribution</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fmodel-library%2Findex">型号库管理 ModelLibrary</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdashboard%2Findex&amp;id=174#navigation-4-5" data-toggle="collapse" data-parent="#navigation-4">清洗正确率 CorrectRate <b class="caret"></b></a><div id="navigation-4-5" class="submenu panel-collapse collapse"><a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fcorrect-rate%2Findex-with-filter">index</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fcorrect-rate%2Fsecond">Batch Correct Rate</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fcorrect-rate%2Fthird">Clean Flag Correct Rate</a></div></div>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdashboard%2Findex&amp;id=174#navigation-6" data-toggle="collapse" data-parent="#navigation">CleanSettings <b class="caret"></b></a><div id="navigation-6" class="submenu panel-collapse collapse"><a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-request%2Findex">需求表管理 CleanRequest</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-brand-merge%2Findex">清洗前品牌合并管理 CleanBrandMerge</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-batch%2Findex">立项管理 CleanBatch</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-sub-batch%2Findex">子品类管理 CleanSubBatch</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-category%2Findex">cid分类管理 CleanCategory</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-pos%2Findex">属性清洗配置 CleanPos</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-prop%2Findex">CleanProp</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-target%2Findex">属性值管理 CleanTarget</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-keyword%2Findex">关键词配置 CleanKeyword</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-quantifier%2Findex">数值单位管理 CleanQuantifier</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-multi-units%2Findex">单位分级配置 CleanMultiUnits</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-price%2Findex">价格划分配置 CleanPrice</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-unify-result%2Findex">文字属性关联更改 CleanUnifyResult</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-classify-result%2Findex">数值属性关联更改 CleanClassifyResult</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-config-version%2Findex">配置版本历史查询 CleanConfigVersion</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-version%2Findex">版本控制 CleanVersion</a></div>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdashboard%2Findex&amp;id=174#navigation-7" data-toggle="collapse" data-parent="#navigation">数据查询 <b class="caret"></b></a><div id="navigation-7" class="submenu panel-collapse collapse"><a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fsop-import-check%2Findex">SOP导入检查 SopImportCheck</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fetable-item-search%2Findex">E表宝贝查询 EtableItemSearch</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fnew-item-search%2Findex">新品清洗查询 NewItemSearch</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-data-common%2Findex">清洗资源查询 CleanDataCommon</a></div>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fall-brand-search%2Findex">清洗品牌查询 AllBrandSearch</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fbrand-relation%2Findex">品牌关系查询 BrandRelation</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdashboard%2Findex&amp;id=174#navigation-8" data-toggle="collapse" data-parent="#navigation">知识图谱相关 <b class="caret"></b></a><div id="navigation-8" class="submenu panel-collapse collapse"><a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-data-to-graph%2Findex">自动增量知识抽取 CleanDataToGraph</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fgraph-ecshop%2Findex">GraphEcshop</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fgraph-ecshop%2Falert">Ecshop报警 </a></div>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fbrand-simulation%2Findex">BrandSimulation</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdashboard%2Findex&amp;id=174#navigation-9" data-toggle="collapse" data-parent="#navigation">非常用或废弃功能 <b class="caret"></b></a><div id="navigation-9" class="submenu panel-collapse collapse"><a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Ffetch-table%2Findex">表数据修改</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fanswer-monitor%2Findex">AnswerMonitor</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fbrand-new%2Findex">BrandNew</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fbrand-keyword-new%2Findex">BrandKeywordNew</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fcategory%2Findex">Category</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fcategory-brand%2Findex">CategoryBrand</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fcategory-parent%2Findex">CategoryParent</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fcategory-keyword%2Findex">CategoryKeyword</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fcategory-keyword-lv0%2Findex">CategoryKeywordLv0</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-batch-time%2Findex">CleanBatchTime</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-batch-log-hw%2Findex">CleanBatchLogHw</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fclean-plan%2Findex">CleanPlan</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fupload-pkey%2Findex">ImportPkey</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fadd-brush%2Findex">补充出题</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdashboard%2Findex&amp;id=174#navigation-9-10" data-toggle="collapse" data-parent="#navigation-9">AutoTestSet <b class="caret"></b></a><div id="navigation-9-10" class="submenu panel-collapse collapse"><a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fbuild-auto-test-set%2Findex">Build Page</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fautomatic-testset%2Findex">DataSet</a></div>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fkeyword%2Findex">Keyword</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fbrand-item-sample%2Findex">BrandItemSample</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fcorrect-rate%2Findex">StandardCorrect</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdashboard%2Findex&amp;id=174#navigation-9-11" data-toggle="collapse" data-parent="#navigation-9">tools <b class="caret"></b></a><div id="navigation-9-11" class="submenu panel-collapse collapse"><a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Ftools%2Fcheck">check</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Ftools%2Fflush">flushCache</a></div>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdashboard%2Findex&amp;id=174#navigation-9-12" data-toggle="collapse" data-parent="#navigation-9">前台用户管理 <b class="caret"></b></a><div id="navigation-9-12" class="submenu panel-collapse collapse"><a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fauth-item%2Findex">用户及路由</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fauth-assignment%2Findex">用户组设置</a>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fauth-item-child%2Findex">路由分配</a></div></div>
+      <a class="list-group-item" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdata-graph%2Findex">暂用</a></div>                </div>
+  <div class="col-md-12 guide-content" role="main">
+<style>
+
+  .flow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .flow__wrap {
+    position: relative;
+    margin: 0 -15px;
+    height: 430px;
+    width: 75%;
+  }
+
+  .flow__bg {
+    background: url('https://cleaner.ecdataway.com/cleaner/img/flow.svg') no-repeat;
+    height: 100%;
+    width: 100%;
+  }
+
+  .flow__item {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 5px;
+    border: 2px solid #333;
+    border-radius: 5px;
+    width: 103px;
+    height: 52px;
+    font-size: 12px;
+    text-align: center;
+    color: #fff;
+    background: transparent;
+    background-color: #4CAF50;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .flow__item:hover {
+    background: #0f9960;
+  }
+
+  .flow__condition {
+    -webkit-clip-path: polygon(50% 0%, 50% 0%, 100% 50%, 50% 100%, 50% 100%, 0% 50%);
+    clip-path: polygon(50% 0%, 50% 0%, 100% 50%, 50% 100%, 50% 100%, 0% 50%);
+    padding: 20px;
+    border: 0;
+    color: #333;
+    background: #ffff66;
+  }
+
+  .flow__condition:hover {
+    background: #ffdf00;
+  }
+
+  .flow__other {
+    cursor: auto;
+    border-radius: 50px;
+    color: #333;
+    background-color: #f5f5f5;
+  }
+
+  .flow__other:hover {
+    background-color: #f5f5f5;
+  }
+
+  .flow__item--start {
+    width: 66px;
+    height: 37px;
+    top: 23px;
+    left: 90px;
+  }
+
+  .flow__item--end {
+    top: 279px;
+    left: 1130px;
+    width: 66px;
+    height: 36px;
+  }
+
+  .flow__item--0 {
+    top: 78px;
+    left: 53px;
+    width: 140px;
+    height: 46px;
+  }
+
+  .flow__item--1 {
+    top: 150px;
+    left: 52px;
+    width: 140px;
+    height: 46px;
+  }
+
+  .flow__item--2 {
+    top: 219px;
+    left: 73px;
+    width: 98px;
+    height: 56px;
+  }
+
+  .flow__item--3 {
+    top: 295px;
+    left: 53px;
+    width: 139px;
+    height: 46px;
+  }
+
+  .flow__item--4 {
+    top: 365px;
+    left: 76px;
+    width: 92px;
+    height: 54px;
+    cursor: auto;
+  }
+
+  .flow__item--6 {
+    top: 248px;
+    left: 263px;
+    width: 105px;
+    height: 42px;
+  }
+
+  .flow__item--7 {
+    top: 96px;
+    left: 268px;
+    width: 94px;
+    height: 55px;
+  }
+
+  .flow__item--8 {
+    top: 101px;
+    left: 397px;
+    width: 139px;
+    height: 46px;
+  }
+
+  .flow__item--9 {
+    top: 99px;
+    left: 563px;
+    width: 125px;
+    height: 50px;
+    padding: 10px;
+  }
+
+  .flow__item--10 {
+    top: 76px;
+    left: 445px;
+    width: 118px;
+    height: 62px;
+    color: #333;
+    background-color: #f5f5f5;
+    cursor: auto;
+  }
+
+  .flow__item--11 {
+    top: 216px;
+    left: 396px;
+    width: 139px;
+    height: 46px;
+  }
+
+  .flow__item--12 {
+    top: 216px;
+    left: 563px;
+    width: 139px;
+    height: 46px;
+  }
+
+  .flow__item--13 {
+    top: 156px;
+    left: 563px;
+    width: 139px;
+    height: 46px;
+  }
+
+  .flow__item--14 {
+    top: 157px;
+    left: 396px;
+    width: 139px;
+    height: 46px;
+  }
+
+  .flow__item--15 {
+    top: 336px;
+    left: 563px;
+    width: 140px;
+    height: 46px;
+    color: #333;
+    background-color: #f5f5f5;
+  }
+
+  .flow__item--16 {
+    top: 337px;
+    left: 396px;
+    width: 139px;
+    height: 46px;
+    color: #333;
+    background-color: #f5f5f5;
+  }
+
+  .flow__item--17 {
+    top: 276px;
+    left: 396px;
+    width: 139px;
+    height: 46px;
+  }
+
+  .flow__item--18 {
+    top: 276px;
+    left: 563px;
+    width: 139px;
+    height: 46px;
+  }
+
+  .flow__item--19 {
+    top: 78px;
+    left: 742px;
+    width: 80px;
+    height: 46px;
+  }
+
+  .flow__item--20 {
+    top: 78px;
+    left: 851px;
+    width: 70px;
+    height: 46px;
+  }
+
+  .flow__item--21 {
+    top: 78px;
+    left: 947px;
+    width: 101px;
+    height: 46px;
+  }
+
+  .flow__item--22 {
+    top: 98px;
+    left: 1069px;
+    width: 132px;
+    height: 60px;
+  }
+
+  .flow__item--23 {
+    top: 275px;
+    left: 850px;
+    width: 124px;
+    height: 46px;
+  }
+
+  .flow__item--24 {
+    top: 275px;
+    left: 740px;
+    width: 83px;
+    height: 46px;
+  }
+
+  .flow__item--25 {
+    top: 194px;
+    left: 995px;
+    width: 125px;
+    height: 46px;
+  }
+
+  .flow__item--26 {
+    top: 338px;
+    left: 931px;
+    width: 74px;
+    height: 40px;
+  }
+
+  .flow__item--27 {
+    top: 338px;
+    left: 1013px;
+    width: 90px;
+    height: 40px;
+  }
+
+  .flow__item--28 {
+    top: 271px;
+    left: 1011px;
+    width: 95px;
+    height: 52px;
+    cursor: auto;
+  }
+
+  .flow__item--29 {
+    top: 40px;
+    left: 397px;
+    width: 139px;
+    height: 46px;
+  }
+
+  .flow__item--30 {
+    top: 40px;
+    left: 562px;
+    width: 139px;
+    height: 46px;
+  }
+  .flow__item--31 {
+    top: 40px;
+    left: 1082px;
+    width: 100px;
+    height: 46px;
+  }
+  .flow__item--32 {
+    top: 338px;
+    left: 1111px;
+    width: 77px;
+    height: 40px;
+  }
+
+  .fold {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100px;
+  }
+</style>
+<h1>{{eid}}-{{batchName}}</h1>
+<div class="flow">
+  <div class="flow__wrap">
+    <div class="flow__bg">
+      <div class="flow__item flow__other flow__item--start">
+        开始
+      </div>
+      <div class="flow__item flow__item--0" onclick="step(0)">
+        SOP立项并导数<br>(非清洗系统)
+      </div>
+      <div class="flow__item flow__item--1" onclick="step(1)">
+        Admin立项
+      </div>
+      <div class="flow__item flow__item--2 flow__condition" onclick="step(2)">
+        检查导数
+      </div>
+      <div class="flow__item flow__item--3" onclick="step(3)">
+        制作需求表并上传(Clean Request)
+      </div>
+      <div class="flow__item flow__item--4 flow__condition">
+        上传
+      </div>
+      <div class="flow__item flow__item--6" onclick="step(6)">
+        属性清洗配置 CleanPos
+      </div>
+      <div class="flow__item flow__item--7 flow__condition" onclick="step(7)">
+        采样
+      </div>
+      <div class="flow__item flow__item--8" onclick="step(8)">
+        机洗
+      </div>
+      <div class="flow__item flow__item--9 flow__condition" onclick="step(9)">
+        检查<br>机洗分布
+      </div>
+      <div class="flow__item flow__item--11" onclick="step(11)">
+        属性值管理 CleanTarget
+      </div>
+      <div class="flow__item flow__item--12" onclick="step(12)">
+        关键词配置 CleanKeyword
+      </div>
+      <div class="flow__item flow__item--13" onclick="step(13)">
+        子品类管理 CleanSubBatch
+      </div>
+      <div class="flow__item flow__item--14" onclick="step(14)">
+        cid分类管理 CleanCategory
+      </div>
+      <div class="flow__item flow__item--15" onclick="step(15)">
+        单位分级配置 CleanMultiUnits
+      </div>
+      <div class="flow__item flow__item--16" onclick="step(16)">
+        价格划分配置 CleanPrice
+      </div>
+      <div class="flow__item flow__item--17" onclick="step(17)">
+        文字属性关联更改CleanUnifyResult
+      </div>
+      <div class="flow__item flow__item--18" onclick="step(18)">
+        数值属性关联更改CleanClassifyResult
+      </div>
+      <div class="flow__item flow__item--19" onclick="step(19)">
+        出题配置
+      </div>
+      <div class="flow__item flow__item--20" onclick="step(20)">
+        出题
+      </div>
+      <div class="flow__item flow__item--21" onclick="step(21)">
+        答题<br>(非清洗系统)
+      </div>
+      <div class="flow__item flow__item--22 flow__condition" onclick="step(22)">
+        Correct Rate<br>检查清洗正确率
+      </div>
+      <div class="flow__item flow__item--23" onclick="step(23)">
+        特殊规则处理：<br>出数刷SP等
+      </div>
+      <div class="flow__item flow__item--24" onclick="step(24)">
+        出E表
+      </div>
+      <div class="flow__item flow__item--25" onclick="step(25)">
+        修改E表
+      </div>
+      <div class="flow__item flow__item--26" onclick="step(26)">
+        Admin<br>数据调查
+      </div>
+      <div class="flow__item flow__item--27" onclick="step(27)">
+        SOP<br>取数系统
+      </div>
+      <div class="flow__item flow__item--28 flow__condition" onclick="step(28)">
+        E表检查
+      </div>
+      <div class="flow__item flow__item--29" onclick="step(29)">
+        机洗过程查询
+      </div>
+      <div class="flow__item flow__item--30" onclick="step(30)">
+        配置版本查询
+      </div>
+      <div class="flow__item flow__item--31" onclick="step(31)">
+        答题分部检查
+      </div>
+      <div class="flow__item flow__item--32" onclick="step(32)">
+        cid相关性检查
+      </div>
+      <div class="flow__item flow__other flow__item--end">
+        结束
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="btn-group"><a id="colToggle" class="btn btn-info">列折叠/展开</a><a class="btn btn-info" href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin/data-graph/index2&amp;batchId=174" style="margin-left: 10px;">有新的出题需要检查</a></div>
+
+<div class="container">
+    <div id="table-container"></div>
+</div>
+<script>
+    async function fetchData() {
+        try {
+            const response = await fetch('/clean_statu/');
+            const data = await response.json();
+            renderTable(data.items);
+            addEventListeners();
+        } catch (error) {
+            console.error('Error fetching data:', error);
+        }
+    }
+
+    function renderTable(items) {
+        const tableContainer = document.getElementById('table-container');
+
+        let tableHTML = `
+            <div class="grid-view">
+                <div class="summary">Showing <b>1-${items.length}</b> of <b>${items.length}</b> items.</div>
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>快捷操作</th>
+                            <th>T</th>
+                            <th>Tips</th>
+                            <th>Status</th>
+                            <th>Msg</th>
+                            <th>Warn</th>
+                            <th>Process</th>
+                            <th>Create Time</th>
+                            <th>Update Time</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
+
+        items.forEach(item => {
+            const operationsHTML = item.operations.map(operation => {
+                const operationId = operation.id;
+                const operationClass = operation.class;
+                const operationName = operation.name;
+                return `<a id="${operationId}" class="${operationClass}">${operationName}</a>`;
+            }).join('');
+
+          // 定义一个函数来处理空值
+          const displayValue = (value) => {
+              return value === null ? '<span style="color: #c55;font-style: italic">(no set)</span>': value;
+          };
+
+          // 生成表格行的 HTML
+          tableHTML += `
+              <tr>
+                  <td style="max-width: 100px;">${operationsHTML}</td>
+                  <td class="fold">${displayValue(item.T)}</td>
+                  <td class="fold" "max-width: 150px;">${displayValue(item.tips)}</td>
+                  <td class="fold">${displayValue(item.status)}</td>
+                  <td class="fold">${displayValue(item.msg)}</td>
+                  <td class="fold" "max-width: 150px;">${displayValue(item.warn)}</td>
+                  <td class="fold">${displayValue(item.process)}</td>
+                  <td class="fold">${displayValue(item.create_time)}</td>
+                  <td class="fold">${displayValue(item.update_time)}</td>
+              </tr>`;
+      });
+
+        tableHTML += `
+                    </tbody>
+                </table>
+            </div>`;
+
+        tableContainer.innerHTML = tableHTML;
+    }
+    fetchData();
+    </script>
+<script>
+  const routers = [
+    'http://sop.ecdataway.com/adminbi/sop?',
+    'admin/clean-batch/view',
+    'admin/sop-import-check/index',
+    'clean_rules',
+    '',
+    'admin/clean-category/index',
+    'admin/clean-pos/index',
+    'admin/rule-test/index',
+    'admin/clean-task/index',
+    'admin/etable-item-search/index',
+    '',
+    'admin/clean-target/index',
+    'admin/clean-keyword/index',
+    'admin/clean-sub-batch/index',
+    'admin/clean-category/index',
+    'admin/clean-multi-units/index',
+    'admin/clean-price/index',
+    'admin/clean-unify-result/index',
+    'admin/clean-classify-result/index',
+    'admin/sop/index',
+    'admin/sop/brush',
+    'https://brush.ecdataway.com/projectnew/project-list?waibu_flag=1',
+    'admin%2Fcorrect-rate%2Fsecond',
+    'admin/sop/index',
+    'admin%2Fclean-batch%2Fview',
+    'admin/sop/customize',
+    'admin/sop/index',
+    'http://sop.ecdataway.com/bi/reportform/getreportnew2?',
+    '',
+    'clean_process',
+    'admin%2Fclean-config-version%2Findex',
+    "admin/data-graph/index2",
+    "admin/data-graph/index3"
+  ]
+  const routers2 = {
+    '20': 'admin/sop/brush2',
+    '23': 'admin/sop/cover-d',
+    '25': 'admin/sop/modify-e'
+  }
+  // 跳转操作页面
+  function step(index) {
+    let path = `${routers[index]}`
+    if (init.use_all_table === '1' && Object.keys(routers2).includes(`${index}`)) {
+      path = routers2[index]
+    }
+    if (path === '') {
+      return
+    }
+    path += `/?eid=${init.eid}&batchId=${init.batchId}`
+    if ([0, 21, 27].includes(index)) {
+      window.open(path)
+      return
+    }
+    window.open(`../${path}`)
+  }
+  // 获取URL参数对象
+  function getUrlParamsObj() {
+    const url = window.location.href
+    var params = url.split("?")[1].split("&")
+    var obj = {}
+    params.map(v => obj[v.split("=")[0]] = v.split("=")[1])
+    return obj
+  }
+  // 公共变量
+  const init = {
+    batchId: -1,
+    eid: '91363',
+    use_all_table: '1',
+  }
+  let isFold = false
+  $(document).ready(function() {
+    const params = getUrlParamsObj()
+    init.batchId = params.id
+    console.log('batchId', params.id, init)
+    // $('#btn-group').append('<a id="colToggle" class="btn btn-info">列折叠/展开</a>')
+    $(`table tbody tr td:nth-child(n+2)`).addClass('fold')
+    $("a#colToggle").click(function() {
+      isFold = !isFold
+      if (isFold) {
+        $(`table tbody tr td:nth-child(n+2)`).addClass('fold')
+      } else {
+        $(`table tbody tr td:nth-child(n+2)`).removeClass('fold')
+      }
+    })
+    if (init.use_all_table == '0') {
+      window.alert('老套路清洗已经不再支持，需要找清洗人员切换成新套路')
+    } else {
+      // check_total()
+      // addEventListeners()
+    }
+  })
+</script>
+
+<!-- TODO 出数弹窗 -->
+<script src="{% static 'dist/JS/models.js' %}" charset="utf-8"></script>
+<div class="modal fade bs-example-modal-md" id="importMarketInput" role="dialog" tabindex="-1" aria-labelledby="mySmallModalLabel" style="display: none; padding-right: 17px;">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content" style=" border-radius: 10px;">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title" id="mySmallModalLabel">请填入时间和BatchName</h4>
+      </div>
+      <div class="modal-body" id="importMarketInputDisplay">
+        <div class="input-group md-3" id="typebInput" style="margin:10px;">
+          <span class="input-group-addon" id="basic-addon">BatchName</span>
+          <input class="form-control" id="batchNameImportMarket" type="text" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
+
+        <div class="input-group md-3" id="typebInput" style="margin:10px;">
+          <span class="input-group-addon" id="basic-addon">开始时间</span>
+          <input class="form-control input-date" id="startTime" type="text" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
+
+        <div class="input-group md-3" id="typebInput" style="margin:10px;">
+          <span class="input-group-addon" id="basic-addon">结束时间</span>
+          <input class="form-control input-date" id="endTime" type="text" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="basic-addon">Params</span>
+          <input class="form-control" id="params-input" type="text" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="basic-addon">JD4tbl</span>
+          <input class="form-control" id="jd4-input" type="text" placeholder="不填就是不刷JD4" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="basic-addon">tbl</span>
+          <input class="form-control" id="test-input" type="text" value="sop_e.entity_prod_91363_E" placeholder="保存到tbl对应的历史版本 不填就是sop_e.entity_prod_91363_E" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="basic-addon">出数简介</span>
+          <input class="form-control" id="tips-input" type="text" placeholder="选填" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="basic-addon">
+            <input id="skipbrush-checkbox" type="checkbox" value="1" style="margin-right:4px;vertical-align: top">跳过答题回填
+          </span>
+          <span class="input-group-addon" id="basic-addon">
+            <input id="modifyprice-checkbox" type="checkbox" value="0" style="margin-right:4px;vertical-align: top">使用改价表价格
+          </span>
+        </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          开启加速最多减少出数时间60%，但内存使用最多会增加4倍。加速时间内需要避免其他人出数，以回避内存爆炸
+          <br>
+          月数据量4kw的项目最多同时一个项目加速
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="confirm-market" data-id="">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% csrf_token %}
+<!-- TODO 机洗弹窗 -->
+<div class="modal fade bs-example-modal-md" id="importCleanInput" role="dialog" tabindex="-1" aria-labelledby="mySmallModalLabel" style="display: none; padding-right: 17px;">
+  <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content" style=" border-radius: 10px;">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">请填入时间和BatchName</h4>
+      </div>
+      <div class="modal-body" id="importCleanInputDisplay">
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="basic-addon">BatchName</span>
+          <input class="form-control" id="batchNameImportClean" type="text" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="basic-addon">开始时间</span>
+          <input class="form-control input-date" id="CleanstartTime" type="text" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="basic-addon">结束时间</span>
+          <input class="form-control input-date" id="CleanendTime" type="text" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="confirm-clean" data-id="">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'dist/JS/bootstrap-datetimepicker.min.js' %}" charset="utf-8" defer="defer"></script>
+<script src="{% static 'dist/JS/bootstrap-datepicker.min.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/bootstrap-datepicker.zh-CN.min.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/bootstrap-datepicker.zh-CN.min.js' %}" charset="utf-8"></script>
+<script type="text/javascript" v="0.05">
+
+  function getCSRFToken() {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          var cookieParts = cookie.split('=');
+          if (cookieParts[0] === 'csrftoken') {
+              return cookieParts[1];
+          }
+      }
+      return null;
+  };
+
+  var token = "DGKi6pM5s1wk842LJfiNuadFuqKUgesmttVXPmacfTVKLcSz4g7YNWq54ucWif_U7QPD6dbsplTx-CFYNM4lTQ==";
+
+  function check_total() {
+    console.log("开始检查");
+    let buttonsHTML = '';
+    route(init.batchId, 'check_total', {}, function(res) {
+      if (res[0] == '') {
+        $('#msg').removeClass('alert-danger').addClass('alert-success').html('无异常消息')
+      } else {
+        $('#msg').removeClass('alert-success').addClass('alert-danger').html(res[0])
+      }
+      if (res[3] != '') {
+        $('#msg').removeClass('alert-success').addClass('alert-danger').append(res[3])
+      }
+      if (res[1] != 0) {
+        buttonsHTML += `<a class="btn btn-info" href="index.php?r=admin/data-graph/index&batchId=${init.batchId}" style="margin-left: 10px;">有新的E表版本需要检查</a>`;
+      }
+      if (res[2]) {
+        buttonsHTML += `<a class="btn btn-info" href="index.php?r=admin/data-graph/index2&batchId=${init.batchId}" style="margin-left: 10px;">有新的出题需要检查</a>`;
+      }
+      $('#btn-group').append(buttonsHTML);
+    })
+  };
+
+  function addEventListeners() {
+      console.log("监测弹窗");
+      document.querySelectorAll('.btn-info').forEach(button => {
+          button.addEventListener('click', function() {
+              const operationId = this.id;
+              console.log(`Operation button clicked with id: ${operationId}`);
+              triggerModal(operationId);
+          });
+      });
+  };
+
+  // 触发弹窗的函数
+  function triggerModal(operationId) {
+      switch (operationId) {
+          case 'importMarket':
+              $("#importMarketInput").modal("show");
+              break;
+          case 'importClean':
+              $("#importCleanInput").modal("show");
+              break;
+          default:
+              console.warn('未知的操作 ID:', operationId);
+      }
+  };
+
+  $('.input-date').datepicker({
+    format: "yyyy/mm/dd",
+    language: "zh-CN",
+    multidate: false,
+    todayHighlight: true,
+    clearBtn: true,
+  });
+
+  // TODO 导数
+  $("a#syncAtbl").click(function() {
+    route(init.batchId, 'sync_atbl', {}, function(res) {
+      window.alert("执行成功 10s后刷新页面");
+      setTimeout(() => {
+        window.location.reload()
+      }, 10000);
+    })
+  });
+
+  // TODO 答题
+  $("a#updateCorrect").click(function() {
+    route(init.batchId, 'correct_rate', {}, function(res) {
+      window.alert("执行成功 10s后刷新页面");
+      setTimeout(() => {
+        window.location.reload()
+      }, 10000);
+    })
+  });
+
+  $("a#updateBrushDefault").click(function() {
+    route(init.batchId, 'brush_default_val', {}, function(res) {
+      window.alert("执行成功 10s后刷新页面");
+      setTimeout(() => {
+        window.location.reload()
+      }, 10000);
+    })
+  });
+
+  $("a#updateSkuDefault").click(function() {
+    route(init.batchId, 'sku_default_val', {}, function(res) {
+      $('#save').removeAttr("disabled")
+      window.sheet.set_data(res)
+    })
+  });
+
+  $("a#importClean").click(function() {
+    $("#importCleanInput").modal("show");
+  });
+
+  // TODO 出数
+  $("a#importMarket").click(function() {
+    $("#importMarketInput").modal("show");
+  });
+
+  $("input#startTime").focusout(function() {
+    var d = new Date($(this).val());
+    var s = d.getFullYear() + "/" + (d.getMonth() < 9 ? "0" + (d.getMonth() + 1) : (d.getMonth() + 1)) + "/01";
+    $(this).val(s);
+  });
+
+  $("input#endTime").focusout(function() {
+    var d = new Date($(this).val());
+    var s = d.getFullYear() + "/" + (d.getMonth() < 9 ? "0" + (d.getMonth() + 1) : (d.getMonth() + 1)) + "/01";
+    $(this).val(s);
+  });
+
+  $("input#ModifystartTime").focusout(function() {
+    var d = new Date($(this).val());
+    var s = d.getFullYear() + "/" + (d.getMonth() < 9 ? "0" + (d.getMonth() + 1) : (d.getMonth() + 1)) + "/01";
+    $(this).val(s);
+  });
+
+  $("input#ModifyendTime").focusout(function() {
+    var d = new Date($(this).val());
+    var s = d.getFullYear() + "/" + (d.getMonth() < 9 ? "0" + (d.getMonth() + 1) : (d.getMonth() + 1)) + "/01";
+    $(this).val(s);
+  });
+
+  $("input#CleanstartTime").focusout(function() {
+    var d = new Date($(this).val());
+    var s = d.getFullYear() + "/" + (d.getMonth() < 9 ? "0" + (d.getMonth() + 1) : (d.getMonth() + 1)) + "/01";
+    $(this).val(s);
+  });
+
+  $("input#CleanendTime").focusout(function() {
+    var d = new Date($(this).val());
+    var s = d.getFullYear() + "/" + (d.getMonth() < 9 ? "0" + (d.getMonth() + 1) : (d.getMonth() + 1)) + "/01";
+    $(this).val(s);
+  });
+
+  $("#confirm-market").click(function() {
+    let batchId = init.batchId;
+    let batchName = $("#batchNameImportMarket").val();
+    let batchInfo = [{
+      batchId: batchId,
+      batchName: batchName
+    }];
+
+    let startTime = $("input#startTime").val();
+    let endTime = $("input#endTime").val();
+    let tips = $("input#tips-input").val();
+    let params = $("input#params-input").val();
+    let jd4tbl = $("input#jd4-input").val();
+    let test = $("input#test-input").val();
+    let skipbrush = 0;
+    if ($("input#skipbrush-checkbox")[0].checked) {
+      skipbrush = 1;
+    }
+    let modifyprice = 0;
+    if ($("input#modifyprice-checkbox")[0].checked) {
+      modifyprice = 1;
+    }
+    let updatesku = 0; // 跟后台功能有冲突 也没人用
+
+    let checkPromise = checkBatchInfo(batchInfo);
+
+    $("#importMarketInput").modal("hide");
+
+    checkPromise.then(function(returnValue) {
+      $.ajax({
+        url: "index.php?r=admin/clean-batch/import-market",
+        type: "POST",
+        dataType: "JSON",
+        async: true,
+        data: {
+          batchId: batchId,
+          startTime: startTime,
+          endTime: endTime,
+          tips: tips,
+          jd4tbl: jd4tbl,
+          params: params,
+          test: test,
+          skipbrush: skipbrush,
+          modifyprice: modifyprice,
+          updatesku: updatesku,
+          btnSelect: '1x',
+          _csrf: token,
+        },
+        success: function(result) {
+          let code = result.code;
+          if (code == -1) {
+            let errmsg = result.errmsg;
+            window.alert(errmsg);
+            return;
+          }
+
+          let data = result.data;
+          window.alert(data + " (succ表示开始执行 10s后页面刷新");
+          setTimeout(() => {
+            window.location.reload()
+          }, 10000);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          window.alert("处理时发生错误: " + textStatus);
+          console.log("Failed");
+        }
+      });
+    });
+  });
+
+  $("#confirm-clean").click(function() {
+    let batchId = init.batchId;
+    let batchName = $("#batchNameImportClean").val();
+    let smonth = $("input#CleanstartTime").val();
+    let emonth = $("input#CleanendTime").val();
+    let batchInfo = {
+      r:"admin",
+      batchId: batchId,
+      batchName: batchName,
+      smonth: smonth,
+      emonth: emonth
+    };
+
+    let checkPromise = checkBatchInfo(batchInfo);
+
+    $("#importCleanInput").modal("hide");
+
+    checkPromise.then(function(returnValue) {
+      window.alert("执行成功 10s后刷新页面");
+        setTimeout(() => {
+          window.location.reload()
+        }, 10000);
+    });
+  });
+
+  function checkBatchInfo(batchInfo) {
+    return new Promise((resolve, reject) => {
+      $.ajax({
+        url: "../easy_clean",
+        async: true,
+        type: "POST",
+        dataType: "JSON",
+        headers: {
+                'X-CSRFToken': getCSRFToken()
+            },
+        data:batchInfo,
+        success: function(result) {
+          let code = result.code;
+          if (code == 0) {
+            let errmsg = result.errmsg;
+            window.alert(errmsg);
+            reject("Failed");
+          }
+
+          resolve();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+          window.alert("处理时发生错误: " + textStatus);
+          console.log("Failed");
+          reject(textStatus);
+        },
+      });
+    });
+  }
+</script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="pull-left">© cleaner 2024</p>
+        </div>
+    </footer>
+
+    <div>
+</div>
+<script src="{% static 'dist/JS/jquery.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/yii.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/yii.gridView.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/jquery-ui.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/bootstrap.js' %}" charset="utf-8"></script>
+<!--<script>jQuery(function ($) {-->
+<!--jQuery('#w0').yiiGridView({"filterUrl":"\/cleaner\/index.php?r=admin%2Fdashboard%2Findex\u0026id=174","filterSelector":"#w0-filters input, #w0-filters select"});-->
+<!--});</script>-->
+
+
+</body></html>

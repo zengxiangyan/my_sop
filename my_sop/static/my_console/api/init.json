@@ -43,7 +43,7 @@
         },
         {
           "title": "清洗系统",
-          "href": "page/menu.html",
+          "href": "../cleaner/?r=admin&id=362",
           "icon": "fa fa-window-maximize",
           "target": "_self"
         },

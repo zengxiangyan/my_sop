@@ -1,0 +1,224 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="{% static 'dist/JS/jquery.min.js' %}" charset="utf-8"></script>
+    <title>机洗过程查询 - Process Log</title>
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-table.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/jquery-ui.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/site.css' %}">
+<style>
+    .submenu a {
+        background: #f5f5f5;
+        border-radius: 0;
+    }
+
+    .submenu a:hover,
+    .submenu a:active,
+    .submenu a.active,
+    .submenu a.active:hover,
+    .submenu a.active:active {
+        background: #44b5f6;
+        border-color: #44b5f6;
+        border-radius: 0;
+        color: #fff;
+    }
+
+    .container {
+        width: 100%;
+    }
+</style>
+
+<body>
+    
+    <div class="wrap">
+        <nav id="w0" class="navbar-inverse navbar-fixed-top navbar"><div class="container"><div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#w0-collapse"><span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span></button><a class="navbar-brand" href="/cleaner/index.php">Data Cleaner</a></div><div id="w0-collapse" class="collapse navbar-collapse"><ul id="w1" class="navbar-nav navbar-right nav"><li><a href="/cleaner/index.php?r=site%2Findex">Home</a></li>
+<li><form action="/cleaner/index.php?r=admin%2Fdefault%2Flogout" method="post"><button type="submit" class="btn btn-link logout">Logout (zeng.xiangyan)</button></form></li></ul></div></div></nav>
+        <div class="container">
+
+            <ul class="breadcrumb"><li><a href="/cleaner/index.php">Home</a></li>
+<li class="active">机洗过程查询 - Process Log</li>
+</ul>
+            <div class="row">
+                <div class="col-md-12 guide-content" role="main">
+                    <style>
+    .hidden-messager {
+        position: fixed;
+        top: calc(-40px);
+        left: calc(50vw - 50px);
+        z-index: 9999;
+        max-width: 200px;
+        max-height: 30px;
+        padding: 5px 20px 5px 20px;
+        text-align: center;
+        border-radius: 10px;
+        background-color: hsla(0, 100%, 65%, 0.8);
+        color: whitesmoke;
+        transition: top 0.5s;
+    }
+</style>
+{% csrf_token %}
+<div class="process-log">
+    <h1>机洗过程查询 - Process Log</h1>
+
+    <p class="buttonField">
+        <a id="search" class="btn btn-info">查询</a>    </p>
+
+    <div class="inputField">
+        <div class="input-group md-3" style="margin-bottom:20px">
+            <span class="input-group-addon" id="basic-addon">BatchID</span>
+            <input id="batchId" name="batchId" type="number" class="form-control" placeholder="在这里输入BatchID" aria-describedby="basic-addon1">
+        </div>
+        <div class="input-group md-3" style="margin-bottom:20px">
+            <span class="input-group-addon" id="basic-addon">ID</span>
+            <input id="itemId" name="itemId" type="text" class="form-control" onchange="javascript:checkString(this)" placeholder="在这里输入ID" aria-describedby="basic-addon1">
+        </div>
+    </div>
+
+    <div id="output"></div>
+    <!-- <script src="https://unpkg.com/papaparse@5.0.0/papaparse.min.js"></script> -->
+    <!-- upload_pkey/   post[batch_id, csv_data(json)] -->
+</div>
+
+<div class="modal fade bs-example-modal-sm" id="prompt" role="dialog" tabindex="-1" aria-labelledby="mySmallModalLabel" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content" style=" border-radius: 10px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="mySmallModalLabel">提示</h4>
+            </div>
+            <div class="modal-body" id="msgDisplay"> 请稍候 </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="{% static 'dist/JS/d3.min.js' %}" defer="defer"></script>
+<script type="text/javascript" v=0.03>
+    function getCSRFToken() {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          var cookieParts = cookie.split('=');
+          if (cookieParts[0] === 'csrftoken') {
+              return cookieParts[1];
+          }
+      }
+      return null;
+  };
+    var token = "fb9v5HdCtQ0IsaJpNRYUAhuoO-DML-9ML2YM_IbtnL0v2SSKJCiNYHDXkD9AfXU1fetj1Ih-nCdMHGmbx4bl0w==";
+
+    $("body").append(`<div class="hidden-messager" z-index=9999></div>`);
+
+    function search() {
+        console.log();
+        let batchId = $("input#batchId").val();
+        let uuid = $("input#itemId").val();
+        $.ajax({
+            url: "./",
+            dataType: "json",
+            type: "POST",
+            data: {
+                _csrf: token,
+                batchId: batchId,
+                uuid: uuid,
+            },
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            },
+            async: true,
+            success: function(result) {
+                if (result) {
+                    let code = result.code;
+                    if (code == -1) {
+                        $("div.modal-body#msgDisplay").html(result.errMsg);
+                        $("#prompt").modal("show");
+                        return;
+                    } else if (code == 1) {
+                        $("div#msgDisplay").html(result.data);
+                        $("#prompt").modal("show");
+                        return;
+                    }
+                    $("div#prompt").modal("hide");
+                    let array = result.data;
+                    let htmlString = "";
+                    for (const key in array) {
+                        if (array.hasOwnProperty(key)) {
+                            const element = array[key];
+                            let tmpString = typeof element === 'string' ? element.replaceAll("\\n", "<br/><br/>") : JSON.stringify(element);
+                            htmlString += "<div>" + tmpString + "</div>";
+                        }
+                    }
+                    $("div#output").html(htmlString);
+                    console.log("Success");
+                } else {
+                    console.log("Failed");
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                window.alert("处理时发生错误: " + textStatus);
+                console.log("Failed");
+            }
+        });
+        $("input#files").val("");
+    }
+
+
+    $("a#search").click(function() {
+        uploadFlag = true;
+        let batchId = $("input#batchId").val();
+        let itemId = $("input#itemId").val();
+        if ((batchId != "") && (itemId != "")) {
+            $("div.modal-body#msgDisplay").html(" 请稍后 ");
+            $("#prompt").modal("show");
+            search();
+        }
+    });
+
+    function checkString(element) {
+        let currentString = $(element).val();
+        // console.log(currentString);
+
+        if (/([^0-9a-zA-Z\-])+/.test(currentString)) {
+            $(`#itemId`).css("background-color", "hsla(0, 50%, 50%, 0.2)");
+            $(".hidden-messager").html("输入id存在错误字符");
+            $(".hidden-messager").css("top", "calc(10px)");
+            setTimeout(() => {
+                $(".hidden-messager").css("top", "calc(-40px)");
+            }, 3000);
+            $("#search").addClass("disabled");
+        } else {
+            $(`#itemId`).css("background-color", "unset");
+            $("#search").removeClass("disabled");
+        }
+    }
+</script>                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="pull-left">&copy; cleaner 2024</p>
+        </div>
+    </footer>
+
+<script src="{% static 'dist/JS/jquery.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/jquery-ui.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/bootstrap.js' %}" charset="utf-8"></script>
+
+</body>
+
+</html>

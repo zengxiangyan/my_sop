@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'channels',
     'django_rq',
     'sop',
+    'cleaning',
 ]
 
 RQ_QUEUES = {

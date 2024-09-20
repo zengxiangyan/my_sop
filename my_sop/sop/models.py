@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class viewed_sp(models.Model): #创建用户信息表
+class viewed_sp(models.Model):
     eid=models.PositiveIntegerField(verbose_name='eid',default=0)
     name =models.CharField(max_length=100,verbose_name='name')
     choices0 = (
@@ -30,7 +30,7 @@ class report_task(models.Model): #创建报告任务表
     def __str__(self):
         return self.ReportName
         
-class check_fss_task(models.Model): #创建报告任务表
+class check_fss_task(models.Model):
     eid = models.IntegerField(blank=False,default=0)
     tbl = models.CharField(max_length=100,blank=False)
     s_date = models.DateField(blank=False)
