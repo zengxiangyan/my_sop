@@ -43,7 +43,7 @@
         },
         {
           "title": "清洗系统",
-          "href": "page/menu.html",
+          "href": "../cleaner/?r=admin&batchid=362",
           "icon": "fa fa-window-maximize",
           "target": "_self"
         },

@@ -142,8 +142,8 @@ def sql_search(request):
         for s in stop_word:
             if s in sql.upper():
                 return JsonResponse({"code":500,'status': 'error', 'msg': '除SELETE外的操作一律不允许通过！！！'})
-        sql_query = connect_clickhouse.connect(1, sql)
         try:
+            sql_query = connect_clickhouse.connect(1, sql)
             # 处理 NaN, Infinity 和 -Infinity 值，将其转换为 None 或空字符串
             def sanitize_data(data):
                 if isinstance(data, list):
@@ -178,7 +178,7 @@ def sql_search(request):
             return JsonResponse({'status': 'error', 'msg': 'Invalid JSON'}, status=400)
         except Exception as e:
             # print(sql_query)
-            return JsonResponse({"code":500,'status': 'error', 'msg': str(sql_query)})
+            return JsonResponse({"code":500,'status': 'error', 'msg': str(e)})
     else:
         return render(request, 'sop/sql语法测试.html', locals())
 

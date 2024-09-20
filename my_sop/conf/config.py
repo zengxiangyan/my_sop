@@ -247,6 +247,13 @@ DB = {
         'user': 'wq',
         'password': 'Iimps99h'
     },
+    'wq': {
+        'host': '10.21.200.122',
+        'port': 3306,
+        'name': 'wq',
+        'user': 'wq',
+        'password': 'Iimps99h'
+    },
     'kuaishou': {
         'host': '127.0.0.1',
         'port': 28169,

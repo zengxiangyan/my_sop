@@ -1,0 +1,478 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="{% static 'dist/JS/jquery.min.js' %}" charset="utf-8"></script>
+    <title>需求表管理 - Clean Request</title>
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-table.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/jquery-ui.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/site.css' %}">
+
+<style>
+
+    .submenu a {
+        background: #f5f5f5;
+        border-radius: 0;
+    }
+
+    .submenu a:hover,
+    .submenu a:active,
+    .submenu a.active,
+    .submenu a.active:hover,
+    .submenu a.active:active {
+        background: #44b5f6;
+        border-color: #44b5f6;
+        border-radius: 0;
+        color: #fff;
+    }
+
+    .container {
+        width: 100%;
+    }
+</style>
+
+<body>
+    
+    <div class="wrap">
+        <nav id="w0" class="navbar-inverse navbar-fixed-top navbar"><div class="container"><div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#w0-collapse"><span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span></button><a class="navbar-brand" href="/cleaner/index.php">Data Cleaner</a></div><div id="w0-collapse" class="collapse navbar-collapse"><ul id="w1" class="navbar-nav navbar-right nav"><li><a href="/cleaner/index.php?r=site%2Findex">Home</a></li>
+<li><form action="/cleaner/index.php?r=admin%2Fdefault%2Flogout" method="post"><button type="submit" class="btn btn-link logout">Logout (zeng.xiangyan)</button></form></li></ul></div></div></nav>
+        <div class="container">
+
+            <ul class="breadcrumb"><li><a href="/cleaner/index.php">Home</a></li>
+<li class="active">需求表管理 - Clean Request</li>
+</ul>                        <div class="row">
+                <div class="col-md-12 guide-content" role="main">
+                    <style>
+    .outter-div {
+        display: inline;
+        font-size: 22px;
+        margin-left: 5px;
+        cursor: help;
+        vertical-align: baseline;
+    }
+
+    .inner-span {
+        color: deepskyblue;
+        clip-path: circle(42%);
+        vertical-align: super;
+    }
+
+    .inner-span:hover {
+        color: dodgerblue;
+    }
+
+    .inner-span {
+        color: deepskyblue;
+        clip-path: circle(42%);
+        vertical-align: super;
+    }
+
+    .glyphicon {
+        position: relative;
+        top: 1px;
+        display: inline-block;
+        font-family: 'Glyphicons Halflings';
+        font-style: normal;
+        font-weight: normal;
+        line-height: 1;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    .glyphicon-question-sign:before {
+        content: "\e085";
+    }
+</style>
+
+{% csrf_token %}
+<div class="clean-request-index">
+    <h1>需求表管理 - Clean Request<div class='outter-div'><span class="inner-span glyphicon glyphicon-question-sign" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="这里可以上传一个标准需求表，便捷地完成大多数清洗配置。也可以把指定项目的全部清洗配置复制到另一个项目上。"></span></div></h1>
+
+    <p class="buttonField">
+        <a id="upload" class="btn btn-info">上传</a>        <a id="copy" class="btn btn-info">复制</a>        <a id="delete" class="btn btn-danger">删除</a>        <a id="template" class="btn btn-info" href="/cleaner/index.php?r=admin%2Fclean-request%2Fdownload-template" target="_blank">下载模板</a>    </p>
+    <input type="file" name="csvFile" accept="csv" style="display:none" onchange="javascript:dealWithFile(this.files)" />
+
+    <div class="inputField">
+        <div class="input-group" style="margin-bottom:10px">
+            <span class="input-group-addon" id="basic-addon">BatchID</span>
+            <input id="batchId" name="batchId" type="number" value="{{BatchID}}" class="form-control" placeholder="在这里输入BatchID" aria-describedby="basic-addon1">
+        </div>
+
+        <div class="input-group" style="margin-bottom:20px">
+            <span class="input-group-addon" id="basic-addon">BatchName</span>
+            <input id="batchName" name="batchName" type="text" class="form-control" placeholder="在这里输入BatchName" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
+    </div>
+
+    <table id="table" data-toggle="table"></table>
+</div>
+
+<div class="modal fade bs-example-modal-sm" id="deleteWarning" role="dialog" tabindex="-1" aria-labelledby="mySmallModalLabel" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content" style=" border-radius: 10px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="mySmallModalLabel">警告</h4>
+            </div>
+            <div class="modal-body" id="deleteMsg"> </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" id="confirmedDelete">删除</button>
+                <button type="button" class="btn btn-primary" id="cancel" data-dismiss="modal" aria-label="Close">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-sm" id="loading" role="dialog" tabindex="-1" aria-labelledby="mySmallModalLabel" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content" style=" border-radius: 10px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="mySmallModalLabel">提示</h4>
+            </div>
+            <div class="modal-body"> 请稍后，加载中 </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-sm" id="prompt" role="dialog" tabindex="-1" aria-labelledby="mySmallModalLabel" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content" style=" border-radius: 10px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="mySmallModalLabel">提示</h4>
+            </div>
+            <div class="modal-body" id="msgDisplay"></div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade bs-example-modal-md" id="inputModal" role="dialog" tabindex="-1" aria-labelledby="mySmallModalLabel" style="display: none; padding-right: 17px;">
+    <div class="modal-dialog modal-md" role="document">
+        <div class="modal-content" style=" border-radius: 10px;">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+                <h4 class="modal-title" id="mySmallModalLabel">请输入想要操作的BatchId</h4>
+            </div>
+            <div class="modal-body" id="inputDisplay">
+                <div class="input-group md-3" style="margin:10px">
+                    <span class="input-group-addon" id="basic-addon">OldBatchID</span>
+                    <input id="oldBatchId" name="oldBatchId" type="number" class="form-control" placeholder="在这里输入OldBatchID" aria-describedby="basic-addon1">
+                </div>
+                <div class="input-group md-3" style="margin:10px">
+                    <span class="input-group-addon" id="basic-addon">oldBatchName</span>
+                    <input id="oldBatchName" name="oldBatchName" type="text" class="form-control" placeholder="在这里输入OldBatchName" aria-describedby="basic-addon1">
+                </div>
+                <div class="input-group md-3" style="margin:10px">
+                    <span class="input-group-addon" id="basic-addon">NewBatchID</span>
+                    <input id="newBatchId" name="newBatchId" type="number" class="form-control" placeholder="在这里输入NewBatchID" aria-describedby="basic-addon1">
+                </div>
+                <div class="input-group md-3" style="margin:10px">
+                    <span class="input-group-addon" id="basic-addon">NewBatchName</span>
+                    <input id="newBatchName" name="newBatchName" type="text" class="form-control" placeholder="在这里输入NewBatchName" aria-describedby="basic-addon1">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="confirmCopy">Confirm</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'dist/JS/bootstrap-table.min.js' %}" defer="defer"></script>
+<script src="{% static 'dist/JS/FileSaver.min.js' %}" defer="defer"></script>
+<script src="{% static 'dist/JS/d3.min.js' %}" defer="defer"></script>
+<script src="{% static 'dist/JS/xlsx.full.min.js' %}"></script>
+<script src="{% static 'dist/JS/jschardet.min.js' %}" defer="defer"></script>
+
+<script type="text/javascript" v=0.21>
+    function getCSRFToken() {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          var cookieParts = cookie.split('=');
+          if (cookieParts[0] === 'csrftoken') {
+              return cookieParts[1];
+          }
+      }
+      return null;
+  };
+    var token = "MExrJEaDYrMcqSXKAMLu42RsLPQsYSpVCXYl_rCdQfdiKiBKFela3mTPF5x1qY_UAi90wGgwWT5qDECZ8fY4mQ==";
+
+    $("a#upload").click(function() {
+        uploadFlag = true;
+        $("input[name='csvFile']").click();
+    });
+
+    $("a#copy").click(function() {
+        $("#inputModal").modal("show");
+    });
+
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    })
+
+    $("button#confirmCopy").click(function() {
+        let oldBatchId = $("input#oldBatchId").val();
+        let newBatchId = $("input#newBatchId").val();
+        let oldBatchName = $("input#oldBatchName").val();
+        let newBatchName = $("input#newBatchName").val();
+
+        if (oldBatchId != "" && newBatchId != "") {
+            $("#inputModal").modal("hide");
+            $("#loading").modal("show");
+            let batchInfo = [];
+            batchInfo.push({
+                batchId: oldBatchId,
+                batchName: oldBatchName
+            });
+
+            batchInfo.push({
+                batchId: newBatchId,
+                batchName: newBatchName
+            });
+
+            let checkPromise = checkBatchInfo(batchInfo);
+            checkPromise.then(() => {
+                $.ajax({
+                    url: "index.php?r=admin/clean-request/copy-request",
+                    type: "POST",
+                    dataType: "json",
+                    async: true,
+                    data: {
+                        oldBatchId: oldBatchId,
+                        newBatchId: newBatchId,
+                        _csrf: token
+                    },
+                    headers: {
+                        'X-CSRFToken': getCSRFToken()
+                    },
+                    success: function(result) {
+                        if (result) {
+                            code = result.code;
+                            if (code == -1) {
+                                $("div.modal-body#msgDisplay").html(result.errMsg);
+                                $("div#loading").modal("hide");
+                                $("#prompt").modal("show");
+                                return;
+                            }
+                            $("div.modal-body#msgDisplay").html(result.data);
+                            $("div#loading").modal("hide");
+                            $("#prompt").modal("show");
+                            $("input#oldBatchId").val("");
+                            $("input#newBatchId").val("");
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        $("div#msgDisplay").html("发生错误: " + textStatus);
+                        console.log("Failed");
+                    }
+                });
+            });
+
+            checkPromise.catch((returnValue) => {
+                $("div#loading").modal("hide");
+            });
+        } else {
+            window.alert("请填写oldBatchId和newBatchId");
+            $("div#loading").modal("hide");
+            $("#inputModal").modal("show");
+        }
+    });
+
+    $("a#delete").click(function() {
+        var batchId = $("input#batchId").val();
+        if (batchId) {
+            var htmlString = "你确定要删除BatchId=" + batchId + "的需求表吗?";
+            $("div#deleteMsg").html(htmlString);
+            $("div#deleteWarning").modal("show");
+        } else {
+            var htmlString = "请输入BatchId";
+            $("div#msgDisplay").html(htmlString);
+            $("div#prompt").modal("show");
+        }
+    });
+
+    $("button#confirmedDelete").click(function() {
+        $("div#deleteWarning").modal("hide");
+        $("div#loading").modal("show");
+        var batchId = $("input#batchId").val();
+
+        let batchInfo = [];
+        let batchName = $("input#batchName").val();
+        batchInfo.push({
+            batchId: batchId,
+            batchName: batchName
+        });
+
+        let checkPromise = checkBatchInfo(batchInfo);
+        checkPromise.then(() => {
+            $.ajax({
+                url: "index.php?r=admin/clean-request/delete-request",
+                type: "POST",
+                dataType: "json",
+                async: true,
+                data: {
+                    batchId: batchId,
+                    _csrf: token
+                },
+                headers: {
+                    'X-CSRFToken': getCSRFToken()
+                },
+                success: function(result) {
+                    if (result) {
+                        code = result.code;
+                        if (code == -1) {
+                            $("div.modal-body#msgDisplay").html(result.errMsg);
+                            $("div#loading").modal("hide");
+                            $("#prompt").modal("show");
+                            return;
+                        }
+                        $("div.modal-body#msgDisplay").html(result.data);
+                        $("div#loading").modal("hide");
+                        $("#prompt").modal("show");
+                    }
+                }
+            });
+        });
+
+        checkPromise.catch((returnValue) => {
+            $("div#loading").modal("hide");
+        });
+    });
+
+    function dealWithFile(files) {
+        if (files != null) {
+            var file = files[0];
+            var reader = new FileReader();
+
+            if (/ms-excel+/.test(file.type) || /text\/csv/.test(file.type)) {
+                $("input[name='csvFile']").val("");
+                window.alert("CSV文件无法在需求表上传中使用");
+            } else if (/openxmlformats-officedocument+/.test(file.type)) {
+                reader.onload = function() {
+                    var exp = new RegExp("=([0-9]*)", "g");
+                    var batchId = exp.exec(file.name);
+                    if (batchId) {
+                        $("input#batchId").val(batchId[1]);
+                    }
+
+                    var rowNumber = exp.exec(file.name);
+                    if (rowNumber) {
+                        $("input#spId").val(rowNumber[1]);
+                    }
+
+                    var data = new Uint8Array(this.result);
+                    var workbook = XLSX.read(data, { type: 'array' });
+
+                    // 将整个文件的二进制数据发送到服务器
+                    var binaryData = this.result;
+                    uploadExcelFile(binaryData, batchId ? batchId[1] : null,file.name);
+                };
+                reader.readAsArrayBuffer(file);
+            }
+        }
+    }
+
+    function uploadExcelFile(binaryData, batchId,originalFileName) {
+        var formData = new FormData();
+        formData.append('file', new Blob([binaryData], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+        formData.append('batchId', batchId);
+        formData.append('FileName', originalFileName);
+        formData.append('_csrf', getCSRFToken());
+
+        $("div#loading").modal("show");
+
+        $.ajax({
+            url: "./",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            },
+            success: function(result) {
+                if (result) {
+                    var code = result.code;
+                    if (code == -1) {
+                        $("div.modal-body#msgDisplay").html(result.errMsg);
+                        $("div#loading").modal("hide");
+                        $("#prompt").modal("show");
+                        return;
+                    }
+                    $("div.modal-body#msgDisplay").html(result.data);
+                    $("div#loading").modal("hide");
+                    $("#prompt").modal("show");
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                window.alert("处理时发生错误: " + textStatus);
+                console.log("Failed");
+            },
+        });
+    }
+
+
+    function checkBatchInfo(batchInfo) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: "index.php?r=admin/clean-batch/check-batch-info&batchInfo=" + JSON.stringify(batchInfo),
+                async: true,
+                type: "GET",
+                dataType: "JSON",
+                success: function(result) {
+                    let code = result.code;
+                    if (code == 0) {
+                        let errmsg = result.errmsg;
+                        window.alert(errmsg);
+                        reject("Failed");
+                    }
+
+                    resolve();
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    window.alert("处理时发生错误: " + textStatus);
+                    console.log("Failed");
+                    reject(textStatus);
+                },
+            });
+        });
+    }
+</script>                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="pull-left">&copy; cleaner 2024</p>
+        </div>
+    </footer>
+<script src="{% static 'dist/JS/jquery.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/jquery-ui.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/bootstrap.js' %}" charset="utf-8"></script>
+
+</html>

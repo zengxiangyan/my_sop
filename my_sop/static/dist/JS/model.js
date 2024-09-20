@@ -329,7 +329,7 @@ function route(id, host, data, callback) {
     $('body').append('<div class="loading"><span class="spinner-border"></span> Loading...</div>')
     $('.btn').attr('disabled', 'disabled');
     $.ajax({
-        url: "index.php?r=admin/sop/route",
+        url: "../",
         type: "POST",
         async: true,
         dataType: "json",

@@ -1,19 +1,279 @@
-from django.shortcuts import render
-
-# Create your views here.
+import datetime
+import ast
+from django.shortcuts import render,get_object_or_404
+from openpyxl import load_workbook
+from io import BytesIO
+from .models import CleanBatchLog,CleanBatch
 from sop import connect_clickhouse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,JsonResponse
 from django.db.models import Max
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-
-from django.urls import reverse
-import json
+from django.http import FileResponse
+from django.conf import settings
+import os
+from django.core.paginator import Paginator
+import mimetypes
+from urllib.parse import quote
 import pandas as pd
-# Create your views here.
+import json
+import importlib
+import sys
+import django_rq
+from django.db import connection
+from django.db.models import Q
+# from .check_fss import main,get_task_id
+from os.path import abspath, join, dirname
+sys.path.insert(0, join(abspath(dirname(__file__)), ''))
+import application as app
+import models.entity_manager as entity_manager
+
+def dynamic_import(batch_id):
+    try:
+        module = importlib.import_module("cleaning.model.plugins.batch{}.run".format(batch_id), package=__name__)
+        return module
+    except ImportError as e:
+        # 处理导入错误
+        print(f"Error importing module: {e}")
+        return None
 
 def cleaner(request):
-    return render(request, 'cleaning/flow.html', locals())
+    if request.method == 'GET':
+        batchId = request.GET.get('id')
+        batchName = CleanBatch.objects.get(batch_id=batchId).name
+        eid = CleanBatch.objects.get(batch_id=batchId).eid
+        print(batchId,batchName,eid)
+        return render(request, 'cleaning/cleaning-flow.html', {"batchId":batchId,"batchName":batchName,"eid":eid})
+
+    return render(request, 'sop/404.html', locals())
+def clean_rules(request):
+    if request.method == 'POST':
+        file = request.FILES.get('file')
+        batchId = request.POST.get('batchId')
+        FileName = request.POST.get('FileName')
+        if file:
+            # 读取 Excel 文件
+            file_data = file.read()
+            workbook = load_workbook(filename=BytesIO(file_data))
+            print(sys.path[0])
+            workbook.save(r'./cleaning/model/plugins/batch{}/rules/{}.xlsx'.format(batchId,batchId))
+            js = {'code': 200, 'data': '文件上传成功\n共包含【{}】等[{}]个sheet'.format(workbook.sheetnames[0],len(workbook.sheetnames))}
+
+            return JsonResponse(js)
+        else:
+            return JsonResponse({'code': -1, 'errMsg': '文件上传失败'})
+    BatchID = request.GET.get('batchId')
+    return render(request, 'cleaning/clean_rules.html', {"BatchID":BatchID})
+
+def clean_process(request):
+    if request.method == 'POST':
+        batchId = request.POST.get('batchId')
+        uuid2 = request.POST.get('uuid')
+        module = dynamic_import(batchId)
+        if module:
+            print("模型导入")
+            process_log = module.process_log(uuid2)
+            print({'code': 200, "data": process_log})
+            return JsonResponse({'code': 200, "data": process_log})
+        print("batch{}查询uuid2{}".format(batchId,uuid2))
+        return JsonResponse({'code': -1, 'errmsg': '清洗配置未找到'})
+    return render(request, 'cleaning/clean_process.html', locals())
+
+def clean_statu(request):
+    items = CleanBatchLog.objects.all()
+    operation_dict = {
+        "导清洗表": [{"id":"syncAtbl","class":"btn btn-info","name":"导清洗表"}],
+        "clean": [{"id":"importClean","class":"btn btn-info","name":"添加机洗"}],
+        "出题": [{"id":"brush","class":"fold","name":""}],
+        "刷答题默认值": [{"id":"updateBrushDefault","class":"btn btn-info","name":"刷答题默认值"}],
+        "刷sku默认值": [{"id":"updateSkuDefault","class":"btn btn-info","name":"刷sku默认值"}],
+        "更新正确率": [{"id":"updateCorrect","class":"btn btn-info","name":"更新正确率"}],
+        "出数到E表": [{"id":"importMarket","class":"btn btn-info","name":"出数"},{"id":"version","class":"btn btn-info","name":"版本记录"}]
+    }
+    res = []
+
+    for operation in operation_dict.keys():
+        found = False
+        for item in items:
+            if item.type == operation:
+                res.append({
+                    "operations": operation_dict[operation],
+                    "T": item.type,
+                    "tips": item.params,
+                    "status": item.status,
+                    "msg": item.msg,
+                    "warn": item.warn,
+                    "process": item.process,
+                    "create_time": item.create_time.strftime('%Y-%m-%d %H:%M:%S'),
+                    "update_time": item.update_time.strftime('%Y-%m-%d %H:%M:%S'),
+                })
+                found = True
+                break
+
+        if not found:
+            res.append({
+                "operations": operation_dict[operation],
+                "T": None,
+                "tips": None,
+                "status": None,
+                "msg": None,
+                "warn": None,
+                "process": None,
+                "create_time": None,
+                "update_time": None,
+            })
+
+    return JsonResponse({"items": res})
+
+def easy_clean(request):
+    if request.method == 'POST':
+        print(request.POST)
+        data = request.POST
+        user = data.get('r')
+        batch_id = data.get('batchId')
+        batch_name = data.get('batchName')
+        s_date = data.get('smonth').replace('/', '-')[0:10]
+        e_date = data.get('emonth').replace('/', '-')[0:10]
+        real_batchName = CleanBatch.objects.get(batch_id=batch_id).name
+        task_id = int(datetime.datetime.now().timestamp())
+        if real_batchName!=batch_name:
+            js = {
+                "code": 0,
+                "errmsg": "Batch ID: {batchId} \n正确名称为: {real_batchName} \n输入为: {batchName}\n"
+                .format(batchId=batch_id, real_batchName=real_batchName, batchName=batch_name)
+            }
+            return JsonResponse(js)
+        print("清洗状态检查：",len(CleanBatchLog.objects.filter(Q(batch_id=batch_id) & ~Q(status__in= ['complete','error']))))
+        if len(CleanBatchLog.objects.filter(Q(batch_id=batch_id) & ~Q(status__in= ['complete','error']))):
+            js = {
+                "code": 0,
+                "errmsg": "batchId{}正在清洗中，请不要重复添加".format(batch_id)
+            }
+            return JsonResponse(js)
+
+        CleanBatchLog.objects.create(batch_id=get_object_or_404(CleanBatch, batch_id=batch_id),eid=10716,type='clean',task_id=task_id,status='process',
+                params=str({"w": f"1 AND date >= \'{s_date}\') AND date < \'{e_date}\')", "s": s_date, "e": e_date}))
+            # task_id = get_task_id()
+            # queue = django_rq.get_queue('default')
+            # job = queue.enqueue(main, task_id)
+        js = {
+            "code": 200,
+            "msg": "batchId{}清洗任务添加成功".format(batch_id)
+        }
+        return JsonResponse(js)
+
+
+        # js = {
+        #     "code": 400,
+        #     "msg": "参数错误：eid & table & s_date & e_date 不允许为空"
+        # }
+        # return JsonResponse(js)
+    else:
+        return render(request, 'report/add_check_fss.html', locals())
+def add_task(request):
+    # smonth = '', emonth = '', priority = 0, planTime = '', where = '', cln_tbl = ''
+    dba, atbl = self.get_plugin().get_a_tbl()
+    dba = self.get_db(dba)
+    db26 = self.get_db('26_apollo')
+    tbl = cln_tbl or atbl
+
+    sql = 'SELECT is_item_table_mysql FROM cleaner.clean_batch WHERE batch_id = {}'.format(self.bid)
+    ret = db26.query_all(sql)
+    if ret[0][0]:
+        raise Exception('只适用于新清洗')
+
+    # 不能重复添加即时任务，有schedule的不管
+    sql = '''
+           SELECT count(*) FROM cleaner.`clean_cron`
+           WHERE batch_id = {} AND cln_tbl = %s AND status NOT IN ('completed', 'error')
+             AND (emergency = 0 OR (status = 'process' AND emergency = 1))
+             AND planTime < '2021-01-01 00:00:00'
+       '''.format(self.bid)
+    ret = db26.query_all(sql, (tbl,))
+    if not planTime and ret[0][0] != 0:
+        raise Exception('正在清洗中，不要重复添加任务')
+
+    # 有任务进行中
+    sql = '''
+           SELECT count(*) FROM cleaner.`clean_cron`
+           WHERE batch_id = {} AND cln_tbl = %s AND status = 'process'
+       '''.format(self.bid)
+    ret = db26.query_all(sql, (tbl,))
+    if planTime and ret[0][0] != 0:
+        raise Exception('正在清洗中，不要重复添加任务')
+
+    a, b = tbl.split('.')
+    # ret = dba.query_all('''
+    #     SELECT count(*) FROM `system`.projection_parts WHERE database = '{}' AND `table` = '{}' AND name = 'clean_items'
+    # '''.format(a, b))
+
+    # if ret[0][0] == 0:
+    #     dba.execute('''
+    #         ALTER TABLE {} ADD PROJECTION clean_items (
+    #             SELECT toYYYYMM(date), source, item_id, name, cid, sid, all_bid, any(brand), any(rbid), any(sub_brand), any(region_str), shop_type,
+    #                 any(uuid2), any(pkey), any(date), any(sales), any(num), any(price), any(org_price),
+    #                 trade_props.name, trade_props.value, props.name, props.value
+    #             GROUP BY toYYYYMM(date), sid, cid, source, shop_type, item_id, trade_props.name, trade_props.value, props.name, props.value, name, all_bid
+    #         )
+    #     '''.format(tbl))
+    #     dba.execute('ALTER TABLE {} MATERIALIZE PROJECTION clean_items'.format(tbl))
+
+    where = where or '1'
+
+    if smonth:
+        where = '({}) AND (toYYYYMM(date) >= toYYYYMM(toDate(\'{}\')) AND toYYYYMM(date) < toYYYYMM(toDate(\'{}\')))'.format(
+            where, smonth, emonth)
+
+    sql = '''
+           SELECT sid, countDistinct(item_id) c FROM {} WHERE {} GROUP BY sid ORDER BY sid
+       '''.format(tbl, where)
+    ret = dba.query_all(sql)
+    if len(ret) == 0:
+        raise Exception('要清洗的月份数据为空')
+
+    self.add_miss_pos(tbl)
+
+    task_id = int(time.time())
+    data, parts, ccc = [], [], 0
+
+    for p, c, in list(ret) + [[None, 0]]:
+        if ccc >= 500000 or p is None:
+            params = {'p': 'sid>={} AND sid<={}'.format(parts[0], parts[-1]), 'w': where, 's': smonth, 'e': emonth}
+            data.append(
+                [task_id, self.bid, self.eid, priority, 0, 0, ccc, json.dumps(params, ensure_ascii=False), planTime,
+                 tbl])
+            parts, ccc = [], 0
+        parts.append(p)
+        ccc += c
+
+    if len(data) > 0:
+        err_msg = ''
+        try:
+            self.batch_now()
+        except Exception as e:
+            err_msg = traceback.format_exc()
+            self.mail('Batch{}机洗配置错误'.format(self.bid), err_msg)
+
+        poslist = self.get_poslist()
+        jointbl = tbl + '_join{}'.format(task_id)
+        dba.execute('DROP TABLE IF EXISTS {}'.format(jointbl))
+
+        dba.execute('''
+               CREATE TABLE {} ( `sid` UInt64, `cid` UInt32, `source` UInt8, `shop_type` UInt8, `item_id` String, `tn` String, `tv` String, `pn` String, `pv` String, `name` String, `all_bid` UInt32, `c_ver` UInt32, `c_type` Int16, `c_all_bid` UInt32, `c_pid` UInt32, {} )
+               ENGINE = MergeTree
+               PARTITION BY sid % 64
+               ORDER BY (sid, cid, source, shop_type, item_id, tn, tv, pn, pv, name, all_bid)
+               SETTINGS index_granularity = 8192,parts_to_delay_insert=50000,parts_to_throw_insert=1000000,max_parts_in_total=1000000,min_bytes_for_wide_part=0,min_rows_for_wide_part=0,storage_policy='disk_group_1'
+           '''.format(jointbl, ','.join(['`c_sp{p}` LowCardinality(String)'.format(p=pos) for pos in poslist])))
+
+        data = [v + ['error' if err_msg else '', '配置错误：' + err_msg if err_msg else ''] for v in data]
+
+        db26.batch_insert(
+            'INSERT INTO cleaner.`clean_cron` (task_id,batch_id,eid,priority,minCPU,minRAM,`count`,params,planTime,createTime,cln_tbl,status,msg) VALUES',
+            '(%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW(),%s,%s,%s)', data
+            )
+
+    db26.commit()
+
 def save(request):
     if request.method == 'POST':
         # print("eid",request.GET.get('sql'))
