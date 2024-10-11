@@ -55,9 +55,17 @@ RQ_QUEUES = {
         'HOST': 'localhost',
         'PORT': 6379,
         'DB': 0,
-        'DEFAULT_TIMEOUT': 600,
+        'DEFAULT_TIMEOUT': 108000,
     },
 }
+
+# Celery configuration
+CELERY_BROKER_URL = 'redis://:nint@10.21.90.130:6379/0'
+CELERY_RESULT_BACKEND = 'redis://:nint@10.21.90.130:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
 
 MIDDLEWARE = [
     # 'my_sop.middleware.simple_middleware',
@@ -156,14 +164,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
     'DATETIME_FORMAT': '%Y-%m-%d %H:%M:%S',
-    # 其他的全局设置...
 }
 
 LANGUAGE_CODE = 'zh-Hans'
 TIME_ZONE = 'Asia/Shanghai'
 
 # USE_I18N = True
-#
+
 # USE_L10N = True
 
 USE_TZ = False

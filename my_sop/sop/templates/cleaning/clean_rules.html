@@ -98,7 +98,12 @@
     <h1>需求表管理 - Clean Request<div class='outter-div'><span class="inner-span glyphicon glyphicon-question-sign" data-toggle="popover" data-placement="top" data-trigger="hover" data-content="这里可以上传一个标准需求表，便捷地完成大多数清洗配置。也可以把指定项目的全部清洗配置复制到另一个项目上。"></span></div></h1>
 
     <p class="buttonField">
-        <a id="upload" class="btn btn-info">上传</a>        <a id="copy" class="btn btn-info">复制</a>        <a id="delete" class="btn btn-danger">删除</a>        <a id="template" class="btn btn-info" href="/cleaner/index.php?r=admin%2Fclean-request%2Fdownload-template" target="_blank">下载模板</a>    </p>
+        <a id="upload" class="btn btn-info">上传</a>
+        <a id="copy" class="btn btn-info">复制</a>
+        <a id="delete" class="btn btn-danger">删除</a>
+        <a id="download-rules" class="btn btn-info">下载rules</a>
+        <a id="download-convert-brand" class="btn btn-info" style="display:{{display}}">下载convert_brand</a>
+    </p>
     <input type="file" name="csvFile" accept="csv" style="display:none" onchange="javascript:dealWithFile(this.files)" />
 
     <div class="inputField">
@@ -315,6 +320,28 @@
         }
     });
 
+    $("a#download-rules").click(function() {
+        var batchId = $("input#batchId").val();
+        if (batchId) {
+            window.location.href = `../download-rules?batchId=${batchId}`;
+        } else {
+            var htmlString = "请输入BatchId";
+            $("div#msgDisplay").html(htmlString);
+            $("div#prompt").modal("show");
+        }
+    });
+
+    $("a#download-convert-brand").click(function() {
+        var batchId = $("input#batchId").val();
+        if (batchId) {
+            window.location.href = `../download-rules?batchId=${batchId}&file=convert_brand`;
+        } else {
+            var htmlString = "请输入BatchId";
+            $("div#msgDisplay").html(htmlString);
+            $("div#prompt").modal("show");
+        }
+    });
+
     $("button#confirmedDelete").click(function() {
         $("div#deleteWarning").modal("hide");
         $("div#loading").modal("show");
@@ -461,7 +488,8 @@
             });
         });
     }
-</script>                </div>
+</script>
+            </div>
             </div>
         </div>
     </div>
