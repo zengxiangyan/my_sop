@@ -13,7 +13,6 @@ import json
 import pandas as pd
 import numpy as np
 import ast
-# Create your views here.
 async def test(request):
     # 异步处理逻辑
     # await some_async_operation()
@@ -138,7 +137,7 @@ def sql_search(request):
     if request.method == 'POST':
         data = json.loads(request.body)
         sql = data.get('sql')
-        stop_word = ['DROP','DELETE','UPDATE','ALTER','CREATE','INSERT','TRUNCATE','ADD']
+        stop_word = ['DROP','DELETE','UPDATE','ALTER','CREATE','INSERT','TRUNCATE','ADD','RENAME']
         for s in stop_word:
             if s in sql.upper():
                 return JsonResponse({"code":500,'status': 'error', 'msg': '除SELETE外的操作一律不允许通过！！！'})

@@ -82,6 +82,10 @@
             <span class="input-group-addon" id="basic-addon">ID</span>
             <input id="itemId" name="itemId" type="text" class="form-control" onchange="javascript:checkString(this)" placeholder="在这里输入ID" aria-describedby="basic-addon1">
         </div>
+        <div class="input-group md-3" style="margin-bottom:20px">
+            <span class="input-group-addon" id="basic-addon">自定义json</span>
+            <input id="define" name="define" type="text" class="form-control" onchange="javascript:checkJson(this)" placeholder="在这里可以自定义json数据查询" aria-describedby="basic-addon1">
+        </div>
     </div>
 
     <div id="output"></div>
@@ -126,6 +130,7 @@
         console.log();
         let batchId = $("input#batchId").val();
         let uuid = $("input#itemId").val();
+        let define = $("input#define").val();
         $.ajax({
             url: "./",
             dataType: "json",
@@ -134,6 +139,7 @@
                 _csrf: token,
                 batchId: batchId,
                 uuid: uuid,
+                define: define,
             },
             headers: {
                 'X-CSRFToken': getCSRFToken()
@@ -180,12 +186,19 @@
         uploadFlag = true;
         let batchId = $("input#batchId").val();
         let itemId = $("input#itemId").val();
+        let define = $("input#define").val();
+
         if ((batchId != "") && (itemId != "")) {
+            $("div.modal-body#msgDisplay").html(" 请稍后 ");
+            $("#prompt").modal("show");
+            search();
+        } else if ((batchId != "") && (define != "")) {
             $("div.modal-body#msgDisplay").html(" 请稍后 ");
             $("#prompt").modal("show");
             search();
         }
     });
+
 
     function checkString(element) {
         let currentString = $(element).val();
@@ -203,7 +216,27 @@
             $(`#itemId`).css("background-color", "unset");
             $("#search").removeClass("disabled");
         }
-    }
+    };
+
+    function checkJson(element) {
+        let currentString = $(element).val();
+
+        try {
+            JSON.parse(currentString);
+            // 如果解析成功，清除错误样式和信息
+            $(`#itemId`).css("background-color", "unset");
+            $(".hidden-messager").html("");
+            $("#search").removeClass("disabled");
+        } catch (e) {
+            $(`#define`).css("background-color", "hsla(0, 50%, 50%, 0.2)");
+            $(".hidden-messager").html("输入的内容不是有效的 JSON 格式");
+            $(".hidden-messager").css("top", "calc(10px)");
+            setTimeout(() => {
+                $(".hidden-messager").css("top", "calc(-40px)");
+            }, 3000);
+            $("#search").addClass("disabled");
+        }
+    };
 </script>                </div>
             </div>
         </div>

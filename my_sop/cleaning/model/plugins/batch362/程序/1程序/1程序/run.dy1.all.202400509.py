@@ -3,11 +3,23 @@
 
 import argparse
 import csv
-# import pandas as pd
 import time
 from tqdm import tqdm
-# from tqdm import tqdm
-# from sqlalchemy import create_engine
+import sys
+import os
+from os.path import abspath, join, dirname
+
+project_root = abspath(join(dirname(__file__), '../../../../../../..'))
+print(project_root)
+sys.path.append(project_root)
+
+# 设置 DJANGO_SETTINGS_MODULE 环境变量
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "my_sop.my_sop.settings")
+
+import django
+django.setup()
+
+from cleaning.models import CleanBatchLog,CleanBatch
 import multiprocessing
 import logging
 from multiprocessing import Process, Pool, log_to_stderr, Manager
@@ -20,6 +32,7 @@ import application as app
 from extensions import utils
 #from config import DB_URL_KW_VM
 import multiprocessing
+
 
 # 获取 multiprocessing 的日志记录器
 logger = multiprocessing.get_logger()
@@ -41,7 +54,7 @@ brand_key_list = brand_key_list + ['brand6']
 brand_db_key_list = ['`{}`'.format(x) for x in brand_key_list]
 
 #category输出表
-#prefix为空，执行rules1, prefix为2，执行rules2, 
+#prefix为空，执行rules1, prefix为2，执行rules2,
 prefix = ''
 table2 = 'makeupall2'  + prefix
 #brand输出表
@@ -60,10 +73,10 @@ category_classifier = Classifier()
 brand_classifier = Classifier()
 category_classifier_old = Classifier_old()
 brand_classifier_old = Classifier_old()
-category_classifier.load_rules("rules.xlsx", sheet_name="category.rule"+prefix)
-brand_classifier.load_rules("rules.xlsx", "brand.rule"+prefix)
-category_classifier_old.load_rules("rules.xlsx", sheet_name="category.rule"+prefix)
-brand_classifier_old.load_rules("rules.xlsx", "brand.rule"+prefix)
+category_classifier.load_rules("../../../rules/rules.xlsx", sheet_name="category.rule"+prefix)
+brand_classifier.load_rules("../../../rules/rules.xlsx", "brand.rule"+prefix)
+category_classifier_old.load_rules("../../../rules/rules.xlsx", sheet_name="category.rule"+prefix)
+brand_classifier_old.load_rules("../../../rules/rules.xlsx", "brand.rule"+prefix)
 end_time = time.time()
 # print('init data used:', (end_time-start_time))
 
@@ -73,7 +86,7 @@ def Foo(i,min_no,max_no,process_where):
         db = app.connect_db('wq')
         start = i
         end = start + default_limit
-        sql = """ select platform, newno, `no`, `time`, c4, name, brand, url, shopname, unitold, priceold, salesold, unit, price, sales, unitlive, pricelive, c6, Category, SubCategory, SubCategorySegment, BrandName, BrandCN, BrandEN, `User`, ShopType1, ShopType2, Manufacturer, Division, Selectivity, BrandLRL, 
+        sql = """ select platform, newno, `no`, `time`, c4, name, brand, url, shopname, unitold, priceold, salesold, unit, price, sales, unitlive, pricelive, c6, Category, SubCategory, SubCategorySegment, BrandName, BrandCN, BrandEN, `User`, ShopType1, ShopType2, Manufacturer, Division, Selectivity, BrandLRL,
         trade_props_name, trade_props_value,
         cid,brand_id,item_id,sid,shopnamefull,shopurl,shop_create_time,real_num,real_sales,subplatform,img
         from makeupall where newno>{start} and newno<={end} and {process_where}
@@ -103,9 +116,15 @@ def Foo(i,min_no,max_no,process_where):
 
     return -1 if len(data) == 0 else data[-1]['newno']
 
-def Bar(result):
+def Bar(task_id):
     global pbar
     pbar.update(1)
+
+    progress_record, created = CleanBatchLog.objects.get_or_create(task_id=task_id)
+    progress_record.msg = '清洗类目：{}/{}'.format(pbar.n, pbar.total)
+    progress_record.process = int((pbar.n / pbar.total) * 100)
+
+    progress_record.save()
 
 # 品牌
 def Foo2(i):
@@ -113,9 +132,9 @@ def Foo2(i):
         db = app.connect_db('wq')
         start = i
         end = start + default_limit
-        sql = """select platform, newno, `no`,`time`, c4, name, brand, url, shopname, unitold, priceold, salesold, unit, price, sales, unitlive, pricelive, c6, Category, SubCategory, SubCategorySegment, BrandName, BrandCN, BrandEN, `User`, ShopType1, ShopType2, Manufacturer, Division, Selectivity, BrandLRL, 
+        sql = """select platform, newno, `no`,`time`, c4, name, brand, url, shopname, unitold, priceold, salesold, unit, price, sales, unitlive, pricelive, c6, Category, SubCategory, SubCategorySegment, BrandName, BrandCN, BrandEN, `User`, ShopType1, ShopType2, Manufacturer, Division, Selectivity, BrandLRL,
         trade_props_name, trade_props_value,
-        cid,brand_id,item_id,sid,shopnamefull,shopurl,shop_create_time,real_num,real_sales,subplatform      
+        cid,brand_id,item_id,sid,shopnamefull,shopurl,shop_create_time,real_num,real_sales,subplatform
         from makeupall where newno>{start} and newno<={end}
         """.format(
             start=start,
@@ -180,7 +199,7 @@ def process():
     pbar = tqdm(total=task_count, desc="process", leave=True)
     for i in range(min_no, max_no, default_limit):
         # Foo(i)
-        pool.apply_async(func=Foo, args=(i, min_no, max_no, process_where), callback=Bar)
+        pool.apply_async(func=Foo, args=(i, min_no, max_no, process_where), callback=lambda result: Bar(args.task_id))
     pool.close()
     pool.join()
     pbar.close()
@@ -209,6 +228,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Params for ')
     parser.add_argument('--action', type=str, default='process', help='action')
+    parser.add_argument('--task_id', type=int, default=int(time.time()), help='任务id')
     parser.add_argument('--process_where', type=str, default='1', help='清洗范围')
     parser.add_argument('--cpu_max', type=int, default=8, help='使用多少个cpu')
     parser.add_argument('--test', type=int, default=2, help='test') #1为限制记录数，非1为全体打标

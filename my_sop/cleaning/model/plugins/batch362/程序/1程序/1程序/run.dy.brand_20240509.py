@@ -6,8 +6,20 @@ import csv
 # import pandas as pd
 import time
 from tqdm import tqdm
-# from sqlalchemy import create_engine
-import multiprocessing
+import sys
+import os
+from os.path import abspath, join, dirname
+
+project_root = abspath(join(dirname(__file__), '../../../../../../..'))
+sys.path.append(project_root)
+
+# 设置 DJANGO_SETTINGS_MODULE 环境变量
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "my_sop.my_sop.settings")
+
+import django
+django.setup()
+from cleaning.models import CleanBatchLog,CleanBatch
+
 import logging
 from multiprocessing import Process, Pool, log_to_stderr, Manager
 log_to_stderr(level=logging.INFO)
@@ -48,8 +60,8 @@ db = app.get_db('wq')
 start_time = time.time()
 category_classifier = Classifier()
 brand_classifier = Classifier()
-category_classifier.load_rules("rules.xlsx", sheet_name="category.rule"+prefix)
-brand_classifier.load_rules("rules.xlsx", "brand.rule"+prefix)
+category_classifier.load_rules("../../../rules/rules.xlsx", sheet_name="category.rule"+prefix)
+brand_classifier.load_rules("../../../rules/rules.xlsx", "brand.rule"+prefix)
 end_time = time.time()
 # print('init data used:', (end_time-start_time))
 
@@ -124,9 +136,17 @@ def Foo2(i,process_where):
     return -1 if len(data) == 0 else data[-1]['newno']
 
 
-def Bar2(result):
+def Bar2(task_id):
     global pbar
     pbar.update(1)
+
+    progress_record, created = CleanBatchLog.objects.get_or_create(task_id=task_id)
+    msgs = progress_record.msg.split('\n')[0:len(progress_record.msg.split('\n'))-1] + ['清洗品牌1：{}/{}'.format(pbar.n, pbar.total)]
+    progress_record.msg = '\n'.join(msgs)
+    progress_record.process = int((pbar.n / pbar.total) * 100)
+
+    progress_record.save()
+
 
 def process():
     global table2, table3, pbar
@@ -174,12 +194,14 @@ def process():
     pbar = tqdm(total=task_count, desc="process", leave=True)
     for i in range(min_no, max_no, default_limit):
         # Foo(i)
-        pool.apply_async(func=Foo2, args=(i,process_where,), callback=Bar2)
+        pool.apply_async(func=Foo2, args=(i,process_where,), callback=lambda result: Bar2(args.task_id))
     pool.close()
     pool.join()
     pbar.close()
+
     end_time = time.time()
     print('process brand done used:', (end_time - start_time))
+
 
 def main(args):
     action = args.action
@@ -188,6 +210,7 @@ def main(args):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Params for ')
     parser.add_argument('--action', type=str, default='process', help='action')
+    parser.add_argument('--task_id', type=int, default=int(time.time()), help='任务id')
     parser.add_argument('--process_where', type=str, default='1', help='清洗范围') # 此参数为清洗范围，1为全量清洗
     parser.add_argument('--cpu_max', type=int, default=8, help='使用多少个cpu')
     parser.add_argument('--test', type=int, default=2, help='test') #1为限制记录数，非1为全体打标
