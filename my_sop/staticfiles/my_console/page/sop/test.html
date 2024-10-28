@@ -1,0 +1,595 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Layui</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="{% static 'dist/layui/css/layui.css' %}" media="all">
+  <link rel="stylesheet" href="{% static 'dist/CSS/sop.css' %}" media="all">
+  <link rel="stylesheet" href="{% static 'dist/CSS/codemirror.css' %}" media="all">
+</head>
+
+<style>
+  .container {
+    display: grid;
+    grid-template-columns: 25fr 0.05fr 8fr 0.2fr;
+    grid-gap: 10px;
+    width: 100%;
+    max-heigth: 100%;
+    transition: grid-template-columns 0.3s; /* 添加过渡效果 */
+  }
+
+  .container.columns-1-2 {
+    display: grid;
+    grid-template-columns: 1fr 0.05fr 80fr 1fr;
+    grid-gap: 10px;
+    width: 100%;
+    transition: grid-template-columns 0.3s;
+  }
+  .layui-form{
+  width: 100% /* 设置表单的宽度为容器的宽度 */
+    /* 其他样式属性 */
+  }
+  .layui-card {
+    width:400px;
+    max-width: 100%; /* 设置卡片的宽度为容器的宽度 */
+    max-heigth:350px;
+    transition: grid-template-columns 0.3s;
+    overflow: auto; /* 添加滚动条以处理内容溢出 */
+    /* 其他样式属性 */
+  }
+  #editorContainer {
+      max-height: 800px; /* 设置最大高度为 300 像素 */
+<!--      overflow: auto; /* 添加滚动条以处理内容溢出 */-->
+    }
+  #editor-bk {
+      max-height: 100%; /* 设置最大高度为 300 像素 */
+<!--      overflow: auto; /* 添加滚动条以处理内容溢出 */-->
+    }
+  #editor {
+    width: 100%; /* 设置编辑器初始宽度为100% */
+    height: 100%;
+    max-width: 100%;
+    transition: width 0.3s; /* 添加过渡效果 */
+<!--    overflow: auto; /* 添加滚动条以处理内容溢出 */-->
+  }
+
+ #sqlResult {
+    width: 100%; /* 设置编辑器初始宽度为100% */
+    max-height: 350px;
+    max-width: 100%;
+    transition: width 0.3s; /* 添加过渡效果 */
+    overflow: auto; /* 添加滚动条以处理内容溢出 */
+  }
+  .layui-card.maxwidth {
+    width:100%;
+    max-width: 100%;
+    /* 其他样式属性 */
+  }
+  .divider {
+    display: flex;
+    align-items: center;
+    position: relative;
+  }
+
+  .divider::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 100%;
+    background-color: #e6e6e6;
+  }
+
+  .divider-icon {
+    margin-left: -10px;
+    cursor: pointer;
+    transition: grid-template-columns 1s;
+  }
+  .divider-icon.rotated {
+    margin-left: -5px;
+    cursor: pointer;
+    transform: rotate(180deg); /* 图标旋转180度 */
+    transition: grid-template-columns 1s;
+  }
+  .save-button-container {
+    height: 25px; /* 设置保存按钮容器的高度 */
+  }
+
+  .save-button {
+    height: 100%; /* 设置保存按钮的高度为容器的高度 */
+  }
+</style>
+<body class="layui-layout-body">
+{{ eid|json_script:"eid" }}
+{{ view_sp|json_script:"view_sp" }}
+{{ tb|json_script:"tb" }}
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo">ND数据查询中心</div>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-left">
+      <li class="layui-nav-item"><a href="http://localhost:63342/my_sop/sop/templates/layuimini/index.html?_ijt=uukp1chk4i2rqdso1ud2rv4737" data-url="/Test01.aspx" data-id="11" data-title="选项a" class="site-demo-active" data-type="tabAdd">控制台</a></li>
+      <li class="layui-nav-item"><a href="#">商品管理</a></li>
+      <li class="layui-nav-item"><a href="#">用户</a></li>
+      <li class="layui-nav-item">
+        <a href="javascript:;">其它系统</a>
+        <dl class="layui-nav-child">
+          <dd><a href="#">邮件管理</a></dd>
+          <dd><a href="#">消息管理</a></dd>
+          <dd><a href="https://chat.sh.nint.com/" target="_blank" title="点击查看">ChatGpt接口1</a></dd>
+          <dd><a href="http://10.21.90.130:1002" target="_blank" title="点击查看">ChatGpt接口2</a></dd>
+        </dl>
+      </li>
+      <li class="layui-inline">
+          <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;选择数据源：</label>
+          <div class="layui-input-inline">
+            <select id="table" name="table" lay-verify="required" class="layui-bg-black" style="width:240px;height:30px;color: white;border-radius: 10px;">
+              {% for table in table_list %}
+                <option value="{{table}}">{{table}}</option>
+              {% endfor %}
+            </select>
+          </div>
+      </li>
+
+    </ul>
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="http://t.cn/RCzsdCq" class="layui-nav-img" />
+          用户姓名
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="#">基本资料</a></dd>
+          <dd><a href="#">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="#">退出</a></li>
+    </ul>
+  </div>
+
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"  class="toggle">默认展开</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="#" data-url="/Test01.aspx" data-id="11" data-title="选项a" class="site-demo-active" data-type="tabAdd">选项a</a>
+                        </dd>
+                        <dd>
+                            <a href="#" data-url="/Test01.aspx" data-id="22" data-title="选项b"  class="site-demo-active" data-type="tabAdd">选项b</a>
+                        </dd>
+                        <dd>
+                            <a href="#">跳转</a>
+                        </dd>
+                    </dl>
+                </li>
+          <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"  class="toggle">二级导航示例</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="#" data-url="/Test01.aspx" data-id="11" data-title="选项a" class="site-demo-active" data-type="tabAdd">子菜单</a>
+                        </dd>
+                        <dd>
+                            <a href="#" data-url="/Test01.aspx" data-id="22" data-title="选项b" class="site-demo-active" data-type="tabAdd">子菜单</a>
+                        </dd>
+                        <dd>
+                            <a href="#">跳转</a>
+                        </dd>
+                    </dl>
+                </li>
+        <li class="layui-nav-item"><a href="#" class="toggle">一级导航示例</a></li>
+        <li class="layui-nav-item"><a href="#">一级导航示例</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="layui-tab" lay-filter="demo" lay-allowclose="true" style="margin-left: 200px;">
+                <ul class="layui-tab-title">
+                </ul>
+                <ul class="rightmenu" style="display: none;position: absolute;">
+                    <li data-type="closethis">关闭当前</li>
+                    <li data-type="closeall">关闭所有</li>
+                </ul>
+            </div>
+
+ <%-- <div class="layui-body">
+    <!-- 表单及表格区域 -->
+    <div style="margin-bottom: 20px;"></div>
+    <div class="container">
+    <div>
+        <form class="layui-form" id="myForm" method="post" lay-filter="dataform">
+        {% csrf_token %}
+        <div class="layui-form-item" id= "top">
+            <label class="layui-form-label">t o p：</label>
+    <!--        <label id= "top_display" class="layui-form-label">收起</label>-->
+            <div class="layui-inline">
+                <div class="layui-input-inline" style="width:250px">
+                     <select id="group_by" name="group_by" lay-verify="required" placeholder={{group_by}}>
+                         <option name="group_by" value="取所有">取所有</option>
+                         <option name="group_by" value="取宝贝(交易属性)">取宝贝(交易属性)</option>
+                     </select>
+                </div>
+            </div>
+
+            <div class="layui-inline" >
+                  <label class="layui-form-label"> 取top数值：</label>
+                  <div class="layui-input-inline" style="width:210px">
+                      <input type="number" name="limit" class="layui-input" placeholder={{limit}} value={{limit}}>
+                  </div>
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">时间：</label>
+                <div class="layui-input-inline" style="width:80px">
+                    <select name="分时间" lay-verify="required">
+                        <option value="不分">不分</option>
+                        <option value="分年">分年</option>
+                        <option value="分季">分季</option>
+                        <option value="分月">分月</option>
+                    </select>
+                </div>
+              <div class="layui-inline" id="date">
+                <div class="layui-input-inline" style="width:240px">
+                  <input type="text" autocomplete="off" id="date1" name="date1" class="layui-input" placeholder={{date1}} value={{date1}}>
+                </div>
+                <div class="layui-form-mid"> - </div>
+                <div class="layui-input-inline" style="width:240px">
+                  <input type="text" autocomplete="off" id="date2" name="date2" class="layui-input" placeholder={{date2}} value={{date2}}>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">国内跨境：</label>
+                <div class="layui-input-inline">
+                    <select name="分国内跨境" lay-verify="required" value="不分国内跨境">
+                        <option value="不分国内跨境">不分国内跨境</option>
+                        <option value="分国内跨境">分国内跨境</option>
+                    </select>
+                </div>
+                <label class="layui-form-label">国内跨境：</label>
+                <div class="layui-input-inline">
+                    <input type="checkbox" name="国内跨境" title="国内" lay-skin="primary">
+                    <input type="checkbox" name="国内跨境" title="跨境" lay-skin="primary">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">平台：</label>
+                <div class="layui-input-inline">
+                    <select name="分平台" lay-verify="required" value="不分平台">
+                        <option value="不分">不分平台</option>
+                        <option value="分">分平台</option>
+                    </select>
+                </div>
+                <label class="layui-form-label">source：</label>
+                <div class="layui-inline">
+                    <input type="checkbox" name="source" title="dy" lay-skin="primary" value="dy">
+                    <input type="checkbox" name="source" title="jd" lay-skin="primary" value="jd">
+                    <input type="checkbox" name="source" title="tb" lay-skin="primary" value="tb">
+                    <input type="checkbox" name="source" title="tmall" lay-skin="primary" value="tmall">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">店铺类别：</label>
+                <div class="layui-input-inline">
+                    <select name="分店铺类别" lay-verify="required" value="不分平台">
+                        <option value="不分国内跨境">不分店铺类别</option>
+                        <option value="分国内跨境">分店铺类别</option>
+                    </select>
+                </div>
+                <label class="layui-form-label">店铺类别：</label>
+                <div class="layui-inline">
+                    <input type="checkbox" name="店铺类别" title="C2C" lay-skin="primary">
+                    <input type="checkbox" name="店铺类别" title="FSS" lay-skin="primary">
+                    <input type="checkbox" name="店铺类别" title="EKA" lay-skin="primary">
+                    <input type="checkbox" name="店铺类别" title="EKA_FSS" lay-skin="primary">
+                    <input type="checkbox" name="店铺类别" title="EDT" lay-skin="primary">
+                    <input type="checkbox" name="店铺类别" title="B2C Others" lay-skin="primary">
+                    <input type="checkbox" name="店铺类别" title="NULL" lay-skin="primary">
+                </div>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+            <label class="layui-form-label">店铺：</label>
+                <div class="layui-input-inline" >
+                  <select name="分店铺" lay-verify="required" value="不分">
+                      <option value="不分">不分店铺</option>
+                      <option value="分">分店铺</option>
+                  </select>
+                </div>
+                <div class="layui-input-inline" style="width:110px">
+                  <select name="是否店铺" lay-verify="required" value="是">
+                      <option value="是">是</option>
+                      <option value="不是">不是</option>
+                  </select>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label"></label>
+                    <div class="layui-input-inline" style="width:305px">
+                        <input type="text" name="sid" class="layui-input" placeholder="sid用英文逗号隔开" value={{sid}}>
+                    </div>
+                </div>
+                <button class="layui-btn layui-btn-primary" name="action" lay-submit lay-filter="submitBtn" value="获取表中店铺" data-id=1" data-id=1>获取表中店铺</button>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+            <label class="layui-form-label">品牌：</label>
+                <div class="layui-input-inline">
+                  <select name="分品牌" lay-verify="required" value="不分">
+                      <option value="不分">不分品牌</option>
+                      <option value="分">分品牌</option>
+                  </select>
+                </div>
+                <div class="layui-input-inline" style="width:110px">
+                  <select name="是否品牌" lay-verify="required" value="是">
+                      <option value="是">是</option>
+                      <option value="不是">不是</option>
+                  </select>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label"></label>
+                    <div class="layui-input-inline" style="width:305px">
+                        <input type="text" name="brand" class="layui-input" placeholder="alias_all_bid用英文逗号隔开" value={{brand}}>
+                    </div>
+                </div>
+                <button class="layui-btn layui-btn-primary" name="action" lay-submit lay-filter="submitBtn" value="获取表中品牌" data-id=1" data-id=1>获取表中品牌</button>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+            <label class="layui-form-label">类目：</label>
+                <div class="layui-input-inline">
+                  <select name="分类目" lay-verify="required" value="不分">
+                      <option value="不分">不分类目</option>
+                      <option value="分">分类目</option>
+                  </select>
+                </div>
+                <div class="layui-input-inline" style="width:110px">
+                  <select name="是否类目" lay-verify="required" value="是">
+                      <option value="是">是</option>
+                      <option value="不是">不是</option>
+                  </select>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label"></label>
+                    <div class="layui-input-inline" style="width:305px">
+                        <input type="text" name="brand" class="layui-input" placeholder="cid用英文逗号隔开" value={{brand}}>
+                    </div>
+                </div>
+                <button class="layui-btn layui-btn-primary" name="action" lay-submit lay-filter="submitBtn" value="获取表中类目" data-id=1" data-id=1>获取表中类目</button>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-inline">
+            <div class="layui-inline">
+            <label class="layui-form-label">关键词：</label>
+                <div class="layui-input-block" style="width:305px">
+                    <input type="text" name="name_words" class="layui-input" placeholder="名称包含关键词" value={{sid}}>
+                    <div class="layui-input-inline" style="width:70px"><br>
+                      <select name="and_or" lay-verify="required" value="且">
+                          <option value="且">且</option>
+                          <option value="或">或</option>
+                      </select><br>
+                    </div>
+                    <input type="text" name="p1_words" class="layui-input" placeholder="交易属性包含关键词" value={{sid}}>
+                </div>
+            </div>
+            <div class="layui-inline">
+                <div class="layui-input-block" style="width:305px">
+                    <input type="text" name="name_not_words" class="layui-input" placeholder="名称排除关键词" value={{sid}}>
+                    <div class="layui-input-inline" style="width:70px"><br>
+                      <select name="and_or" lay-verify="required" value="且">
+                          <option value="且">且</option>
+                          <option value="或">或</option>
+                      </select><br>
+                    </div>
+                    <input type="text" name="p1_not_words" class="layui-input" placeholder="交易属性排除关键词" value={{sid}}>
+                </div>
+            </div>
+    <!--        <div class="layui-inline">-->
+    <!--            <label class="layui-form-label" style="width:180px">备注:包含关键词中且用'+'连接,或用'|'连接（排除时|+同义）;竖线加号仅作分割,关键词中不可包含;或优先级高于且；例：1|2+3|4,可匹配包含13,14,23,24的宝贝</label>-->
+    <!--        </div>-->
+            <div class="layui-input-block" style="width:735px">
+                <br>
+                <input type="text" name="name_not_words" class="layui-input" placeholder="宝贝id(逗号分割)" value={{sid}}>
+            </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label" style="width:130px">备注:包含关键词中且用'+'连接,或用'|'连接（排除时|+同义）;竖线加号仅作分割,关键词中不可包含;或优先级高于且；例：1|2+3|4,可匹配包含13,14,23,24的宝贝</label>
+            </div>
+        </div>
+        {% for sp in view_sp %}
+        <div class="layui-form-item">
+            <div class="layui-inline">
+            <label class="layui-form-label">{{sp}}：</label>
+                <div class="layui-input-inline" >
+                  <select name="分{{sp}}" lay-verify="required" value="不分">
+                      <option value="不分">不分{{sp}}</option>
+                      <option value="分">分{{sp}}</option>
+                  </select>
+                </div>
+                <div class="layui-input-inline" style="width:110px">
+                  <select name="是否{{sp}}" lay-verify="required" value="是">
+                      <option value="是">是</option>
+                      <option value="不是">不是</option>
+                  </select>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label"></label>
+                    <div class="layui-input-inline" style="width:305px">
+                        <input type="text" name="{{sp}}" class="layui-input" placeholder="{{sp}}用英文逗号隔开" value="{{sp_value}}">
+                    </div>
+                </div>
+                <button class="layui-btn layui-btn-primary" name="action" lay-submit lay-filter="submitBtn" value="获取表中{{sp}}" data-id=1>获取表中{{sp}}</button>
+            </div>
+        </div>
+         {% endfor %}
+        <button id = "search0" class="layui-btn" name="action" lay-submit lay-filter="submitBtn" value="search" style="display: none"><i class="layui-icon">&#xe615;</i>查询</button>
+        <button id = "reset0" type="reset" class="layui-btn" style="display: none"><i class="layui-icon">&#xe640;</i>重置</button>
+    </form>
+    </div>
+    <div class="divider">
+        <span class="layui-icon layui-icon-left divider-icon" id="togglesqlBtn"></span>
+    </div>
+    <div>
+        <div class="layui-card" id="sqlreview">
+            <div class="layui-card-header">查询SQL:</div>
+            <div class="layui-card-body layui-text" >
+                <blockquote class="layui-elem-quote layui-quote-nm">
+                    <div class="save-button-container" align="right">
+                        <a class="save-button" lay-skin="switch" lay-event="copy-reviewsql" lay-id="undefined" id="copy-sqlreview">
+                            <i class="layui-icon layui-icon-print"></i>
+                            copy
+                        </a>
+                        <a class="save-button" lay-skin="switch" lay-event="save-reviewsql" lay-id="undefined">
+                            <i class="layui-icon layui-icon-ok-circle"></i>
+                            save
+                        </a>
+                    </div>
+                    <div id="sqlResult" width="300px"><pre><span class="layui-word-aux">本次查询SQL详情……</span></pre></div>
+                </blockquote>
+            </div>
+        </div>
+        <div class="layui-card" id="editorContainer">
+            <div class="layui-card-header">提交SQL:</div>
+            <div class="layui-card-body layui-text">
+                <blockquote class="layui-elem-quote layui-quote-nm" id="editor-bk">
+                    <div class="save-button-container" align="right">
+                        <a class="save-button" lay-skin="switch" lay-event="copy-editsql" lay-id="undefined" id="copy-sqledit">
+                            <i class="layui-icon layui-icon-print"></i>
+                            copy
+                        </a>
+                        <a class="save-button" lay-skin="switch" lay-event="save-reviewsql" lay-id="undefined">
+                            <i class="layui-icon layui-icon-ok-circle"></i>
+                            save
+                        </a>
+                    </div>
+                    <div id="editor"></div>
+                    <div class="run-button-container" align="center">
+                        <br>
+                        <a class="save-button layui-btn layui-btn-primary layui-btn-sm layui-border-blue" lay-skin="switch" lay-event="copy-editsql" lay-id="undefined" id="Run-sqledit">
+                            <i class="layui-icon layui-icon-play"></i>
+                            Run
+                        </a>
+                    </div>
+                </blockquote>
+            </div>
+        </div>
+    </div>
+    <div class="divider"></div>
+    </div>
+    <button id="toggleFormBtn" class="layui-btn layui-btn-primary"><i class="layui-icon layui-icon-up">隐藏筛选</i></button>
+    <button id="add_sp" name="action" value="set_view_sp" class="layui-btn layui-btn-primary"><i class="layui-icon">&#xe716;管理属性字段</i></button>
+<script type="text/html" id="demoTable">
+<div class="layui-btn-group demoTable">
+    <button class="layui-btn" data-type="search"><i class="layui-icon">&#xe615;</i>查询</button>
+    <button class="layui-btn" data-type="reset"><i class="layui-icon">&#xe640;</i>重置</button>
+    <button class="layui-btn" data-type="default" style="VISIBILITY: hidden"><i class="layui-icon">&#xe640;</i></button>
+    <button class="layui-btn" data-type="getCheckData">获取选中行数据</button>
+    <button class="layui-btn" data-type="getCheckLength">获取选中数目</button>
+    <button class="layui-btn" data-type="isAll">验证是否全选</button>
+</div>
+<div id="loadingContainer" class="loading" style="display:none">
+    <span></span>
+</div>
+</script>
+<table id="idTest" lay-filter="demo"></table>
+</div>
+<script type="text/html" id="barDemo">
+  <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="detail">查看</a>
+  <a class="layui-btn layui-btn-xs" lay-event="edit">编辑</a>
+  <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+</div>
+<!--  </div>&#45;&#45;%>-->
+
+<!--  <div class="layui-footer">-->
+<!--    &lt;!&ndash; 底部固定区域 &ndash;&gt;-->
+<!--    © layui.com - 底部固定区域-->
+<!--  </div>-->
+<!--</div>-->
+
+<script src="{% static 'dist/layui/layui.js' %}" charset="utf-8"></script>
+<!--<script src="{% static 'dist/layui/table.js' %}" charset="utf-8"></script>-->
+<script src="{% static 'dist/layui/form.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/codemirror.js' %}"></script>
+<script src="{% static 'dist/JS/sql.js' %}"></script>
+<script src="{% static 'dist/layui/index.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/clipboard.min.js' %}" charset="utf-8"></script>
+<!--<script>-->
+<!--   var copyButton = document.getElementById('copy-sqledit');-->
+<!--   var sqlEditor = document.getElementById('editor');-->
+<!--   var editor = CodeMirror(document.getElementById('editor'), {-->
+<!--      mode: 'text/x-sql', // 设置语法模式为 SQL-->
+<!--      theme: 'default', // 设置主题样式-->
+<!--      lineNumbers: true, // 显示行号-->
+<!--      indentUnit: 2, // 缩进单位为 2 个空格-->
+<!--      autofocus: true, // 自动聚焦-->
+<!--      viewportMargin: Infinity // 设置 viewportMargin 为 Infinity-->
+<!--    });-->
+<!--    // 设置编辑器高度随内容自动调整-->
+<!--    function resizeEditor() {-->
+<!--      editor.setSize(null, 'auto');-->
+<!--    }-->
+<!--    resizeEditor(); // 初始化时调整一次高度-->
+
+<!--    // 监听编辑器内容变化事件，实时调整高度-->
+<!--    editor.on('change', resizeEditor);-->
+<!--   copyButton.addEventListener('click', function(event) {-->
+<!--    　  layer.msg('复制成功');-->
+<!--        var copysqledit = sqlEditor.innerText;-->
+<!--        // 移除行号-->
+<!--        var lines = copysqledit.split("\n");-->
+<!--        var sqlList = [];-->
+<!--        for (var i = 0; i < lines.length; i++) {-->
+<!--          if(i%2!=0){-->
+<!--          sqlList.push(lines[i]);  // 移除行号-->
+<!--          }else{-->
+<!--          }-->
+<!--        };-->
+<!--        copysqledit = sqlList.join('@\\n@');-->
+<!--        console.log('复制的内容为：', copysqledit);-->
+<!--        var xhr = new XMLHttpRequest();-->
+<!--        var eid = JSON.parse(document.getElementById('eid').textContent);-->
+<!--        var tb = document.getElementById('table').value;-->
+<!--        var csrfToken = document.querySelector('input[name=csrfmiddlewaretoken]').value;-->
+<!--        xhr.open('POST', window.location.protocol + '//' + window.location.host + '/report/save/?eid=' + eid + '&tb=' + tb + '&sql=' + copysqledit, true);-->
+<!--        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');-->
+<!--        xhr.setRequestHeader('X-CSRFToken', csrfToken);-->
+<!--        xhr.setRequestHeader('data', {'eid':eid,'tb':tb,'sql':copysqledit});-->
+<!--        xhr.onreadystatechange = function() {-->
+<!--          if (xhr.readyState === 4) {-->
+<!--            if (JSON.parse(xhr.responseText).code === 200) {-->
+<!--              // 请求成功的处理逻辑-->
+<!--              layer.msg('保存成功');-->
+<!--              console.log('请求成功');-->
+<!--              console.log('返回的数据:', JSON.parse(xhr.responseText));-->
+<!--            } else {-->
+<!--              // 请求失败的处理逻辑-->
+<!--              layer.msg(xhr.responseText);-->
+<!--              console.log(JSON.parse(xhr.responseText));-->
+<!--            }-->
+<!--          }-->
+<!--        };-->
+<!--        xhr.send();-->
+<!--});-->
+
+<!--</script>-->
+</body>
+</html>

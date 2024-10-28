@@ -24,13 +24,18 @@ SECRET_KEY = '-f4qc84e++2gxp#z+c9nj0m6tpq654a+4%io5d9sjg!z@b8mba'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','www.zxy-console.cn','zxy-console.cn','nint.zxy-console.cn', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*','www.zxy-console.cn','sop.zxy-console.cn','brush.zxy-console.cn','zxy-console.cn','nint.zxy-console.cn', 'localhost', '127.0.0.1']
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_TRUSTED_ORIGINS = [
     'http://123.249.120.233:3002',
     'https://123.249.120.233:3002',
     'http://123.249.120.233:8009',
-    'https://123.249.120.233:8009'
+    'https://123.249.120.233:8009',
+    'http://117.72.45.190:3000',
+    'https://117.72.45.190:3000',
+    'https://brush.zxy-console.cn',
+    'https://sop.zxy-console.cn',
+    'http://localhost:8000', 
 ]
 
 APPEND_SLASH  = False
@@ -127,12 +132,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'my_sop',
-        # 'USER': 'zeng.xiangyan',
-        # 'PASSWORD': 'nint@2024',
-        # 'HOST': '123.249.120.233',
-        'USER': 'zxy',
-        'PASSWORD': '13639054279zxy',
-        'HOST': '10.21.90.130',
+        'USER': 'zeng.xiangyan',
+        'PASSWORD': 'nint@2024',
+        'HOST': '123.249.120.233',
+        # 'USER': 'zxy',
+        # 'PASSWORD': '13639054279zxy',
+        # 'HOST': '10.21.90.130',
         'PORT': '3306',
     }
 }
@@ -184,7 +189,11 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'

@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>首页二</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../lib/layui-v2.6.3/css/layui.css" media="all">
+    <link rel="stylesheet" href="../lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../css/public.css" media="all">
+    <style>
+        .layui-card {border:1px solid #f2f2f2;border-radius:5px;}
+        .icon {margin-right:10px;color:#1aa094;}
+        .icon-cray {color:#ffb800!important;}
+        .icon-blue {color:#1e9fff!important;}
+        .icon-tip {color:#ff5722!important;}
+        .layuimini-qiuck-module {text-align:center;margin-top: 10px}
+        .layuimini-qiuck-module a i {display:inline-block;width:100%;height:60px;line-height:60px;text-align:center;border-radius:2px;font-size:30px;background-color:#F8F8F8;color:#333;transition:all .3s;-webkit-transition:all .3s;}
+        .layuimini-qiuck-module a cite {position:relative;top:2px;display:block;color:#666;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;font-size:14px;}
+        .welcome-module {width:100%;height:210px;}
+        .panel {background-color:#fff;border:1px solid transparent;border-radius:3px;-webkit-box-shadow:0 1px 1px rgba(0,0,0,.05);box-shadow:0 1px 1px rgba(0,0,0,.05)}
+        .panel-body {padding:10px}
+        .panel-title {margin-top:0;margin-bottom:0;font-size:12px;color:inherit}
+        .label {display:inline;padding:.2em .6em .3em;font-size:75%;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;vertical-align:baseline;border-radius:.25em;margin-top: .3em;}
+        .layui-red {color:red}
+        .main_btn > p {height:40px;}
+        .layui-bg-number {background-color:#F8F8F8;}
+        .layuimini-notice:hover {background:#f6f6f6;}
+        .layuimini-notice {padding:7px 16px;clear:both;font-size:12px !important;cursor:pointer;position:relative;transition:background 0.2s ease-in-out;}
+        .layuimini-notice-title,.layuimini-notice-label {
+            padding-right: 70px !important;text-overflow:ellipsis!important;overflow:hidden!important;white-space:nowrap!important;}
+        .layuimini-notice-title {line-height:28px;font-size:14px;}
+        .layuimini-notice-extra {position:absolute;top:50%;margin-top:-8px;right:16px;display:inline-block;height:16px;color:#999;}
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md8">
+                <div class="layui-row layui-col-space15">
+<!--                    <div class="layui-col-md6">-->
+<!--                        <div class="layui-card">-->
+<!--                            <div class="layui-card-header"><i class="fa fa-shopping-cart icon icon-blue"></i>快捷入口</div>-->
+<!--                            <div class="layui-card-body">-->
+<!--                                <div class="welcome-module">-->
+<!--                                    <div class="layui-row layui-col-space100 layuimini-qiuck">-->
+<!--                                        <div class="layui-col-xs6 layuimini-qiuck-module">-->
+<!--                                            <a id="JD_logo_extend" href="https://www.jd.com/" target="_blank" aria-label="京东LOGO" style="display: flex; justify-content: center; align-items: center; width: 200px; height: 90px; background: rgb(246, 246, 246,1);">-->
+<!--                                                <img src="//img10.360buyimg.com/img/jfs/t1/192028/25/33459/5661/63fc2af2F1f6ae1b6/d0e4fdc2f126cbf5.png" style="height: 88px; width: 98%;background-color:red;">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+<!--                                        <div class="layui-col-xs6 layuimini-qiuck-module">-->
+<!--                                            <a id="TM_logo_extend" href="https://www.tmall.com/" target="_blank" aria-label="天猫LOGO" style="display: flex; justify-content: center; align-items: center; width: 200px; height: 90px; background: rgb(246, 246, 246,1);">-->
+<!--                                                <img src="//img.alicdn.com/imgextra/i2/O1CN01a69z6z1hJklCkBqOU_!!6000000004257-2-tps-174-106.png" style="width: 95px;" data-spm-anchor-id="875.7931836.0.i0.2ec74265S6ybRm">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+<!--                                        <div class="layui-col-xs6 layuimini-qiuck-module">-->
+<!--                                            <a id="TB_logo_extend" href="https://www.taobao.com/" target="_blank" aria-label="淘宝LOGO" style="display: flex; justify-content: center; align-items: center; width: 200px; height: 90px; background: rgb(246, 246, 246);">-->
+<!--                                                <img src="//gw.alicdn.com/imgextra/i2/O1CN019QwrV11EUAr12MFvu_!!6000000000354-2-tps-63-63.png" style="height: 75px;" data-spm-anchor-id="875.7931836.0.i0.2ec74265S6ybRm" alt="" data-spm-anchor-id="a1z3i.me4at31fb.0.i0">-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+<!--                                        <div class="layui-col-xs6 layuimini-qiuck-module">-->
+<!--                                            <a id="DY_logo_extend" href="https://www.douyin.com/" target="_blank" aria-label="抖音LOGO" style="display: flex; justify-content: center; align-items: center; width: 200px; height: 90px; background: rgb(246, 246, 246);">-->
+<!--                                                <img src="//p-pc-weboff.byteimg.com/tos-cn-i-9r5gewecjs/favicon.png" style="height: 75px;" >-->
+<!--                                            </a>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                    <div class="layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-header"><i class="fa fa-credit-card icon icon-blue"></i>快捷入口</div>
+                            <div class="layui-card-body">
+                                <div class="welcome-module">
+                                    <div class="layui-row layui-col-space10 layuimini-qiuck">
+                                        <div class="layui-col-xs2 layuimini-qiuck-module">
+                                            <a href="javascript:;" layuimini-content-href="https://sop.ecdataway.com/adminbi/sop" target="_blank" data-title="sop导数系统" data-icon="fa fa-paw">
+                                                <i class="fa fa-paw"></i>
+                                            </a>
+                                            <cite>sop导数系统</cite>
+                                        </div>
+                                        <div class="layui-col-xs2 layuimini-qiuck-module">
+                                            <a href="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdashboard%2Findex&id=174" target="_blank" data-title="clean系统" data-icon="fa fa-calendar">
+                                                <i class="fa fa-calendar"></i>
+                                            </a>
+                                            <cite>clean系统</cite>
+                                        </div>
+                                        <div class="layui-col-xs2 layuimini-qiuck-module">
+                                            <a href="https://cn2crm.nint.com/" target="_blank" data-title="crm渠道管理" data-icon="fa fa-gears" style="display: flex; justify-content: center; align-items: center; height: 60px; background: rgb(246, 246, 246);">
+                                                <img src="https://ts1.cn.mm.bing.net/th?id=ODLS.78e60a75-c6c3-4e11-bb84-caf54953442c&w=70&h=70&o=6&pid=112" style="height: 70px;">
+                                            </a>
+                                            <cite>crm渠道管理</cite>
+                                        </div>
+                                        <div class="layui-col-xs2 layuimini-qiuck-module">
+                                            <a href="javascript:;" layuimini-content-href="https://brush.ecdataway.com/" data-title="洗刷刷系统" data-icon="fa fa-gears" style="display: flex; justify-content: center; align-items: center; height: 60px; background: rgb(246, 246, 246);">
+                                                <img src="../images/brush_logo.jpg" style="height: 50px;">
+                                            </a>
+                                            <cite>洗刷刷</cite>
+                                        </div>
+                                        <div class="layui-col-xs2 layuimini-qiuck-module">
+                                            <a href="javascript:;" layuimini-content-href="https://research.nint.com/" data-title="kadis系统" data-icon="fa fa-inbox">
+                                                <i class="fa fa-inbox"></i>
+                                            </a>
+                                            <cite>kadis系统</cite>
+                                        </div>
+                                        <div class="layui-col-xs2 layuimini-qiuck-module">
+                                            <a href="javascript:;" layuimini-content-href="https://intranet.sh.nint.com/index.php" target="_blank" data-title="OA系统工时" data-icon="fa fa-dot-circle-o">
+                                                <i class="fa fa-dot-circle-o"></i>
+                                            </a>
+                                            <cite>OA系统工时</cite>
+                                        </div>
+                                        <div class="layui-col-xs2 layuimini-qiuck-module">
+                                            <a href="javascript:;" layuimini-content-href="https://aiapi.sh.nint.com/" target="_blank" style="display: flex; justify-content: center; align-items: center; height: 60px; background: rgb(246, 246, 246);" data-title="One_Api" data-icon="fa fa-dot-circle-o">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" align="center" width="2em" height="2em"><path d="M29.71,13.09A8.09,8.09,0,0,0,20.34,2.68a8.08,8.08,0,0,0-13.7,2.9A8.08,8.08,0,0,0,2.3,18.9,8,8,0,0,0,3,25.45a8.08,8.08,0,0,0,8.69,3.87,8,8,0,0,0,6,2.68,8.09,8.09,0,0,0,7.7-5.61,8,8,0,0,0,5.33-3.86A8.09,8.09,0,0,0,29.71,13.09Zm-12,16.82a6,6,0,0,1-3.84-1.39l.19-.11,6.37-3.68a1,1,0,0,0,.53-.91v-9l2.69,1.56a.08.08,0,0,1,.05.07v7.44A6,6,0,0,1,17.68,29.91ZM4.8,24.41a6,6,0,0,1-.71-4l.19.11,6.37,3.68a1,1,0,0,0,1,0l7.79-4.49V22.8a.09.09,0,0,1,0,.08L13,26.6A6,6,0,0,1,4.8,24.41ZM3.12,10.53A6,6,0,0,1,6.28,7.9v7.57a1,1,0,0,0,.51.9l7.75,4.47L11.85,22.4a.14.14,0,0,1-.09,0L5.32,18.68a6,6,0,0,1-2.2-8.18Zm22.13,5.14-7.78-4.52L20.16,9.6a.08.08,0,0,1,.09,0l6.44,3.72a6,6,0,0,1-.9,10.81V16.56A1.06,1.06,0,0,0,25.25,15.67Zm2.68-4-.19-.12-6.36-3.7a1,1,0,0,0-1.05,0l-7.78,4.49V9.2a.09.09,0,0,1,0-.09L19,5.4a6,6,0,0,1,8.91,6.21ZM11.08,17.15,8.38,15.6a.14.14,0,0,1-.05-.08V8.1a6,6,0,0,1,9.84-4.61L18,3.6,11.61,7.28a1,1,0,0,0-.53.91ZM12.54,14,16,12l3.47,2v4L16,20l-3.47-2Z" fill="currentColor"></path></svg>
+                                            </a>
+                                            <cite>One_Api</cite>
+                                        </div>
+                                        <div class="layui-col-xs2 layuimini-qiuck-module">
+                                            <a href="javascript:;" layuimini-content-href="https://project.nint.com/my/page" target="_blank" data-title="project工时" data-icon="fa fa-hourglass-end">
+                                                <i class="fa fa-hourglass-end"></i>
+                                            </a>
+                                            <cite>project工时</cite>
+                                        </div>
+<!--                                        <div class="layui-col-xs2 layuimini-qiuck-module">-->
+<!--                                            <a href="javascript:;" layuimini-content-href="https://chat.sh.nint.com/" style="display: flex; justify-content: center; align-items: center; height: 60px; background: rgb(246, 246, 246);" data-title="NINT_ChatGpt" data-icon="fa fa-dot-circle-o">-->
+<!--                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" align="center" width="2.5em" height="2.5em"><path d="M29.71,13.09A8.09,8.09,0,0,0,20.34,2.68a8.08,8.08,0,0,0-13.7,2.9A8.08,8.08,0,0,0,2.3,18.9,8,8,0,0,0,3,25.45a8.08,8.08,0,0,0,8.69,3.87,8,8,0,0,0,6,2.68,8.09,8.09,0,0,0,7.7-5.61,8,8,0,0,0,5.33-3.86A8.09,8.09,0,0,0,29.71,13.09Zm-12,16.82a6,6,0,0,1-3.84-1.39l.19-.11,6.37-3.68a1,1,0,0,0,.53-.91v-9l2.69,1.56a.08.08,0,0,1,.05.07v7.44A6,6,0,0,1,17.68,29.91ZM4.8,24.41a6,6,0,0,1-.71-4l.19.11,6.37,3.68a1,1,0,0,0,1,0l7.79-4.49V22.8a.09.09,0,0,1,0,.08L13,26.6A6,6,0,0,1,4.8,24.41ZM3.12,10.53A6,6,0,0,1,6.28,7.9v7.57a1,1,0,0,0,.51.9l7.75,4.47L11.85,22.4a.14.14,0,0,1-.09,0L5.32,18.68a6,6,0,0,1-2.2-8.18Zm22.13,5.14-7.78-4.52L20.16,9.6a.08.08,0,0,1,.09,0l6.44,3.72a6,6,0,0,1-.9,10.81V16.56A1.06,1.06,0,0,0,25.25,15.67Zm2.68-4-.19-.12-6.36-3.7a1,1,0,0,0-1.05,0l-7.78,4.49V9.2a.09.09,0,0,1,0-.09L19,5.4a6,6,0,0,1,8.91,6.21ZM11.08,17.15,8.38,15.6a.14.14,0,0,1-.05-.08V8.1a6,6,0,0,1,9.84-4.61L18,3.6,11.61,7.28a1,1,0,0,0-.53.91ZM12.54,14,16,12l3.47,2v4L16,20l-3.47-2Z" fill="currentColor"></path></svg>-->
+<!--                                            </a>-->
+<!--                                            <cite>NINT_ChatGpt</cite>-->
+<!--                                        </div>-->
+                                        <div class="layui-col-xs2 layuimini-qiuck-module">
+                                            <a href="https://chat2.sh.nint.com/chat" target="_blank" style="display: flex; justify-content: center; align-items: center; height: 60px; background: rgb(246, 246, 246);" data-title="NINT_ChatGpt" data-icon="fa fa-dot-circle-o">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true" align="center" width="2em" height="2em"><path d="M29.71,13.09A8.09,8.09,0,0,0,20.34,2.68a8.08,8.08,0,0,0-13.7,2.9A8.08,8.08,0,0,0,2.3,18.9,8,8,0,0,0,3,25.45a8.08,8.08,0,0,0,8.69,3.87,8,8,0,0,0,6,2.68,8.09,8.09,0,0,0,7.7-5.61,8,8,0,0,0,5.33-3.86A8.09,8.09,0,0,0,29.71,13.09Zm-12,16.82a6,6,0,0,1-3.84-1.39l.19-.11,6.37-3.68a1,1,0,0,0,.53-.91v-9l2.69,1.56a.08.08,0,0,1,.05.07v7.44A6,6,0,0,1,17.68,29.91ZM4.8,24.41a6,6,0,0,1-.71-4l.19.11,6.37,3.68a1,1,0,0,0,1,0l7.79-4.49V22.8a.09.09,0,0,1,0,.08L13,26.6A6,6,0,0,1,4.8,24.41ZM3.12,10.53A6,6,0,0,1,6.28,7.9v7.57a1,1,0,0,0,.51.9l7.75,4.47L11.85,22.4a.14.14,0,0,1-.09,0L5.32,18.68a6,6,0,0,1-2.2-8.18Zm22.13,5.14-7.78-4.52L20.16,9.6a.08.08,0,0,1,.09,0l6.44,3.72a6,6,0,0,1-.9,10.81V16.56A1.06,1.06,0,0,0,25.25,15.67Zm2.68-4-.19-.12-6.36-3.7a1,1,0,0,0-1.05,0l-7.78,4.49V9.2a.09.09,0,0,1,0-.09L19,5.4a6,6,0,0,1,8.91,6.21ZM11.08,17.15,8.38,15.6a.14.14,0,0,1-.05-.08V8.1a6,6,0,0,1,9.84-4.61L18,3.6,11.61,7.28a1,1,0,0,0-.53.91ZM12.54,14,16,12l3.47,2v4L16,20l-3.47-2Z" fill="currentColor"></path></svg>
+                                            </a>
+                                            <cite>ChatGpt</cite>
+                                        </div>
+                                        <div class="layui-col-xs2 layuimini-qiuck-module">
+                                            <a href="javascript:;" layuimini-content-href="https://tools.ecdataway.com/ali-data-analysis/index" target="_blank" style="display: flex; justify-content: center; align-items: center; height: 60px; background: rgb(246, 246, 246);" data-title="内部调查工具" data-icon="fa fa-search">
+                                                <img src="https://tools.ecdataway.com/image/logoicon.ico" style="height: 25px;">
+                                            </a>
+                                            <cite>内部调查工具</cite>
+                                        </div>
+                                        <div class="layui-col-xs2 layuimini-qiuck-module">
+                                            <a href="javascript:;" layuimini-content-href="https://chsql.ecdataway.com/user/blank" target="_blank" style="display: flex; justify-content: center; align-items: center; height: 60px; background: rgb(246, 246, 246);" data-title="万能报表" data-icon="fa fa-search">
+                                                 <img src="https://ts1.cn.mm.bing.net/th?id=ODLS.78e60a75-c6c3-4e11-bb84-caf54953442c&w=70&h=70&o=6&pid=112" style="height: 70px;">
+                                            </a>
+                                            <cite>chsql万能报表</cite>
+                                        </div>
+                                        <div class="layui-col-xs2 layuimini-qiuck-module">
+                                            <a href="javascript:;" layuimini-content-href="https://intelligence.nint.com/site/loginNew?site=ali" target="_blank" style="display: flex; justify-content: center; align-items: center; height: 60px; background: rgb(246, 246, 246);" data-title="情报通" data-icon="fa fa-search">
+                                                 <img class="brand_icon" style="height: 48px" src="https://intelligence.nint.com/img/qbt_logo.gif">
+                                            </a>
+                                            <cite>qbt对数</cite>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-header"><i class="fa fa-line-chart icon"></i>报表统计</div>
+                            <div class="layui-card-body">
+                                <div id="echarts-records" style="width: 100%;min-height:500px"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-col-md4">
+
+                <div class="layui-card">
+                    <div class="layui-card-header"><i class="fa fa-bullhorn icon icon-tip"></i>新上系统</div>
+                    <div class="layui-card-body layui-text">
+                        <div class="layuimini-notice">
+                            <div class="layuimini-notice-title">clickhouse-connect</div>
+                            <div class="layuimini-notice-extra">2023-09-11 10:06</div>
+                            <div class="layuimini-notice-content layui-hide">
+                                界面简洁清爽。<br>
+                                一个接口几行代码可直接连接clickhouse。<br>
+                                支持返回查询的sql，及自定义编辑sql。<br>
+                                支持sql语法支持，语法高亮等。<br>
+                                返回json格式数据<br>
+                                通过方法渲染layui表格<br>
+                            </div>
+                        </div>
+                        <div class="layuimini-notice">
+                            <div class="layuimini-notice-title">新增mysop 2.0</div>
+                            <div class="layuimini-notice-extra">2023-08-15 12:57</div>
+                            <div class="layuimini-notice-content layui-hide">
+                                界面与sop查询系统类似<br>
+                                通过表单设置的方式合成sql，以连接clickhouse驱动sql方式查询<br>
+                                支持默认字段查询，如品牌、cid、店铺等。<br>
+                                支持清洗字段查询，但必须是在清洗系统配置了清洗的字段，如“sp子品类”<br>
+                                支持不同的字段聚合<br>
+                            </div>
+                        </div>
+                        <div class="layuimini-notice">
+                            <div class="layuimini-notice-title">新增treetable插件和菜单管理样式</div>
+                            <div class="layuimini-notice-extra">2019-07-05 14:28</div>
+                            <div class="layuimini-notice-content layui-hide">
+                                界面足够简洁清爽。<br>
+                                一个接口几行代码而已直接初始化整个框架，无需复杂操作。<br>
+                                支持多tab，可以打开多窗口。<br>
+                                支持无限级菜单和对font-awesome图标库的完美支持。<br>
+                                失效以及报错菜单无法直接打开，并给出弹出层提示完美的线上用户体验。<br>
+                                url地址hash定位，可以清楚看到当前tab的地址信息。<br>
+                                刷新页面会保留当前的窗口，并且会定位当前窗口对应左侧菜单栏。<br>
+                                移动端的友好支持。<br>
+                            </div>
+                        </div>
+                        <div class="layuimini-notice">
+                            <div class="layuimini-notice-title">修改logo缩放问题</div>
+                            <div class="layuimini-notice-extra">2019-07-04 11:02</div>
+                            <div class="layuimini-notice-content layui-hide">
+                                界面足够简洁清爽。<br>
+                                一个接口几行代码而已直接初始化整个框架，无需复杂操作。<br>
+                                支持多tab，可以打开多窗口。<br>
+                                支持无限级菜单和对font-awesome图标库的完美支持。<br>
+                                失效以及报错菜单无法直接打开，并给出弹出层提示完美的线上用户体验。<br>
+                                url地址hash定位，可以清楚看到当前tab的地址信息。<br>
+                                刷新页面会保留当前的窗口，并且会定位当前窗口对应左侧菜单栏。<br>
+                                移动端的友好支持。<br>
+                            </div>
+                        </div>
+                        <div class="layuimini-notice">
+                            <div class="layuimini-notice-title">修复左侧菜单缩放tab无法移动</div>
+                            <div class="layuimini-notice-extra">2019-06-17 11:55</div>
+                            <div class="layuimini-notice-content layui-hide">
+                                界面足够简洁清爽。<br>
+                                一个接口几行代码而已直接初始化整个框架，无需复杂操作。<br>
+                                支持多tab，可以打开多窗口。<br>
+                                支持无限级菜单和对font-awesome图标库的完美支持。<br>
+                                失效以及报错菜单无法直接打开，并给出弹出层提示完美的线上用户体验。<br>
+                                url地址hash定位，可以清楚看到当前tab的地址信息。<br>
+                                刷新页面会保留当前的窗口，并且会定位当前窗口对应左侧菜单栏。<br>
+                                移动端的友好支持。<br>
+                            </div>
+                        </div>
+                        <div class="layuimini-notice">
+                            <div class="layuimini-notice-title">修复多模块菜单栏展开有问题</div>
+                            <div class="layuimini-notice-extra">2019-06-13 14:53</div>
+                            <div class="layuimini-notice-content layui-hide">
+                                界面足够简洁清爽。<br>
+                                一个接口几行代码而已直接初始化整个框架，无需复杂操作。<br>
+                                支持多tab，可以打开多窗口。<br>
+                                支持无限级菜单和对font-awesome图标库的完美支持。<br>
+                                失效以及报错菜单无法直接打开，并给出弹出层提示完美的线上用户体验。<br>
+                                url地址hash定位，可以清楚看到当前tab的地址信息。<br>
+                                刷新页面会保留当前的窗口，并且会定位当前窗口对应左侧菜单栏。<br>
+                                移动端的友好支持。<br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="layui-card">
+                    <div class="layui-card-header"><i class="fa fa-fire icon"></i>版本信息</div>
+                    <div class="layui-card-body layui-text">
+                        <table class="layui-table">
+                            <colgroup>
+                                <col width="100">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                            <tr>
+                                <td>框架名称</td>
+                                <td>
+                                    layuimini
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>当前版本</td>
+                                <td>v2.0.0</td>
+                            </tr>
+                            <tr>
+                                <td>主要特色</td>
+                                <td>多系统整合 / 响应式 / 清爽 / 极简</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="layui-card">
+                    <div class="layui-card-header"><i class="fa fa-paper-plane-o icon"></i>作者心语</div>
+                    <div class="layui-card-body layui-text layadmin-text">
+                        <p>个人工作台，方便工作</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script src="../lib/layui-v2.6.3/layui.js" charset="utf-8"></script>
+<script src="../js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['layer', 'miniTab','echarts'], function () {
+        var $ = layui.jquery,
+            layer = layui.layer,
+            miniTab = layui.miniTab,
+            echarts = layui.echarts;
+
+        miniTab.listen();
+
+        /**
+         * 查看新系统公告信息
+         **/
+        $('body').on('click', '.layuimini-notice', function () {
+            var title = $(this).children('.layuimini-notice-title').text(),
+                noticeTime = $(this).children('.layuimini-notice-extra').text(),
+                content = $(this).children('.layuimini-notice-content').html();
+            var html = '<div style="padding:15px 20px; text-align:justify; line-height: 22px;border-bottom:1px solid #e2e2e2;background-color: #2f4056;color: #ffffff">\n' +
+                '<div style="text-align: center;margin-bottom: 20px;font-weight: bold;border-bottom:1px solid #718fb5;padding-bottom: 5px"><h4 class="text-danger">' + title + '</h4></div>\n' +
+                '<div style="font-size: 12px">' + content + '</div>\n' +
+                '</div>\n';
+            parent.layer.open({
+                type: 1,
+                title: '新上系统'+'<span style="float: right;right: 1px;font-size: 12px;color: #b1b3b9;margin-top: 1px">'+noticeTime+'</span>',
+                area: '300px;',
+                shade: 0.8,
+                id: 'layuimini-notice',
+                btn: ['查看', '取消'],
+                btnAlign: 'c',
+                moveType: 1,
+                content:html,
+                success: function (layero) {
+                    var btn = layero.find('.layui-layer-btn');
+                    btn.find('.layui-layer-btn0').attr({
+                        href: 'https://gitee.com/zhongshaofa/layuimini',
+                        target: '_blank'
+                    });
+                }
+            });
+        });
+
+        /**
+         * 报表功能
+         */
+        var echartsRecords = echarts.init(document.getElementById('echarts-records'), 'walden');
+        var optionRecords = {
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data:['邮件营销','联盟广告','视频广告','直接访问','搜索引擎']
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: ['周一','周二','周三','周四','周五','周六','周日']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [
+                {
+                    name:'邮件营销',
+                    type:'line',
+                    data:[120, 132, 101, 134, 90, 230, 210]
+                },
+                {
+                    name:'联盟广告',
+                    type:'line',
+                    data:[220, 182, 191, 234, 290, 330, 310]
+                },
+                {
+                    name:'视频广告',
+                    type:'line',
+                    data:[150, 232, 201, 154, 190, 330, 410]
+                },
+                {
+                    name:'直接访问',
+                    type:'line',
+                    data:[320, 332, 301, 334, 390, 330, 320]
+                },
+                {
+                    name:'搜索引擎',
+                    type:'line',
+                    data:[820, 932, 901, 934, 1290, 1330, 1320]
+                }
+            ]
+        };
+        echartsRecords.setOption(optionRecords);
+
+        // echarts 窗口缩放自适应
+        window.onresize = function(){
+            echartsRecords.resize();
+        }
+
+    });
+</script>
+</body>
+</html>

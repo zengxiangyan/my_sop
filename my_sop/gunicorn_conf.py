@@ -1,5 +1,5 @@
 # 项目目录
-chdir = '/www/wwwroot/my_sop/my_sop'
+chdir = '/home/www/my_sop/my_sop'
 
 # 指定进程数
 workers = 4
@@ -14,10 +14,10 @@ user = 'www'
 worker_class = 'sync'
 
 # 绑定的ip与端口
-bind = '0.0.0.0:8009' 
+bind = '0.0.0.0:3000' 
 
 # 设置进程文件目录（用于停止服务和重启服务，请勿删除）
-pidfile = '/www/wwwroot/my_sop/my_sop/gunicorn.pid'
+pidfile = '/home/www/my_sop/my_sop/gunicorn.pid'
 
 # 设置访问日志和错误信息日志路径
 accesslog = '/www/wwwlogs/python/my_sop/gunicorn_acess.log'
