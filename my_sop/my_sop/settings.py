@@ -53,7 +53,7 @@ INSTALLED_APPS = [
 
 RQ_QUEUES = {
     'default': {
-        'HOST': 'localhost',
+        'HOST': '117.72.45.190',
         'PORT': 6379,
         'DB': 0,
         'DEFAULT_TIMEOUT': 108000,
@@ -62,8 +62,8 @@ RQ_QUEUES = {
 }
 
 # Celery configuration
-CELERY_BROKER_URL = 'redis://:nint@10.21.90.130:6379/0'
-CELERY_RESULT_BACKEND = 'redis://:nint@10.21.90.130:6379/0'
+CELERY_BROKER_URL = 'redis://:nint@117.72.45.190/0'
+CELERY_RESULT_BACKEND = 'redis://:nint@117.72.45.190/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
