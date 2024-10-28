@@ -5,17 +5,17 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from urllib.parse import urlencode
 
+
 class LoginRequiredMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
-        # print("检查用户登录状态：",request.user)
         # 检查用户是否已认证
         if not request.user.is_authenticated:
             login_url = reverse('admin:login')
-            if not request.path.startswith(login_url):
-                # 登录跳转
+            # 添加静态文件路径的排除规则
+            if not request.path.startswith(login_url) and not request.path.startswith('/static/'):
                 return redirect(f'{login_url}?{urlencode({"next": request.path})}')
 
         response = self.get_response(request)
