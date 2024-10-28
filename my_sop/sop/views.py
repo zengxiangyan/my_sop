@@ -164,7 +164,7 @@ def sql_search_new(request):
 
             # 确保数据列表不为空
             if sanitized_query:
-                cols = get_field(list(sanitized_query[0].keys()))
+                cols = list(sanitized_query[0].keys())
             else:
                 cols = []
 
