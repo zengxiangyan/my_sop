@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="{% static 'dist/JS/jquery.min.js' %}" charset="utf-8"></script>
+        <title></title>
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-table.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap.css' %}">
+<!--    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-datepicker3.standalone.min.css' %}">-->
+<!--    <link rel="stylesheet" href="{% static 'dist/CSS/jexcel.css' %}">-->
+<!--    <link rel="stylesheet" href="{% static 'dist/CSS/jsuites.css' %}">-->
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-datetimepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/models.css' %}">
+<!--    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap.css' %}">-->
+<!--    <link rel="stylesheet" href="{% static 'dist/CSS/jquery-ui.css' %}">-->
+<!--    <link rel="stylesheet" href="{% static 'dist/CSS/site.css' %}">-->
+    <link rel="stylesheet" href="{% static 'dist/CSS/multi.css' %}">
+     <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<script src="{% static 'dist/JS/multi.js' %}" charset="utf-8"></script>
+
+<body>
+    <div class="input-group" style="margin: 0 15px 3px;">
+                <span class="input-group-addon">机洗测试</span>
+
+                <div class="fs-wrap multiple" style="width: 160px; height: 34px; border-radius: 0px; margin-right: 10px; float: left;">
+                    <div class="fs-label-wrap" style="border-radius: 0px;">
+                        <div class="fs-label" title=" ===请选择=== "> ===机洗测试请选择=== </div>
+                        <span class="fs-arrow"></span>
+                    </div>
+                    <div class="fs-dropdown hidden">
+                        <div class="fs-search"><input type="search" placeholder="搜索" data-multiple-search="0"></div>
+                            <div class="fs-options" id="test_choose_hidden">
+                                <div class="fs-option" data-value="三级类目" data-index="0"><span class="fs-checkbox"><i></i></span>
+                                    <div class="fs-option-label">三级类目</div>
+                                </div>
+                                <div class="fs-option" data-value="四级类目" data-index="1"><span class="fs-checkbox"><i></i></span>
+                                    <div class="fs-option-label">四级类目</div>
+                                </div>
+                                <div class="fs-option" data-value="清洗品牌1" data-index="2"><span class="fs-checkbox"><i></i></span>
+                                    <div class="fs-option-label">清洗品牌1</div>
+                                </div>
+                                <div class="fs-option" data-value="清洗品牌2" data-index="3"><span class="fs-checkbox"><i></i></span>
+                                    <div class="fs-option-label">清洗品牌2</div>
+                                </div>
+
+                            </div>
+                            <div class="btnFixed">
+                                <button class="buttonDefault" id="selectAllBtn" type="button">全选</button>
+                                <button class="buttonDefault" id="clearAllBtn" type="button">清空</button>
+                            </div>
+                    </div>
+                    <select class="form-control visibility-hidden" id="test_choose" data-multi="multi" multiple="multiple" name="search_source[]" style="width: 120px;border-radius: 0;margin-right: 10px">
+                                <!-- <option value="-1">全部</option> -->
+                        <option  value="三级类目">三级类目</option>
+                        <option  value="四级类目">四级类目</option>
+                        <option  value="清洗品牌1">清洗品牌1</option>
+                        <option  value="清洗品牌2">清洗品牌2</option>
+                    </select>
+                </div>
+            </div>
+<script type="text/javascript">
+        $(document).ready(function () {
+            const initialLabel = '===机洗测试请选择===';
+
+            // 显示下拉菜单
+            $(".fs-label-wrap").on("click", function () {
+                $("#test_choose_hidden").toggleClass("hidden");
+            });
+
+            // 更新显示的标签
+            function updateLabel() {
+                let selectedOptions = [];
+                $('.fs-option .fs-checkbox i.selected').each(function () {
+                    selectedOptions.push($(this).closest('.fs-option').find('.fs-option-label').text());
+                });
+
+                if (selectedOptions.length > 0) {
+                    $('.fs-label').text(selectedOptions.join(', '));
+                } else {
+                    $('.fs-label').text(initialLabel);
+                }
+            }
+
+            // 监听选项状态改变事件
+            $(".fs-option").on("click", function () {
+                var checkbox = $(this).find('.fs-checkbox i');
+                checkbox.toggleClass('selected');
+                if (checkbox.hasClass('selected')) {
+                    // 选项被选中
+                    $(this).attr('data-selected', 'true');
+                } else {
+                    // 选项被取消选中
+                    $(this).attr('data-selected', 'false');
+                }
+
+                // 更新标签
+                updateLabel();
+
+                // 隐藏下拉菜单
+                $("#test_choose_hidden").addClass("hidden");
+            });
+
+            // 全选按钮事件
+            $('#selectAllBtn').on('click', function () {
+                $('.fs-option').each(function () {
+                    $(this).find('.fs-checkbox i').addClass('selected');
+                    $(this).attr('data-selected', 'true');
+                });
+                updateLabel();
+                $("#test_choose_hidden").addClass("hidden");
+            });
+
+            // 清空按钮事件
+            $('#clearAllBtn').on('click', function () {
+                $('.fs-option').each(function () {
+                    $(this).find('.fs-checkbox i').removeClass('selected');
+                    $(this).attr('data-selected', 'false');
+                });
+                updateLabel();
+                $(".fs-dropdown").addClass("hidden");
+            });
+        });
+    </script>
+</body>
+</html>

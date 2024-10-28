@@ -16,12 +16,14 @@ Including another URLconf
 
 from django.conf.urls import include
 from django.urls import path
-from django.contrib import admin
+from sop.admin import admin_site
+
+# from django.contrib import admin
 from sop import views
 
 urlpatterns = [
     path('sop_e/', include('sop.urls')),
-    path('admin/', admin.site.urls),
+    path('admin/', admin_site.urls),
     path('report/', include('report.urls')),
     path('', include('cleaning.urls')),
     path('django-rq/', include('django_rq.urls')),

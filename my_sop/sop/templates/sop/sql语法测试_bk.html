@@ -2,71 +2,371 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="{% static 'dist/layui/css/layui.css' %}" media="all">
-  <link rel="stylesheet" href="{% static 'dist/CSS/sop.css' %}" media="all">
-  <link rel="stylesheet" href="{% static 'dist/CSS/codemirror.css' %}" media="all">
-</head>
-<body>
-{% csrf_token %}
-  <div class="divider">
-        <span class="layui-icon layui-icon-left divider-icon" id="togglesqlBtn"></span>
-    </div>
-        <div class="layui-card" id="sqlreview" style="width:100%">
-            <div class="layui-card-header">查询SQL:</div>
-            <div class="layui-card-body layui-text" >
-                <blockquote class="layui-elem-quote layui-quote-nm">
-                    <div class="save-button-container" align="right">
-                        <a class="save-button" lay-skin="switch" lay-event="copy-reviewsql" lay-id="undefined" id="copy-sqlreview">
-                            <i class="layui-icon layui-icon-print"></i>
-                            copy
-                        </a>
-                        <a class="save-button" lay-skin="switch" lay-event="save-reviewsql" lay-id="undefined">
-                            <i class="layui-icon layui-icon-ok-circle"></i>
-                            save
-                        </a>
-                    </div>
-                    <div id="sqlResult" width="300px"><pre><span class="layui-word-aux">本次查询SQL详情……</span></pre></div>
-                </blockquote>
-            </div>
-        </div>
-        <div class="layui-card" id="editorContainer" style="width:100%">
-            <div class="layui-card-header">提交SQL:</div>
-            <div class="layui-card-body layui-text">
-                <blockquote class="layui-elem-quote layui-quote-nm" id="editor-bk">
-                    <div class="save-button-container" align="right">
-                        <a class="save-button" lay-skin="switch" lay-event="copy-editsql" lay-id="undefined" id="copy-sqledit">
-                            <i class="layui-icon layui-icon-print"></i>
-                            copy
-                        </a>
-                        <a class="save-button" lay-skin="switch" lay-event="save-reviewsql" lay-id="undefined">
-                            <i class="layui-icon layui-icon-ok-circle"></i>
-                            save
-                        </a>
-                    </div>
-                    <div id="editor"></div>
-                    <div class="run-button-container" align="center">
-                        <br>
-                        <a type="submit" lay-submit lay-filter="data-search-btn" class="save-button layui-btn layui-btn-primary layui-btn-sm layui-border-blue" lay-skin="switch" lay-event="copy-editsql" lay-id="undefined" id="Run-sqledit">
-                            <i class="layui-icon layui-icon-play"></i>
-                            Run
-                        </a>
-                        <br><br>
-                    </div>
-                </blockquote>
-            </div>
+    <link rel="stylesheet" href="{% static 'dist/layui/css/layui.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'dist/CSS/sop.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'dist/CSS/codemirror.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-select.min.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-table.min.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'dist/CSS/style.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/fonts/font-glyphicons.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-datetimepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap.custom.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'dist/CSS/common.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/fonts/font-awesome.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/fonts/fontawesome-webfont.woff2' %}">
+    <link rel="stylesheet" href="{% static 'dist/fonts/fontawesome-webfont.woff' %}">
+    <link rel="stylesheet" href="{% static 'dist/fonts/fontawesome-webfont.ttf' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/jquery-ui.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/public.css' %}">
 
-            <script type="text/html" id="toolbarDemo" >
-                <div class="layui-btn-container right-toolbar">
-                    <button class="layui-btn layui-btn-sm" lay-event="print"><i class="layui-icon layui-icon-file"></i>保存</button>
-                    <button class="layui-btn layui-btn-sm" lay-event="exportAll"><i class="layui-icon layui-icon-download-circle"></i>下载</button>
+</head>
+
+<style type="text/css">
+    .container {
+        display: grid;
+        grid-template-columns: 0fr 50fr 0.2fr 10fr;
+        grid-gap: 10px;
+        width: 100%;
+        height: 100%;
+        transition: grid-template-columns 0.3s; /* 添加过渡效果 */
+      }
+
+    .columns-1-2 {
+        display: grid;
+        grid-template-columns: 0.4fr 48fr 0.15fr;
+        grid-gap: 10px;
+        width: 100%;
+        max-height: 100%;
+        transition: grid-template-columns 0.3s;
+     }
+
+
+    #editor {
+        max-width: 100%; /* 最大宽度为100% */
+        overflow-x: auto; /* 超出时显示水平滚动条 */
+    }
+
+    #editorContainer {
+        width: 100%;
+    }
+
+    .layui-text a:not(.layui-btn) {
+        color: #5A738E;
+    }
+
+    .body {
+        color: #73879C;
+        font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 1.471;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+
+    #showtable,
+    .bootstrap-table .fixed-table-container .fixed-table-body {
+        overflow: inherit;
+        color: #73879C;
+    }
+
+    .img-wrap {
+        position: relative;
+        overflow: initial;
+    }
+
+    .img-hover.active {
+        position: relative;
+        transform: scale(15);
+        z-index: 4;
+        background: #fff;
+        padding: 1px;
+        left: -250px;
+    }
+
+    .table-hover tbody tr td {
+        word-break: break-word;
+    }
+
+    .table-bordered tr > th {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+
+    #button_float {
+        position: fixed;
+        left: 0;
+        bottom: 0px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #fff;
+        padding: 10px;
+        border-radius: 1px;
+        width: 230px;
+    }
+
+    .btn2 {
+        width: 100%;
+        background: #efefef;
+    }
+
+    .factory {
+        display: none;
+    }
+
+    .my_alert {
+        color: #a94442;
+        background-color: #e9b6b0;
+        border-color: #ebccd1;
+        padding: 8px;
+        margin-bottom: 1px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+    }
+
+    .btn-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: calc(100vh - 194px);
+        background: #fff;
+        padding: 10px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        z-index: 2;
+        width: 230px;
+    }
+
+    .modal-dialog {
+        width: 800px;
+        margin: 30px auto;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+
+    .divider::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 1px;
+        height: 100%;
+        background-color: #e6e6e6;
+    }
+
+    .divider-icon {
+        margin-left: -10px;
+        cursor: pointer;
+        transition: grid-template-columns 1s;
+    }
+
+    .divider-icon.rotated {
+        margin-left: -5px;
+        cursor: pointer;
+        transform: rotate(180deg); /* 图标旋转180度 */
+        transition: grid-template-columns 1s;
+    }
+
+    .layui-form-offswitch {align:center; height:23px; margin-top:0px; padding:0px 6px; cursor:pointer;}
+
+    .layui-form-onswitch {align:center; height:23px; margin-top:0px; padding:0px 6px; cursor:pointer;}
+
+
+    .layui-card {border:1px solid #f2f2f2;border-radius:5px;overflow: visible;}
+    .icon {margin-right:10px;color:#1aa094;}
+    .icon-cray {color:#ffb800!important;}
+    .icon-blue {color:#1e9fff!important;}
+    .icon-tip {color:#ff5722!important;}
+    .layuimini-qiuck-module {text-align:center;margin-top: 10px}
+    .layuimini-qiuck-module a i {display:inline-block;width:100%;height:60px;line-height:60px;text-align:center;border-radius:2px;font-size:30px;background-color:#F8F8F8;color:#333;transition:all .3s;-webkit-transition:all .3s;}
+    .layuimini-qiuck-module a cite {position:relative;top:2px;display:block;color:#666;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;font-size:14px;}
+    .welcome-module {width:100%;height:210px;}
+    .panel {background-color:#fff;border:1px solid transparent;border-radius:3px;-webkit-box-shadow:0 1px 1px rgba(0,0,0,.05);box-shadow:0 1px 1px rgba(0,0,0,.05)}
+    .panel-body {padding:10px}
+    .panel-title {margin-top:0;margin-bottom:0;font-size:12px;color:inherit}
+    .label {display:inline;padding:.2em .6em .3em;font-size:75%;font-weight:700;line-height:1;color:#fff;text-align:center;white-space:nowrap;vertical-align:baseline;border-radius:.25em;margin-top: .3em;}
+    .layui-red {color:red}
+    .main_btn > p {height:40px;}
+    .layui-bg-number {background-color:#F8F8F8;}
+    .layuimini-notice:hover {background:#f6f6f6;}
+    .layuimini-notice {padding:7px 16px;clear:both;font-size:12px !important;cursor:pointer;position:relative;transition:background 0.2s ease-in-out;}
+    .layuimini-notice-title,.layuimini-notice-label {
+        padding-right: 70px !important;text-overflow:ellipsis!important;overflow:hidden!important;white-space:nowrap!important;}
+    .layuimini-notice-title {line-height:28px;font-size:14px;}
+    .layuimini-notice-extra {position:absolute;top:50%;margin-top:-8px;right:16px;display:inline-block;height:16px;color:#999;}
+</style>
+<body class="body">
+    <div class="columns-1-2" id="header" style="margin-bottom: 0px; clear: both; height:55px;">
+        <div></div>
+        <div class="layui-card">
+            <form class="layui-form" action="../sql_search/" method="post">
+                <div class="layui-form-item" style="margin-bottom: 0px; clear: both; margin-top: 5px;margin-left: 0px;">
+                    <div class="layui-inline" style="width:20%;">
+                        <label class="layui-form-label" style="width:35%">Database</label>
+                        <div class="layui-input-inline" style="width:60%;">
+                            <select name="type" id="db" lay-verify="required" placeholder="请选择">
+                                <option value="chsop">chsop</option>-->
+                                <option value="cleaner">cleaner</option>
+                                <option value="oulaiya">oulaiya</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline" id="user-tools" style="width:75%; text-align:right;"><i class="fa fa-bullhorn icon icon-tip"></i> 欢迎，<strong>{{user}}</strong>.
+                        <a href="/">查看站点</a> /
+                        <a href="/admin/password_change/">修改密码</a> /
+                        <form action="../../admin/logout/" method="post"><button type="submit" class="btn btn-link logout">注销</button>{% csrf_token %}</form>
+                    </div>
+                    <div id="user" style="display:none">{{user}}</div>
                 </div>
-            </script>
-            <div class="layui-hide" id="currentTableId" lay-filter="demo"></div>
+            </form>
+         </div>
+      </div>
+    <br>
+    <div class="container" id="rule">
+        <div class="card-container">
+            <div class="layui-card" id="sqlreview" style="width:100%,height:300px">
+                <div class="layui-card-header" style="color:#73879C">查询SQL:</div>
+                <div class="layui-card-body layui-text">
+                    <blockquote class="layui-elem-quote layui-quote-nm">
+                        <div class="save-button-container" align="right">
+                            <a class="save-button" lay-skin="switch" lay-event="copy-reviewsql" lay-id="undefined" id="copy-sqlreview">
+                                <i class="layui-icon layui-icon-print"></i>
+                                copy
+                            </a>
+                            <a class="save-button" lay-skin="switch" lay-event="save-reviewsql" lay-id="undefined">
+                                <i class="layui-icon layui-icon-ok-circle"></i>
+                                save
+                            </a>
+                        </div>
+                        <div id="sqlResult" width="300px"><pre><span class="layui-word-aux">本次查询SQL详情……</span></pre></div>
+                    </blockquote>
+                </div>
+            </div>
+            <div class="layui-card" id="editorContainer" style="width:100%">
+                <div class="layui-card-header" style="color:#73879C">提交SQL:</div>
+                <input id="title" style="display:none" value="{{user}}">
+                <div class="layui-card-body layui-text">
+                    <blockquote class="layui-elem-quote layui-quote-nm" id="editor-bk">
+                        <div class="save-button-container" align="right">
+                            <a class="save-button" lay-skin="switch" lay-event="copy-editsql" lay-id="undefined" id="copy-sqledit">
+                                <i class="layui-icon layui-icon-print"></i>
+                                copy
+                            </a>
+                            <a class="save-button" lay-skin="switch" lay-event="save-reviewsql" lay-id="undefined">
+                                <i class="layui-icon layui-icon-ok-circle"></i>
+                                save
+                            </a>
+                        </div>
+                        <div id="editor"></div>
+                    </blockquote>
+                </div>
+                <div class="run-button-container" align="center">
+                    <br>
+                    <a type="submit" lay-submit lay-filter="data-search-btn" class="layui-btn layui-btn-primary layui-btn-sm layui-border-blue" lay-skin="switch" lay-event="copy-editsql" lay-id="undefined" id="Run-sqledit">
+                        <i class="layui-icon layui-icon-play"></i>
+                        Run
+                    </a>
+                    &nbsp;
+                    <a id="toggleSwitch" class="layui-unselect layui-form-switch layui-form-offswitch" lay-skin="switch">
+                        <em id="Ai_help">否</em>
+                        <i></i>
+                    </a>
+                    &nbsp;(启用AI辅助)
+                    <br><br>
+                </div>
+            </div>
         </div>
+        <div class="divider" id="divider">
+            <span class="layui-icon layui-icon-left divider-icon" id="togglesqlBtn"></span>
+        </div>
+        <div class="layui-card" id="tip">
+            <div class="layui-card-header"><i class="fa fa-history icon"></i>历史记录</div>
+            <div class="layui-card-body layui-text">
+                {% for query in queries %}
+                    <div class="layuimini-notice" style="color:#73879C">
+                        <div class="layuimini-notice-title">{{query.title}}</div>
+                        <div class="layuimini-notice-extra">{{query.update_time}}</div>
+                        <input id="dbquery" style="display:none" value="{{query.db}}">
+                        <textarea id="sqlquery" style="display:none">{{query.sql_query}}</textarea>
+                        <div class="layuimini-notice-content layui-hide">
+                            {{query.comment}}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="layuimini-notice">
+                        <div class="layuimini-notice-title">你还没有保存过！！！</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="columns-1-2" style="height: 90px">
+        <div></div>
+        <div class="layui-card" id="tool">
+            <div style="text-align:right" class="layui-card-body layui-text">
+                <button id="download" onclick="down()" class="btn btn-success" style="display: none" value="">下载</button>
+                <button id="save" data-toggle="modal" data-target="#recordname" class="btn btn-info"  style="display: none" >保存</button>
+            </div>
+        </div>
+    </div>
+    <div class="columns-1-2">
+        <div></div>
+        <div class="layui-card" id="tb" style="width:100%">
+            <div class="layui-card-body layui-text">
+                <div id="load">
+                </div>
+                <div style="margin-bottom: 150px;">
+                    <table id="showtable">
+                    </table>
+                </div>
+
+                <div class="modal fade" id="recordname" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="myModalLabel">请输入记录名</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="input-group">
+                                    <span class="input-group-addon">title:</span>
+                                    <input type="text" class="form-control" id="record_name"/>
+                                </div>
+                                <br>
+                                <div class="input-group">
+                                    <span class="input-group-addon">comments:</span>
+                                    <input type="text" class="form-control" id="comments"/>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" onclick="commit()">提交</button>
+                                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="{% static 'dist/JS/jquery.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/bootstrap.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/bootstrap-table.min.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/tableexport.min.js' %}" charset="utf-8"></script>
 <script src="{% static 'dist/layui/layui.js' %}" charset="utf-8"></script>
 <script src="{% static 'dist/JS/codemirror.js' %}"></script>
 <script src="{% static 'dist/JS/sql.js' %}"></script>
-<script src="{% static 'dist/layui/sql_index.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/layui/sql_index_bk.js' %}" charset="utf-8"></script>
+
 </body>
 </html>
 

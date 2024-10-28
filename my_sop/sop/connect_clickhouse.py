@@ -357,30 +357,37 @@ async def async_connect(n,sql):
     finally:
         cursor.close()
         session.close()
-def connect(n,sql,as_dict=True):
-    conf = [{
-        "user": "admin",
-        "password": "7kvx4GTg",
-        "server_host": "127.0.0.1",
-        "port": "30192",
-        "db": "sop_e"
-    },
-        {
-            "user": "chenziping",
-            "password": "iAFDqM6f",
-            "server_host": "10.21.90.15",
-            "port": "10081",
-            "db": "sop"
-        }]
-    try:
-        chsop = app.connect_clickhouse('chsop')
-        res = chsop.query_all(sql,as_dict=as_dict)
-    except Exception as e:
-        chsop = app.connect_clickhouse('chsop')
-        res = chsop.execute(sql)
-        return res
-    except Exception as res:
-        print(res)
+def connect(db,sql,as_dict=True):
+    if db in ['cleaner','brush','channel','dy2','jd']:
+        try:
+            db = app.connect_db('default')
+            res = db.query_all(sql, as_dict=as_dict)
+        except Exception as e:
+            db = app.connect_db('default')
+            res = db.execute(sql)
+            return res
+        except Exception as res:
+            print(res)
+    elif db in ['oulaiya','wq']:
+        try:
+            db = app.connect_db('oulaiya')
+            res = db.query_all(sql, as_dict=as_dict)
+        except Exception as e:
+            db = app.connect_db('oulaiya')
+            res = db.execute(sql)
+            return res
+        except Exception as res:
+            print(res)
+    else:
+        try:
+            chsop = app.connect_clickhouse(db)
+            res = chsop.query_all(sql,as_dict=as_dict)
+        except Exception as e:
+            chsop = app.connect_clickhouse(db)
+            res = chsop.execute(sql)
+            return res
+        except Exception as res:
+            print(res)
     return res
 
 def source(pt):

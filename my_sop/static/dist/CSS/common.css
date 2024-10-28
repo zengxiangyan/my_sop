@@ -1,0 +1,120 @@
+.keep-line ,.ui-multiselect-header{
+    white-space: nowrap;
+    word-break: keep-all;
+}
+select.aj_select {
+    padding: 0;
+}
+select.aj_select option {
+  color: #666;
+  padding: 4px 10px;
+  text-shadow: none;
+}
+.my-form-set {
+  background: #fcfcfc ;
+ /* background: -moz-linear-gradient(top, #fefefe, #fcfcfc);
+  background: -webkit-linear-gradient(top,#fefefe,#fcfcfc);
+  background: -o-linear-gradient(top, #fefefe, #fcfcfc);
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient (GradientType=0, startColorstr=#fefefe, endColorstr=#fcfcfc)";
+*/
+  border: 1px solid #d3d3d3;
+  padding: 20px 30px;
+  border-radius: 4px;
+  box-shadow:0 2px 3px rgba(0, 0, 0, 0.15);
+  margin-bottom: 10px;
+}
+
+#popup_container {
+    background: #fff none repeat scroll 0 0;
+    border: 3px solid #999;
+    border-radius: 3px;
+    box-shadow: 0 0 3px #ccc;
+    color: #000;
+    font-family: Arial,sans-serif;
+    font-size: 12px;
+    max-width: 600px;
+    min-width: 300px;
+    width: 360px;
+}
+#popup_title {
+    background: #ccc url("../imagesLocal/table-th-bg.jpg") repeat-x scroll center top;
+    border-bottom: 1px solid #999;
+    color: #fff;
+    cursor: default;
+    font-size: 14px;
+    font-weight: bold;
+    height: 30px;
+    line-height: 30px;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+#popup_content {
+    margin: 0;
+    padding: 1em 1.75em;
+    text-align: center;
+}
+#popup_panel {
+    margin: 1em 0 0 1em;
+    text-align: center;
+}
+#popup_prompt {
+    margin: 0.5em 0;
+}
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+    background-image: linear-gradient(to right bottom, rgba(0, 134, 244, 0.7) 0%, rgba(0, 106, 193, 0.7) 100%);
+    background-repeat: repeat-x;
+}
+.aj_middleNav_tabGroup{
+    margin-top: 10px;
+}
+.ac_loading {
+    background: white url("indicator.gif") no-repeat scroll right center;
+}
+#loading-popup {
+    z-index: 1060;
+}
+#loading-popup .modal-dialog {
+    height: 100%;
+    margin: 0;
+    width: 100%;
+}
+#loading-popup .modal-dialog img {
+    left: 50%;
+    margin: -64px 0 0 -44px;
+    position: fixed;
+    top: 40%;
+    z-index: 1060;
+}
+#loading-popup .modal-dialog .text {
+    left: 50%;
+    margin: -64px 0 0 -44px;
+    position: fixed;
+    top: 40%;
+    z-index: 1060;
+}
+
+.breadcrumb > li + li::before {
+    content: "=>";
+}
+#trend-popup .modal-long{
+  height: 96%;
+    overflow-y: auto;
+}
+.table > tbody > tr.clicked {
+  background-color: rgb(153, 255, 153);
+}
+table.table th.header, table.table .headerSortDown, table.table .headerSortUp {
+  background-position: right center;
+  background-repeat: no-repeat;
+  padding-right: 16px;
+}
+table.table th.header {
+    background-image: url("../imagesLocal/bg.gif");
+}
+table.table th.headerSortDown {
+    background-image: url("../imagesLocal/desc.gif");
+}
+table.table th.headerSortUp {
+    background-image: url("../imagesLocal/asc.gif");
+}

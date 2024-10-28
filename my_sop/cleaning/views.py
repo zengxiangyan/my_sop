@@ -4,15 +4,15 @@ import ast
 from django.shortcuts import render,get_object_or_404
 from openpyxl import load_workbook
 from io import BytesIO
-from .models import CleanBatchLog,CleanBatch
+from .models import CleanBatchLog,CleanBatch,CleanCron
 from sop import connect_clickhouse
-from django.http import HttpResponseRedirect,JsonResponse
-from django.db.models import Max
+from django.http import JsonResponse,FileResponse
+# from django.db.models import Max
 from django.views.decorators.csrf import csrf_exempt
-from django.http import FileResponse
-from django.conf import settings
+# from django.conf import settings
 import os
-from django.core.paginator import Paginator
+import redis
+# from django.core.paginator import Paginator
 import mimetypes
 from urllib.parse import quote
 import pandas as pd
@@ -22,11 +22,10 @@ import sys
 import django_rq
 from django.db import connection
 from django.db.models import Q
-# from .check_fss import main,get_task_id
 from os.path import abspath, join, dirname
 sys.path.insert(0, join(abspath(dirname(__file__)), ''))
-import application as app
-import models.entity_manager as entity_manager
+# import application as app
+# import models.entity_manager as entity_manager
 
 def dynamic_import(batch_id):
     try:
@@ -149,63 +148,288 @@ def clean_statu(request):
 
     return JsonResponse({"items": res})
 
-def easy_clean(request):
+def clean_task(request,id=0):
+    def format_time(t):
+        if not t:
+            return ''
+
+        h = int(t / 3600)
+        t = t % 3600
+        m = int(t / 60)
+        s = int(t % 60)
+        return '{}{}{}{}{}s'.format(h, 'h' if h > 0 else '', m, 'm' if m > 0 else '', s)
     if request.method == 'POST':
-        print(request.POST)
-        data = request.POST
-        user = data.get('r')
-        batch_id = data.get('batchId')
-        batch_name = data.get('batchName')
-        s_date = data.get('smonth').replace('/', '-')[0:10]
-        e_date = data.get('emonth').replace('/', '-')[0:10]
-        real_batchName = CleanBatch.objects.get(batch_id=batch_id).name
-        task_id = int(datetime.datetime.now().timestamp())
-        if real_batchName!=batch_name:
-            js = {
-                "code": 0,
-                "errmsg": "Batch ID: {batchId} \n正确名称为: {real_batchName} \n输入为: {batchName}\n"
-                .format(batchId=batch_id, real_batchName=real_batchName, batchName=batch_name)
-            }
-            return JsonResponse(js)
-        print("清洗状态检查：",len(CleanBatchLog.objects.filter(Q(batch_id=batch_id) & ~Q(status__in= ['complete','error']))))
-        if len(CleanBatchLog.objects.filter(Q(batch_id=batch_id) & ~Q(status__in= ['complete','error']))):
-            js = {
-                "code": 0,
-                "errmsg": "batchId{}正在清洗中，请不要重复添加".format(batch_id)
-            }
-            return JsonResponse(js)
-        params = json.dumps({
-            "w": f"1 AND (date >= '{s_date}') AND (date < '{e_date}')",
-            "s": s_date,
-            "e": e_date
-        })
-        CleanBatchLog.objects.create(batch_id=get_object_or_404(CleanBatch, batch_id=batch_id),eid=10716,type='clean',task_id=task_id,status='process',
-                process='清洗中',params=params)
-        task_id = str(int(time.time()))
-        queue = django_rq.get_queue('default')
-        module = dynamic_import(batch_id)
-        if module:
-            print("batchId{}模型导入".format(batch_id))
-            job = queue.enqueue(module.cleaning, task_id)
-            js = {
-                "code": 200,
-                "msg": "batchId{}清洗任务添加成功".format(batch_id)
-            }
-            return JsonResponse(js)
-        js = {
-            "code": 0,
-            "msg": "batchId{}清洗清洗模型异常".format(batch_id)
-        }
-        return JsonResponse(js)
 
+        try:
+            batches = CleanBatch.objects.values('batch_id', 'name')
+            bna = {batch['batch_id']: batch['name'] for batch in batches}
 
-        # js = {
-        #     "code": 400,
-        #     "msg": "参数错误：eid & table & s_date & e_date 不允许为空"
-        # }
-        # return JsonResponse(js)
+            sql = '''
+                    SELECT count(DISTINCT server_ip), sum(unix_timestamp(completedTime)-unix_timestamp(beginTime))/count(*)
+                    FROM clean_cron WHERE status = 'completed' AND completedTime > date_sub(now(),interval 1 day)
+                '''
+            with connection.cursor() as cursor:
+                cursor.execute(sql)
+                ret = cursor.fetchall()
+            # 最近1天内子任务平均清洗时间
+            server_count, hash_rate = ret[0][0] or 1, ret[0][1] or 0
+
+            # 最近1天内每个batch的子任务平均清洗时间
+            sql = '''
+                    SELECT batch_id, sum(unix_timestamp(completedTime)-unix_timestamp(beginTime))/count(*)
+                    FROM clean_cron WHERE status = 'completed' AND completedTime > date_sub(now(),interval 1 day)
+                    GROUP BY batch_id
+                '''
+            with connection.cursor() as cursor:
+                cursor.execute(sql)
+                ret = cursor.fetchall()
+            his = {bid: avgtime for bid, avgtime, in ret}
+
+            sql = """
+                    SELECT * FROM (
+                        SELECT
+                            batch_id, task_id, cln_tbl,
+                            max(emergency) as killed,
+                            max(priority) as pri,
+                            min(IF(beginTime!='1970-01-01 00:00:00',0,UNIX_TIMESTAMP(planTime))) as plan_time,
+                            min(IF(beginTime!='1970-01-01 00:00:00', beginTime, '~')) as begin_time,
+                            max(IF(completedTime!='1970-01-01 00:00:00', beginTime, '~')) as comp_time,
+                            count(*) as task_count,
+                            sum(IF(status='completed',1,0)) as comp_count,
+                            sum(IF(status='error',1,0)) as err_count,
+                            sum(IF(status='process',1,0)) as proc_count,
+                            sum(IF(status='completed', unix_timestamp(completedTime)-unix_timestamp(beginTime),0)) as time_per_task,
+                            sum(IF(status NOT IN ('error', 'completed'),`count`,0)) as count_less_task,
+                            unix_timestamp(max(beginTime)) as unix_begin_time,
+                            min(params) as min_params, max(params) as max_params,
+                            min(createTime) as createTime
+                        FROM clean_cron
+                        WHERE task_id IN (
+                            SELECT max(task_id) FROM clean_cron WHERE createTime > date_add(now(), INTERVAL -1 MONTH)
+                            GROUP BY eid, cln_tbl, planTime
+                        )
+                        GROUP BY batch_id,task_id,cln_tbl
+                    ) a ORDER BY (task_count>comp_count) DESC, killed, err_count=0 DESC, begin_time DESC
+                """
+
+            # 使用 Django 的 raw() 方法执行原生 SQL 查询
+            with connection.cursor() as cursor:
+                cursor.execute(sql)
+                ret = cursor.fetchall()
+
+            ret = list(ret)
+
+            data, tmp_time = [], time.time()
+            for i, v in enumerate(ret):
+                bid, task_id, cln_tbl, stop, priority, plan, stime, etime, total, comp, fail, pros, t, count, btime, params1, params2, created, = v
+                if comp > 0:
+                    avgtime = t / comp
+                elif bid in his:
+                    avgtime = his[bid]
+                else:
+                    avgtime = hash_rate
+
+                if total != comp + fail:
+                    lesstime = avgtime * max(1, (total - comp - fail) / server_count)
+                else:
+                    lesstime = ''
+
+                if total == comp + fail:
+                    # 任务已完成或失败
+                    beginTime = ''
+                    completedTime = ''
+                elif comp > 0 or pros > 0 or fail > 0:
+                    # 任务已经开始
+                    beginTime = ''
+                    completedTime = btime + int(lesstime)
+                elif plan > tmp_time:
+                    # 设定时间未开始
+                    beginTime = plan
+                    completedTime = beginTime + int(lesstime)
+                    lesstime = ''
+                    tmp_time = completedTime
+                else:
+                    # 即时任务
+                    beginTime = tmp_time
+                    completedTime = beginTime + int(lesstime)
+                    tmp_time = completedTime
+
+                if stop:
+                    lesstime = '已终止' if pros == 0 else '终止中'
+                    beginTime = '已终止' if pros == 0 else '终止中'
+                    completedTime = '已终止' if pros == 0 else '终止中'
+                    stime = '已终止' if pros == 0 else '终止中'
+                    etime = '已终止' if pros == 0 else '终止中'
+                elif total == comp:
+                    lesstime = '已完成'
+                elif fail > 0:
+                    lesstime = '有任务失败了'
+                elif beginTime != '':
+                    lesstime = '未开始'
+                else:
+                    lesstime = format_time(lesstime)
+
+                if beginTime and beginTime != '已终止' and beginTime != '终止中':
+                    beginTime = datetime.datetime.fromtimestamp(int(beginTime))
+                if completedTime and completedTime != '已终止' and completedTime != '终止中':
+                    completedTime = datetime.datetime.fromtimestamp(int(completedTime))
+                if plan:
+                    plan = datetime.datetime.fromtimestamp(int(plan))
+
+                name = bna[bid] if bid in bna else ''
+                btn = '<button class="btn btn-info" style="margin-right: 8px;" onclick="window.detail({},{});">查看</button>'.format(
+                    bid, task_id)
+                if total != comp:
+                    btn += '<button class="btn btn-success" style="margin-right: 8px;" onclick="window.modify({},{});">保存</button>'.format(
+                        bid, task_id)
+                if total != comp + fail and not stop:
+                    btn += '<button class="btn btn-danger" style="margin-right: 8px;" onclick="window.stop({},{});">终止</button>'.format(
+                        bid, task_id)
+                if fail > 0 or stop:
+                    btn += '<button class="btn btn-warning" style="margin-right: 8px;" onclick="window.retry({},{});">重试</button>'.format(
+                        bid, task_id)
+
+                where = '', '', ''
+                if params1 != '':
+                    params1 = json.loads(params1)
+                    params2 = json.loads(params2)
+                    where = params2['w'] if 'w' in params2 and params2['w'] != '' else where
+
+                data.append([
+                    bid, name, task_id, cln_tbl, where,
+                    int(total) or '', int(comp) or '', int(fail) or '', int(pros) or '',
+                    format_time(avgtime), lesstime,
+                    str(created),
+                    priority, str(plan or ''), str(beginTime or ''), str(completedTime or ''), str(stime or ''),
+                    str(etime or ''),
+                    btn
+                ])
+
+            return JsonResponse({'code': 0, 'data': {'server_count': server_count, 'hash_rate': hash_rate, 'data': data}})
+
+        except Exception as e:
+            print(e)
+            return JsonResponse({'code': 1, 'data': 'False'})
     else:
-        return render(request, 'report/add_check_fss.html', locals())
+        BatchID = request.GET.get('batchId')
+        convert_brand = 'None'
+        if int(BatchID) in [362]:
+            display = 'black'
+        else:
+            display = 'None'
+    return render(request, 'cleaning/clean-task1.html', locals())
+
+def get_connected_clients():
+    redis_host = '10.21.90.130'
+    redis_port = 6379
+    redis_password = 'nint'
+    r = redis.Redis(host=redis_host, port=redis_port, password=redis_password, decode_responses=True)
+    clients = r.client_list()
+    unique_ips = set()
+    for client in clients:
+        ip = client['addr'].replace('[::1]', '127.0.0.1').split(':')[0]
+        unique_ips.add(ip)
+
+    return unique_ips
+
+
+def view_clean_task(request, id):
+    if request.method != 'POST':
+        return JsonResponse({'code': 1, 'data': 'Invalid request method'})
+
+    try:
+        # 解析和验证输入数据
+        data = json.loads(request.POST.get('data', '{}'))
+        bid = request.POST.get('id')
+        tid = data.get('tid')
+
+        if not bid or not tid:
+            return JsonResponse({'code': 1, 'data': 'Missing batch_id or task_id'})
+
+        # 查询数据库并获取指定字段
+        ret = CleanCron.objects.filter(batch_id=bid, task_id=tid).order_by('id').values_list(
+            'id', 'task_id', 'batch_id', 'eid', 'server_ip', 'process_id', 'priority',
+            'retry', 'minCPU', 'minRAM', 'count', 'params', 'status', 'emergency',
+            'msg', 'planTime', 'beginTime', 'completedTime', 'createTime'
+        )
+
+        # 将查询结果转换为列表
+        res = list(ret)
+
+    except json.JSONDecodeError:
+        return JsonResponse({'code': 1, 'data': 'Invalid JSON data'})
+    except Exception as e:
+        return JsonResponse({'code': 1, 'data': str(e)})
+
+    # 打印结果用于调试
+    print(res)
+
+    return JsonResponse({'code': 0, 'data': res})
+
+def clean_task_plan(request,id):
+    print(request.POST)
+    js = {"code": 0, "data": [[]]}
+    return JsonResponse(js)
+
+# def easy_clean(request):
+#     if request.method == 'POST':
+#         print(request.POST)
+#         data = json.loads(request.POST.get('data'))
+#         user = data.get('r')
+#         batch_id = data.get('bid')
+#         batch_name = data.get('batchName')
+#         where = data.get('where', '1')
+#         priority = data.get('priority', 0)
+#         tbl = data.get('tbl', None)
+#         s_date = data.get('smonth').replace('/', '-')[0:10]
+#         e_date = data.get('emonth').replace('/', '-')[0:10]
+#         is_test = data.get('is_test', '')
+#         test_choose = data.get('test_choose', '')
+#         real_batchName = CleanBatch.objects.get(batch_id=batch_id).name
+#         task_id = int(datetime.datetime.now().timestamp())
+#         eid = CleanBatch.objects.get(batch_id=batch_id).eid
+#
+#         if real_batchName!=batch_name:
+#             js = {
+#                 "code": 0,
+#                 "errmsg": "Batch ID: {batchId} \n正确名称为: {real_batchName} \n输入为: {batchName}\n"
+#                 .format(batchId=batch_id, real_batchName=real_batchName, batchName=batch_name)
+#             }
+#             return JsonResponse(js)
+#         print("清洗状态检查：",len(CleanBatchLog.objects.filter(Q(batch_id=batch_id) & ~Q(status__in= ['complete','error']))))
+#         if len(CleanBatchLog.objects.filter(Q(batch_id=batch_id) & ~Q(status__in= ['complete','error']))):
+#             js = {
+#                 "code": 0,
+#                 "errmsg": "batchId{}正在清洗中，请不要重复添加".format(batch_id)
+#             }
+#             return JsonResponse(js)
+#         params = json.dumps({
+#             "w": f"1 AND (date >= '{s_date}') AND (date < '{e_date}')",
+#             "s": s_date,
+#             "e": e_date
+#         })
+#         CleanBatchLog.objects.create(batch_id=get_object_or_404(CleanBatch, batch_id=batch_id),eid=eid,type='clean',task_id=task_id,status='process',
+#                 process='清洗中',params=params)
+#         task_id = str(int(time.time()))
+#         queue = django_rq.get_queue('default')
+#         module = dynamic_import(batch_id)
+#         if module:
+#             print("batchId{}模型导入".format(batch_id))
+#             module.add_task()
+#             job = queue.enqueue(module.cleaning, task_id)
+#             js = {
+#                 "code": 200,
+#                 "msg": "batchId{}清洗任务添加成功".format(batch_id)
+#             }
+#             return JsonResponse(js)
+#         js = {
+#             "code": 0,
+#             "msg": "batchId{}清洗清洗模型异常".format(batch_id)
+#         }
+#         return JsonResponse(js)
+#
+#     else:
+#         return render(request, 'sop/404.html')
 
 from my_sop.task import my_task
 from celery.result import AsyncResult
@@ -222,110 +446,106 @@ def get_task_result(request, task_id):
     else:
         return JsonResponse({'status': 'pending'})
 
-def add_task(request):
-    # smonth = '', emonth = '', priority = 0, planTime = '', where = '', cln_tbl = ''
-    dba, atbl = self.get_plugin().get_a_tbl()
-    dba = self.get_db(dba)
-    db26 = self.get_db('26_apollo')
-    tbl = cln_tbl or atbl
-
-    sql = 'SELECT is_item_table_mysql FROM cleaner.clean_batch WHERE batch_id = {}'.format(self.bid)
-    ret = db26.query_all(sql)
-    if ret[0][0]:
-        raise Exception('只适用于新清洗')
-
-    # 不能重复添加即时任务，有schedule的不管
-    sql = '''
-           SELECT count(*) FROM cleaner.`clean_cron`
-           WHERE batch_id = {} AND cln_tbl = %s AND status NOT IN ('completed', 'error')
-             AND (emergency = 0 OR (status = 'process' AND emergency = 1))
-             AND planTime < '2021-01-01 00:00:00'
-       '''.format(self.bid)
-    ret = db26.query_all(sql, (tbl,))
-    if not planTime and ret[0][0] != 0:
-        raise Exception('正在清洗中，不要重复添加任务')
-
-    # 有任务进行中
-    sql = '''
-           SELECT count(*) FROM cleaner.`clean_cron`
-           WHERE batch_id = {} AND cln_tbl = %s AND status = 'process'
-       '''.format(self.bid)
-    ret = db26.query_all(sql, (tbl,))
-    if planTime and ret[0][0] != 0:
-        raise Exception('正在清洗中，不要重复添加任务')
-
-    a, b = tbl.split('.')
-    # ret = dba.query_all('''
-    #     SELECT count(*) FROM `system`.projection_parts WHERE database = '{}' AND `table` = '{}' AND name = 'clean_items'
-    # '''.format(a, b))
-
-    # if ret[0][0] == 0:
-    #     dba.execute('''
-    #         ALTER TABLE {} ADD PROJECTION clean_items (
-    #             SELECT toYYYYMM(date), source, item_id, name, cid, sid, all_bid, any(brand), any(rbid), any(sub_brand), any(region_str), shop_type,
-    #                 any(uuid2), any(pkey), any(date), any(sales), any(num), any(price), any(org_price),
-    #                 trade_props.name, trade_props.value, props.name, props.value
-    #             GROUP BY toYYYYMM(date), sid, cid, source, shop_type, item_id, trade_props.name, trade_props.value, props.name, props.value, name, all_bid
-    #         )
-    #     '''.format(tbl))
-    #     dba.execute('ALTER TABLE {} MATERIALIZE PROJECTION clean_items'.format(tbl))
-
-    where = where or '1'
-
-    if smonth:
-        where = '({}) AND (toYYYYMM(date) >= toYYYYMM(toDate(\'{}\')) AND toYYYYMM(date) < toYYYYMM(toDate(\'{}\')))'.format(
-            where, smonth, emonth)
-
-    sql = '''
-           SELECT sid, countDistinct(item_id) c FROM {} WHERE {} GROUP BY sid ORDER BY sid
-       '''.format(tbl, where)
-    ret = dba.query_all(sql)
-    if len(ret) == 0:
-        raise Exception('要清洗的月份数据为空')
-
-    self.add_miss_pos(tbl)
-
-    task_id = int(time.time())
-    data, parts, ccc = [], [], 0
-
-    for p, c, in list(ret) + [[None, 0]]:
-        if ccc >= 500000 or p is None:
-            params = {'p': 'sid>={} AND sid<={}'.format(parts[0], parts[-1]), 'w': where, 's': smonth, 'e': emonth}
-            data.append(
-                [task_id, self.bid, self.eid, priority, 0, 0, ccc, json.dumps(params, ensure_ascii=False), planTime,
-                 tbl])
-            parts, ccc = [], 0
-        parts.append(p)
-        ccc += c
-
-    if len(data) > 0:
-        err_msg = ''
+def create_clean_task(request,id):
+    if request.method == 'POST':
+        print(request.POST)
         try:
-            self.batch_now()
-        except Exception as e:
-            err_msg = traceback.format_exc()
-            self.mail('Batch{}机洗配置错误'.format(self.bid), err_msg)
+            data = json.loads(request.POST.get('data'))
+        except:
+            data = request.POST
+        user = data.get('r')
+        batch_id = data.get('bid') or data.get('batchId')
+        batch_name = data.get('batchName')
+        where = data.get('where') or '1'
+        priority = data.get('priority',0)
+        tbl = data.get('tbl',None)
+        s_date = data.get('smonth').replace('/', '-')[0:10]
+        e_date = data.get('emonth').replace('/', '-')[0:10]
+        is_test = data.get('is_test','')
+        test_choose = data.get('test_choose','')
+        real_batchName = CleanBatch.objects.get(batch_id=batch_id).name
+        eid = CleanBatch.objects.get(batch_id=batch_id).eid
+        task_id = int(datetime.datetime.now().timestamp())
 
-        poslist = self.get_poslist()
-        jointbl = tbl + '_join{}'.format(task_id)
-        dba.execute('DROP TABLE IF EXISTS {}'.format(jointbl))
+        if real_batchName != batch_name:
+            js = {
+                "code": 300,
+                "errmsg": "Batch ID: {batchId} \n正确名称为: {real_batchName} \n输入为: {batchName}\n"
+                .format(batchId=batch_id, real_batchName=real_batchName, batchName=batch_name)
+            }
+            return JsonResponse(js)
+        check = len(CleanCron.objects.filter(Q(emergency=0) & Q(batch_id=batch_id) & ~Q(status__in=['completed', 'error']))) \
+                + len(CleanCron.objects.filter(Q(emergency=1) & Q(status='process') & Q(batch_id=batch_id) & ~Q(status__in=['completed', 'error'])))
+        print("清洗状态检查：",check)
+        if check:
+            js = {
+                "300": 0,
+                "errmsg": "batchId{}正在清洗中，请不要重复添加".format(batch_id)
+            }
+            return JsonResponse(js)
 
-        dba.execute('''
-               CREATE TABLE {} ( `sid` UInt64, `cid` UInt32, `source` UInt8, `shop_type` UInt8, `item_id` String, `tn` String, `tv` String, `pn` String, `pv` String, `name` String, `all_bid` UInt32, `c_ver` UInt32, `c_type` Int16, `c_all_bid` UInt32, `c_pid` UInt32, {} )
-               ENGINE = MergeTree
-               PARTITION BY sid % 64
-               ORDER BY (sid, cid, source, shop_type, item_id, tn, tv, pn, pv, name, all_bid)
-               SETTINGS index_granularity = 8192,parts_to_delay_insert=50000,parts_to_throw_insert=1000000,max_parts_in_total=1000000,min_bytes_for_wide_part=0,min_rows_for_wide_part=0,storage_policy='disk_group_1'
-           '''.format(jointbl, ','.join(['`c_sp{p}` LowCardinality(String)'.format(p=pos) for pos in poslist])))
+        queue = django_rq.get_queue('default')
+        module = dynamic_import(batch_id)
+        if module:
+            print("batchId{}模型导入".format(batch_id))
+            params = json.dumps({
+                "w": f"({where}) AND (date >= '{s_date}') AND (date < '{e_date}')",
+                "s": s_date,
+                "e": e_date
+            })
+            print("params测试:", params)
+            CleanBatchLog.objects.create(batch_id=get_object_or_404(CleanBatch, batch_id=batch_id), eid=eid,
+                                         comments=is_test,type='clean', task_id=task_id, status='process', process='清洗中',params=params)
+            scripts = module.add_task(batch_id,eid,task_id,priority,test_choose,params)
 
-        data = [v + ['error' if err_msg else '', '配置错误：' + err_msg if err_msg else ''] for v in data]
+            job = queue.enqueue(module.cleaning, batch_id,task_id,scripts)
+            js = {
+                "code": 200,
+                "msg": "batchId{}清洗任务添加成功".format(batch_id)
+            }
+            return JsonResponse(js)
+        js = {
+            "code": 404,
+            "msg": "batchId{}清洗清洗模型异常".format(batch_id)
+        }
+        return JsonResponse(js)
 
-        db26.batch_insert(
-            'INSERT INTO cleaner.`clean_cron` (task_id,batch_id,eid,priority,minCPU,minRAM,`count`,params,planTime,createTime,cln_tbl,status,msg) VALUES',
-            '(%s,%s,%s,%s,%s,%s,%s,%s,%s,NOW(),%s,%s,%s)', data
-            )
+    else:
+        return render(request, 'sop/404.html')
 
-    db26.commit()
+def modify_clean_task(request, id=0):
+    print('<modify_clean_task>')
+    if request.method == 'POST':
+        data = json.loads(request.POST.get('data'))
+        print(data)
+        tid = data.get('tid', 0)
+        pri = int(data.get('pri', 0))
+        pt = data.get('pt', '').strip()
+        if not pt:
+            pt = datetime.datetime(1970, 1, 1, 0, 0)
+    print(tid,pri,pt)
+    try:
+        CleanCron.objects.filter(batch_id=id, task_id=tid).update(planTime=pt, priority=pri)
+
+    except Exception as e:
+        return JsonResponse({'code': 1, 'data': str(e)})
+
+    return JsonResponse({'code': 0, 'data': 'succ'})
+
+def kill_clean_task(request, id=0):
+    print('<kill_clean_task>')
+    if request.method == 'POST':
+        data = json.loads(request.POST.get('data'))
+        tid = data.get('tid', '')
+
+    try:
+        CleanBatchLog.objects.filter(batch_id=id, task_id=tid).update(status='completed',process='killed')
+        CleanCron.objects.filter(batch_id=id, task_id=tid).update(emergency=1,completedTime=datetime.datetime(1970, 1, 1, 0, 0))
+
+    except Exception as e:
+        return JsonResponse({'code': 1, 'data': str(e)})
+
+    return JsonResponse({'code': 0, 'data': 'succ'})
 
 def save(request):
     if request.method == 'POST':

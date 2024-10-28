@@ -1,26 +1,44 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponse
 
+from django.shortcuts import redirect
+from django.urls import reverse
+from urllib.parse import urlencode
+
+class LoginRequiredMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # print("检查用户登录状态：",request.user)
+        # 检查用户是否已认证
+        if not request.user.is_authenticated:
+            login_url = reverse('admin:login')
+            if not request.path.startswith(login_url):
+                # 登录跳转
+                return redirect(f'{login_url}?{urlencode({"next": request.path})}')
+
+        response = self.get_response(request)
+        return response
+
+
+
 class XFrameOptionsMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     async def __call__(self, scope, receive, send):
-        # 创建一个异步请求对象
         request = HttpRequest(scope, receive)
 
-        # 调用 get_response 处理请求
         response = await self.get_response(request)
 
-        # 处理响应
         if isinstance(response, HttpResponse) and response.status_code == 200 and response.get('X-Frame-Options') is None:
             response['X-Frame-Options'] = self.get_xframe_options_value(request)
 
-        # 将响应发送回客户端
         await response(scope, receive, send)
 
     def get_xframe_options_value(self, request):
-        # 根据需要自定义 X-Frame-Options 的值
+
         return 'SAMEORIGIN'
 
 

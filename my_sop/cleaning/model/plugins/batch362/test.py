@@ -5,18 +5,18 @@ import sys
 import os
 from os.path import abspath, join, dirname
 
-# 设置项目根目录
-project_root = abspath(join(dirname(__file__), '../../../..'))
-print(project_root)
-sys.path.append(project_root)
+# # 设置项目根目录
+# project_root = abspath(join(dirname(__file__), '../../../..'))
+# print(project_root)
+# sys.path.append(project_root)
+#
+# # 设置 DJANGO_SETTINGS_MODULE 环境变量
+# os.environ.setdefault("DJANGO_SETTINGS_MODULE", "my_sop.my_sop.settings")
+#
+# import django
+# django.setup()
 
-# 设置 DJANGO_SETTINGS_MODULE 环境变量
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "my_sop.my_sop.settings")
-
-import django
-django.setup()
-
-from cleaning.models import CleanBatchLog,CleanBatch
+# from cleaning.models import CleanBatchLog,CleanBatch
 
 def monitor_process(pid):
     try:
@@ -37,6 +37,6 @@ def terminate_process(process):
 
 if __name__ == "__main__":
 
-    proc = monitor_process(18476)
+    proc = monitor_process(1264)
     # 这里你可以选择等待一段时间或者根据某些条件再终止进程
     terminate_process(proc)

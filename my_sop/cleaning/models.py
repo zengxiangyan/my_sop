@@ -1,5 +1,5 @@
 from django.db import models
-
+import datetime
 class CleanBatch(models.Model):
     batch_id = models.AutoField(primary_key=True)
     eid = models.IntegerField(default=0)
@@ -51,6 +51,7 @@ class CleanBatchLog(models.Model):
     msg = models.TextField(blank=True, null=True)
     warn = models.TextField(blank=True, null=True)
     process = models.TextField(default='0')
+    comments = models.TextField(blank=True, null=True)
     create_time = models.DateTimeField(auto_now_add=True, null=True, blank=True)
     update_time = models.DateTimeField(auto_now=True)
 
@@ -60,3 +61,32 @@ class CleanBatchLog(models.Model):
 
     def __str__(self):
         return f'CleanBatchLog {self.id} - Batch ID: {self.batch_id}'
+
+class CleanCron(models.Model):
+    id = models.AutoField(primary_key=True)
+    task_id = models.IntegerField()
+    batch_id = models.IntegerField()
+    eid = models.IntegerField()
+    aimod = models.CharField(max_length=64, default='')
+    cln_tbl = models.CharField(max_length=64, default='')
+    server_ip = models.CharField(max_length=32, default='')
+    process_id = models.CharField(max_length=64, default='')
+    priority = models.IntegerField(default=0)
+    minCPU = models.IntegerField(default=0)
+    minRAM = models.IntegerField(default=0)
+    count = models.PositiveIntegerField(default=0)
+    params = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=32, default='')
+    retry = models.PositiveSmallIntegerField(default=0)
+    emergency = models.SmallIntegerField(default=0)
+    msg = models.TextField(blank=True, null=True)
+    type = models.TextField(blank=True, null=True)
+    # comments = models.TextField(blank=True, null=True)
+    planTime = models.DateTimeField(null=True, blank=True, default=datetime.datetime(1970, 1, 1, 0, 0))
+    beginTime = models.DateTimeField(null=True, blank=True, default=datetime.datetime(1970, 1, 1, 0, ))
+    completedTime = models.DateTimeField(null=True, blank=True, default=None)
+    createTime = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updateTime = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'clean_cron'
