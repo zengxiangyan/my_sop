@@ -1,0 +1,777 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript" src="{% static 'dist/JS/jquery.min.js' %}" charset="utf-8"></script>
+        <title></title>
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-table.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-datepicker3.standalone.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/jexcel.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/jsuites.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap-datetimepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/models.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/jquery-ui.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/site.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/multi.css' %}">
+</head>
+<style>
+    .submenu a {
+        background: #f5f5f5;
+        border-radius: 0;
+    }
+
+    .submenu a:hover,
+    .submenu a:active,
+    .submenu a.active,
+    .submenu a.active:hover,
+    .submenu a.active:active {
+        background: #44b5f6;
+        border-color: #44b5f6;
+        border-radius: 0;
+        color: #fff;
+    }
+
+    .container {
+        width: 100%;
+    }
+</style>
+
+<body>
+    
+    <div class="wrap">
+        <nav id="w0" class="navbar-inverse navbar-fixed-top navbar"><div class="container"><div class="navbar-header"><button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#w0-collapse"><span class="sr-only">Toggle navigation</span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span></button><a class="navbar-brand" href="/cleaner/index.php">Data Cleaner</a></div><div id="w0-collapse" class="collapse navbar-collapse"><ul id="w1" class="navbar-nav navbar-right nav"><li><a href="/cleaner/index.php?r=site%2Findex">Home</a></li>
+<li><form action="../admin/login/" method="post"><button type="submit" class="btn btn-link logout">Logout ({{user}})</button></form></li></ul></div></div></nav>
+        <div class="container">
+
+            <ul class="breadcrumb"><li><a href="/cleaner/index.php">Home</a></li>
+<li class="active">清洗任务</li>
+</ul>
+
+<div class="col-md-12 guide-content" role="main">
+    <style>
+    .form__row {
+        display: flex;
+        gap: 10px;
+    }
+
+    .form__wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .jexcel_filter {
+        justify-content: flex-start;
+    }
+</style>
+<script src="{% static 'dist/JS/bootstrap-datetimepicker.min.js' %}" charset="utf-8" defer="defer"></script>
+<script src="{% static 'dist/JS/bootstrap-datepicker.min.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/bootstrap-datepicker.zh-CN.min.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/jexcel.js' %}" charset="utf-8" defer="defer"></script>
+<script src="{% static 'dist/JS/jsuites.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/multi.js' %}" charset="utf-8"></script>
+
+<div id="msg" class="alert alert-warning alert-dismissible" role="alert">
+</div>
+{% csrf_token %}
+<div class="form">
+    <div class="row form__row">
+        <div class="col form__wrap">
+            <div class="input-group" style="margin: 0 15px 3px;">
+                <span class="input-group-addon">BatchId</span>
+                <input type="text" class="form-control" id="bid" placeholder="" aria-describedby="basic-addon1">
+            </div>
+            <div class="input-group" style="margin: 0 15px 3px;">
+                <span class="input-group-addon">BatchName</span>
+                <input type="text" class="form-control" id="bname" placeholder="" aria-describedby="basic-addon1">
+            </div>
+            <div class="input-group" style="margin: 0 15px 3px;">
+                <span class="input-group-addon">清洗开始月份</span>
+                <input class="form-control input-date" id="smonth" placeholder="不填就是全量" type="text" aria-describedby="basic-addon1" autocomplete="off">
+            </div>
+            <div class="input-group" style="margin: 0 15px 3px;">
+                <span class="input-group-addon">清洗结束月份</span>
+                <input class="form-control input-date" id="emonth" placeholder="不填就是全量" type="text" aria-describedby="basic-addon1" autocomplete="off">
+            </div>
+            <div class="input-group" style="margin: 0 15px 3px;display:None">
+                <span class="input-group-addon">计划开始时间</span>
+                <input class="form-control input-time" id="ctime" placeholder="填了就是按计划时间清洗" type="text" aria-describedby="basic-addon1" autocomplete="off">
+            </div>
+            <div class="input-group" style="margin: 0 15px 3px;">
+                <span class="input-group-addon">重复次数</span>
+                <input class="form-control" id="repeat" placeholder="-1为不限次，空是不重复" type="text" aria-describedby="basic-addon1" autocomplete="off">
+            </div>
+            <div class="input-group" style="margin: 0 15px 3px;">
+                <span class="input-group-addon">SQL范围</span>
+                <input class="form-control" id="where" placeholder="source in (1,2,3)" type="text" aria-describedby="basic-addon1" autocomplete="off">
+            </div>
+            <div class="input-group" style="margin: 0 15px 3px;">
+                <span class="input-group-addon">优先级</span>
+                <input type="text" class="form-control" id="priority" placeholder="越大优先级越高" aria-describedby="basic-addon1">
+            </div>
+            <div class="input-group" style="margin: 0 15px 3px;">
+                <span class="input-group-addon">需要清洗的表</span>
+                <input type="text" class="form-control" id="tbl" placeholder="空着就行" aria-describedby="basic-addon1">
+            </div>
+
+            <div class="input-group" style="margin: 0 15px 3px;display:{{display}}">
+                <span class="input-group-addon">测试</span>
+
+                <select class="form-control" id="test_choose" style="width:70%">
+                    <option  value="">请选择</option>
+                    <option  value="import_brand">import_brand</option>
+                    <option  value="三级类目">三级类目</option>
+                    <option  value="四级类目">四级类目</option>
+                    <option  value="清洗品牌1">清洗品牌1</option>
+                    <option  value="清洗品牌2">清洗品牌2</option>
+                </select>
+                <select class="form-control" id="is_test" style="width:30%">
+                    <option  value="">正式</option>
+                    <option  value="测试">测试</option>
+                </select>
+            </div>
+
+            <div class="input-group" style="margin: 0 15px 3px;">
+                <button type="button" class="btn btn-success" aria-haspopup="true" aria-expanded="false" style="margin: 0 15px 0 0;" onclick="window.create(false);">添加机洗任务</button>
+                <button id="refresh" type="button" class="btn btn-info" aria-haspopup="true" aria-expanded="false" style="margin: 0 15px 0 0;" onclick="window.refresh();">刷新</button>
+                <button type="button" class="btn btn-info" aria-haspopup="true" aria-expanded="false" style="margin: 15px 0;" onclick="toggleAll()">筛选</button>
+            </div>
+        </div>
+        <div class="col alert alert-warning alert-dismissible" role="alert">
+            <p>此系统为竞争型清洗任务系统，每台机器根据任务优先级取任务</p>
+            <p>添加的任务会拆分成多个子任务、每个子任务大约1kw数据。子任务最小范围是一个月</p>
+            <p>对于需要定时清洗的任务，配置计划开始时间</p>
+            <p>对于需要重复清洗的任务，配置重复次数，-1是无限次</p>
+            <p>对于优先清洗或者插队的任务，配置一个比当前任务更大的优先级即可</p>
+            <p>-</p>
+            <p>周期性任务创建后只可以修改重复次数及优先级</p>
+            <p>一次性任务创建后只可以修改优先级及计划时间</p>
+            <p>周期性任务会提前7天自动添加任务</p>
+            <p>每个任务想取消点击终止，终止的任务可以点击重试继续</p>
+            <p>终止功能非强制型，只是未开始任务不清洗而已，清洗中的需要等待完成</p>
+            <p>-</p>
+            <p>※ 重试仅重试未完成的子任务，如果配置修改则需要重新添加任务</p>
+            <p>※ 设置了重复次数的为周期型任务，周期型任务每月执行一次，不支持全量清洗，必须设置月份范围（-1为无限次，月份范围每次重复都会自动+1月）</p>
+            <p>※ 对于周期性任务遇到双休需要提前的，需等待任务添加成功后再修改计划时间</p>
+            <p>※ 任务清洗顺序主要以优先级为准，计划时间仅用来限制开始，如果想优先清洗需要改大优先级</p>
+            <p>※ 每个任务都有剩余时间及预计时间，数据为历史均值，仅供参考。</p>
+            <p>※ 紧急任务请创建时就分配高优先级，以避免被新任务插队</p>
+            <p>※ 任务失败会自动重试，最多3次，失败的任务不要反复点重试，找开发看问题</p>
+        </div>
+    </div>
+</div>
+<div id='spreadsheet' style="margin:15px 0"></div>
+
+<script src="{% static 'dist/JS/d3.min.js' %}" defer="defer"></script>
+<script src="{% static 'dist/JS/xlsx.full.min.js' %}"></script>
+<script src="{% static 'dist/JS/jschardet.min.js' %}" defer="defer"></script>
+
+<script v=0.01>
+    function getCSRFToken() {
+      var cookies = document.cookie.split(';');
+      for (var i = 0; i < cookies.length; i++) {
+          var cookie = cookies[i].trim();
+          var cookieParts = cookie.split('=');
+          if (cookieParts[0] === 'csrftoken') {
+              return cookieParts[1];
+          }
+      }
+      return null;
+  };
+
+    // ajax
+    var token = "DGqcx2rV7RdXrlOaIanErNxxH1uyho4qzLWZJWVN9f5YPdahC7e-Uw_eC-Bt2JPZihR9b-O2wVL8xeBfHH_Diw==";
+    var bname_map = {"1":"\u7cd6\u679c\u679c\u51bb","2":"\u5438\u5c18\u5668","3":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9690\u5f62\u773c\u955c","4":"\u7a7a\u6c14\u51c0\u5316\u5668","5":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6d17\u7897\u673a","6":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u51c0\u6c34\u5668","7":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6d17\u8863\u673a","8":"\u5e73\u677f\u7535\u89c6","9":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7a7a\u8c03","10":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6d88\u6bd2\u67dc","11":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7535\u52a8\u7259\u5237","12":"\u5de7\u514b\u529b-\u8f6c\u79fb(\u745e\u58eb\u83b2\u8868\u6709\u7279\u6b8a\u89c4\u5219)","13":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u70ed\u6c34\u5668","14":"\u6cb9\u70df\u673a","15":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5fae\u6ce2\u7089","16":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7089\u7076","17":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7f8e\u5bb9\u6d01\u9762\u4eea","18":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u667a\u80fd\u97f3\u7bb1","19":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u94bb\u6212","20":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9999\u6c34","21":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u829d\u58eb\u9ec4\u6cb9\u5976\u6cb9","22":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9632\u6652","23":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5378\u5986","24":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6d01\u9762","25":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9762\u819c","26":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9694\u79bb\u5986\u524d","27":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5564(\u6d4b\u8bd5)\u9152","28":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 BB\u971c","29":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5987\u79d1\u836f\u54c1","30":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7c89\u5e95","31":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6b62\u6cfb","32":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9762\u90e8\u7cbe\u534e","33":"\u5976\u74f6","34":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u76ca\u751f\u83cc","35":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7ef4\u751f\u7d20","36":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7a7a\u8c03\u6247","37":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7535\u6696\u5668","38":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u51b0\u7bb1\u51b0\u7bb1","39":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u52a0\u6e7f\u5668","40":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7535\u98ce\u6247","41":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u8c46\u6d46\u673a","42":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7535\u78c1\u7089","43":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7535\u996d\u7172","44":"Nike\u6708\u62a5","45":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5546\u7528\u7eb8\u54c1\uff08\u7ef4\u8fbe\uff09","46":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5b89\u5168\u5ea7\u6905","47":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 Nike\u6708\u62a5 - \u4e09\u5e74","48":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7f57\u6280\u6e05\u6d17","49":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9762(\u6d4b\u8bd5)\u819c","50":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5eb7\u5e08\u5085","51":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u65c5\u884c\u7bb1","52":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u65e0\u7eba\u5e03","53":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7f8e(\u6d4b\u8bd5)\u5986","54":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7b14\u8bb0\u672c\u7535\u8111","55":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u732b\u7cae","56":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6e7f\u5dfe","57":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u8fd0\u52a8\u978b","58":"\u673a\u6cb9","59":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6d17\u8f66\u673a\u4ebf\u529b","60":"\u6d0b\u9152\u8461\u8404\u9152\u9879\u76ee","61":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u65af\u7f8e\u51ef\u9884\u8c03\u67e5","62":"\u4e50\u9ad8\u73a9\u5177","63":"\u4e50\u9ad8-\u8f6c\u79fb","64":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u4f53\u91cd\u7ba1\u7406-\u89e3\u836f\u5b63\u62a5","65":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7231\u8309\u83897-11\u6708\u6570\u636e","66":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u73a9\u5177-\u5b69\u4e4b\u5b9d","67":"\u767e\u6d0b(\u9499)","68":"DELL\u6234\u5c14-\u8f6c\u79fb","69":"SONY-\u8f6c\u79fb","70":"\u4f9d\u89c6\u8def\u955c\u5bb4-\u8f6c\u79fb","71":"\u7f8e\u5986\u62a4\u80a4\uff08\u552e\u524d\uff09","72":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 coty\u7f8e\u5986-\u8f6c\u79fb","73":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5bb6\u5316","74":"\u5eb7\u4e50\u4fdd\u9020\u53e3\u888b-\u8f6c\u79fb","75":"\u9690\u5f62\u773c\u955c-\u8f6c\u79fb","76":"\u62a4\u7406\u6db2-\u8f6c\u79fb","77":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 Xtep","78":"\u6b27\u59c6\u9f99-\u8f6c\u79fb","79":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5976\u7c89-\u7f8e\u7d20\u4f73\u513f","80":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u4e09\u5168","81":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u82cf\u5b81\u624b\u673a","82":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 coty\u9999\u6c34\u548c\u62a4\u80a4","83":"\u7c73\u5176\u6797\u8f6e\u80ce-\u8f6c\u79fb","84":"\u96c5\u987f\u80f6\u56ca","85":"coty\u6c90\u6d74\u9732-\u65b0sop\u8f6c\u79fb","86":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u76ca\u6d77\u5609\u91cc\u98df\u7528\u6cb9\u9884\u8c03\u67e5","87":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 coty\u6700\u65b0\u7f8e\u5986\u548c\u9999\u6c34-\u8f6c\u79fb","88":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u739b\u6c0f\u4f11\u95f2\u96f6\u98df","89":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u76ca\u6d77\u5609\u91cc\u9762\u7c89\u9762\u6761\u9884\u8c03\u67e5","90":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u4ea8\u6c0f\u5a74\u513f\u8f85\u98df","91":"\u91d1\u9f99\u9c7c\u7cae\u6cb9\u8c03\u5473","92":"LV\u8def\u6613\u5a01\u767b\u6253\u50472020","93":"\u59ae\u7ef4\u96c5\u5168\u54c1\u7c7b2020","94":"\u98de\u5229\u6d66-\u8f6c\u79fb","95":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u683c\u529b\u9ad8\u997c\u5e72","96":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6210\u4eba\u7eb8\u5c3f\u88e4","97":"\u7f8e\u5fb7\u4e50\u5438\u5976\u5668-\u8f6c\u79fb","98":"DELL\u7b14\u8bb0\u672c-\u8f6c\u79fb","99":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u8010\u6d88618-1\u53f7\u9879\u76ee","100":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u8010\u6d88618-2\u53f7\u9879\u76ee","101":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 DFS\u673a\u6d17SKU","102":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 618\u7f8e\u5986\u4e2a\u62a4","103":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 618\u98df\u54c1\u996e\u6599\u7c7b\u76ee","104":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u795b\u75a4\u4ea7\u54c1","105":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u8fbe\u80fd\u996e\u54c1","106":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7f8a\u5976\u7c89--\u9884\u8c03\u67e5","107":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 coach\u9884\u8c03\u67e5","108":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9152\u7c7b\u6807\u51c6\u5e93\u9884\u8bbe","109":"\u6db2\u6001\u5976\u9884\u6e05\u6d17(\u52a0\u5373\u996e\u5496\u5561\u548c\u690d\u7269\u8089)","110":"\u81ea\u70ed\u7c73\u996d\u9884\u6e05\u6d17","111":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7279\u6b8a\u533b\u5b66\u7528\u9014\u5a74\u513f\u914d\u65b9\u5976\u7c89\u9884\u6e05\u6d17","112":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u4f18\u8272\u67972020","113":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u529f\u80fd\u996e\u6599\u9884\u8c03\u67e5","114":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5305\u88c5\u7c73\u9884\u6e05\u6d17","115":"\u5305\u88c5\u6c34\u9884\u6e05\u6d17","116":"\u7cd6\u679c\u9884\u6e05\u6d17","117":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5eb7\u5e08\u5085\u996e\u6599\u9884\u6e05\u6d17","118":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7eb8\u5dfe\u7c7b\u9884\u6e05\u6d17","119":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u4fdd\u5065\u54c1-\u7ef4\u751f\u7d20","120":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u4f9d\u4e91\u996e\u7528\u6c34","121":"\u53e3\u8154\u62a4\u7406","122":"\u8fd0\u52a8\u978b\u9884\u6e05\u6d17","123":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 remifemin\u8fdb\u53e3\uff08\u4e00\u6b21\u6027\uff09","124":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u96c5\u8bd7\u5170\u9edb\u5173\u6ce8\u5e97\u94faSKU","125":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u8eab\u4f53\u62a4\u7406","126":"\u5934\u53d1\u7528\u54c1\u9884\u6e05\u6d17","127":"\u4eac\u4e1cNIKE-\u8f6c\u79fb","128":"\u9999\u5948\u513f-\u8f6c\u79fb","129":"\u997c\u5e72\u9884\u6e05\u6d17","130":"\u9152\u7c7b\u9884\u6e05\u6d17","131":"\u4ebf\u6ecb\u997c\u5e72-\u541b\u4e1c\u51fa\u6570\u8bb0\u5f97\u5e94\u7528JD4","132":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5e73\u677f\u7535\u8111\u9884\u6e05\u6d17","133":"\u8d39\u5217\u7f57\u997c\u5e72-\u8f6c\u79fb","134":"\u745e\u58eb\u83b2\u5de7\u514b\u529bSKU","135":"Casio-\u8f6c\u79fb","136":"\u670d\u88c5-\u5973\u88c5\u9884\u6e05\u6d17","137":"\u76ca\u751f\u83cc-gsk","138":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 AMD\u7535\u8111SKU\u673a\u6d17","139":"\u5357\u5b5a-\u8f6c\u79fb","140":"LV watch-\u8f6c\u79fb","141":"\u4fdd\u5065\u54c1-\u6fb3\u4f73\u5b9d(gsk)","142":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u8fbe\u80fd\u65b0\u54c1\u8ffd\u8e2a","143":"LV jewelry-\u8f6c\u79fb","144":"GSK-OTC","145":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6c5f\u4e2d\u4e73\u9178\u83cc\u9884\u8c03\u67e5","146":"LV fashion-\u8f6c\u79fb","147":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6c5f\u4e2d\u836f\u54c1\u4fdd\u5065\u54c12020","148":"LV \u7f8e\u5986-\u8f6c\u79fb","149":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u59ae\u7ef4\u96c5FACE\u4e00\u6b21\u6027","150":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u516c\u5171\u5e93","151":"\u59ae\u7ef4\u96c5body-\u4e00\u6b21\u6027\u9879\u76ee","152":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u4e18\u6bd4\u8c03\u5473\u9171\u4e00\u6b21\u6027","153":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5eb7\u5e08\u5085\u65b0\u54c1\u7c7b\u6e05\u6d17","154":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u51e4\u7965\u98df\u54c1","155":"\u9999\u5948\u513f\u6c34\u8d272021","156":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5973\u978b\u53d6\u6570\u652f\u6301","157":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u51e4\u7965\u98df\u54c1JD\u5bf9\u6570","158":"\u51e4\u7965\u98df\u54c1\u6b63\u5f0f(\u6df7\u5408\u5bfc\u6570)","159":"\u4e1d\u5854\u8299-\u8f6c\u79fb","160":"\u6b27\u59c6\u9f99-\u5fc3\u7535\u76d1\u6d4b\u4eeaand\u8840\u7cd6\u4eea","161":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 chanel WFJ\u4e00\u6b21\u6027\u62a5\u544a","162":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u610f\u5927\u5229\u98df\u54c1","163":"\u8840\u7cd6\u4eea\u4ea7\u54c1\u540d\u6b63\u5f0f\u9879\u76ee-\u4e00\u6b21\u6027","164":"GUCCI-\u9ad8\u7aef\u5e02\u573a","165":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5361\u5ba2\u8f66\u8f6e\u80ce-\u6d66\u6797\u6210\u5c71","166":"\u82b1\u738b\u773c\u7f69\u6e05\u6d17\u53ca\u5176\u5b83\u54c1\u7c7b\u51fa\u6570","167":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5029\u78a7\u9ec4\u6cb9\u956d\u5c04\u7cbe\u534e\u6e05\u6d17-\u4e34\u65f60412","168":"3M\u533b\u7528\u80f6\u5e26\u6577\u6599","169":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9762\u819c\u6d4b\u8bd5-xy","170":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9762\u819c\u6d4b\u8bd5-\u6768","171":"\u59ae\u7ef4\u96c5\u673a\u6d17\u7cbe\u534eSKU","172":"\u5a74\u513f\u5976\u7c89\u5408\u5e76\u5e93","173":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u610f\u5927\u5229\u98df\u54c1_\u8865\u5145\u9700\u6c42","174":"Coty-\u5f69\u62a4\u9999","175":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u51ef\u5ea6\u963f\u8fea\u8fbe\u65af\u4e00\u6b21\u6027\u9879\u76ee","176":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u8d5b\u8bfa\u83f2\u6b62\u75db\u836f\u4e00\u6b21\u6027\u9879\u76ee","177":"\u76ca\u6d77\u5609\u91cc\u5305\u88c5\u6db2\u6001\u5976","178":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6296\u97f3\u7f8e\u5986","179":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u552f\u54c1\u4f1a\u978b\u670d\u914d\u9884\u8c03\u67e5","180":"\u96c5\u6f3e2021","181":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9152\u4ed9\u7f51\u9a6c\u7239\u5229\u548c\u4eba\u5934\u9a6c\u673a\u6d17\u7cfb\u5217","182":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 MUJI-\u7f8e\u5bb9\u62a4\u7406-\u4e00\u6b21\u6027\u9879\u76ee","183":"\u6b27\u59c6\u9f99-\u6307\u5939\u5f0f\u8840\u6c27\u4eea","184":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 MUJI-\u670d\u9970\u978b\u5305-\u4e00\u6b21\u6027\u9879\u76ee","185":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u51e4\u7965\u975e\u9e21\u8089\u9879\u76ee","186":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9999\u5948\u513f\u5305\u888b","187":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u8d44\u751f\u5802\u963f\u91cc\u7f8e\u5986\u5e02\u573a","188":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7f8e\u7d20\u829d\u58eb\u9ec4\u6cb9\u5976\u6cb9\u4e00\u6b21\u6027","189":"\u7f8e\u5fb7\u4e50\u5b89\u629a\u5976\u5634","190":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5eb7\u4e50\u4fdd\u4f24\u53e3\u6577\u6599-\u4e00\u6b21\u6027","191":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6296\u97f3\u978b\u670d\u914d\u6d4b\u8bd50907","192":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5eb7\u5e08\u5085\u65b0\u54c1\u7c7b\u6296\u97f3","193":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u51e4\u7965\u9e21\u8089\u5373\u98df\u54c1-\u6296\u97f3","194":"\u4f18\u8272\u6797\u7f8e\u5986\u4eac\u4e1c\u6296\u97f32021","195":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u8d5b\u8bfa\u83f2\u9884\u8c03\u67e5-\u5916\u7528\u6b62\u75db\u8d34 \/\u5185\u670d\u6b62\u75db","196":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 LV-\u7f8e\u5986-CDF 2021","197":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5229\u6d01\u65f6","198":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5eb7\u4e50\u4fdd\u5c0f\u513f\u7ea2\u81c0-\u4e00\u6b21\u6027","199":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u98de\u5229\u6d66\u7761\u7720\u76d1\u6d4b\u6b63\u5f0f\u9879\u76ee","200":"\u6296\u97f3\u8fd0\u52a8\u6bcd\u5a74","201":"\u62a4\u80a4\u6807\u51c6\u5e932021","202":"\u96c5\u987f\u65b0\u9700\u6c42(\u6e20\u9053)2021","203":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6c7d\u8f66\u4fdd\u517b\u670d\u52a1","204":"\u99a5\u7eff\u5fb7\u96c5-\u5934\u53d1\u62a4\u7406","205":"\u7f8e\u5fb7\u4e50\u54fa\u4e73\u6587\u80f8","206":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u51e4\u7965\u9884\u6e05\u6d17-\u8089\u7c7b","207":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u610f\u5f0f\u5496\u5561\u673a\u9884\u8c03\u67e5","208":"Nivea\u59ae\u7ef4\u96c5\u5973\u58eb\u62a4\u80a4-2022","209":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 ITA\u4e00\u6b21\u6027\u62a5\u544a","210":"\u7f8e\u5986\u6807\u51c6\u5e93-2021","211":"\u5934\u53d1\u62a4\u7406\u6807\u51c6\u5e93-2021","212":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 nike\u8f85\u52a9\u6e05\u6d17\u91cd\u70b9\u5e97\u94fa\u540a\u724c\u4ef7","213":"\u82ad\u514b\u795b\u75a4","214":"\u6c5f\u4e2d\u80c3\u80a0\u836f\u7528\u54c12021","215":"\u6c5f\u4e2d\u672f\u540e\u6062\u590d\u53e3\u670d\u4ea7\u54c1","216":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5e0c\u5c14\u601d\u5ba0\u7269\u7cae\u5e97\u94fa\u505asku","217":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9999\u5948\u513f\u5e74\u62a5","218":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u6296\u97f3\u8c03\u7528\u4ea7\u54c1\u90e8\u6570\u636e\u6d4b\u8bd5\u9879\u76ee","219":"\u675c\u857e\u65af\u6210\u4eba\u7528\u54c1\u6e05\u6d17","220":"\u98df\u54c1\u5927\u76d8\u5206\u6790\u5b63\u62a5","221":"\u59ae\u7ef4\u96c5\u6296\u97f3-\u4e34\u65f6","222":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 qbt\u670d\u88c5\u6d4b\u8bd50120","223":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u8fd0\u52a8\u670d\/\u4f11\u95f2\u670d\u88c5\u5c3a\u7801\u6e05\u6d17","224":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 qbt\u670d\u88c5-\u8fde\u8863\u88d92021","225":"\u5eb7\u5e08\u5085\u5408\u5e76\u5e93","226":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 2021qbt\u5c3a\u7801\u6d4b\u8bd5\u8fd0\u52a8\u6bdb\u8863","227":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7b14\u8bb0\u672c\u7535\u8111\u5c4f\u5e55\u5c3a\u5bf8","228":"LV\u7f8e\u5986-\u5f97\u7269","229":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u82b1\u738b\u536b\u751f\u5dfe\u5355\u5e97\u94fa\u4e00\u6b21\u6027","230":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u59ae\u7ef4\u96c5\u6b62\u6c57\u9732-2022","231":"\u51e4\u7965\u901f\u98df\u996d\u7c7b","232":"LV\u7f8e\u5986-\u6296\u97f3","233":"\u7ec3\u4e60 \u7cae\u6cb9\u8c03\u5473\u6db2\u6001\u5976","234":"\u5eb7\u5e08\u5085\u996e\u54c12022","235":"\u76ca\u6d77\u5609\u91cc\u5929\u732b2022\u8d77","236":"\u7f8e\u5fb7\u4e50\u54fa\u4e73\u6587\u80f8\u6296\u97f3","237":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u4e50\u9ad8\u73a9\u5177\u6296\u97f3","238":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u98de\u5229\u6d66-\u6296\u97f3\u6570\u636e","239":"\u4ebf\u6ecb\u86cb\u7cd5\u54c1\u7c7b","240":"\u9762\u819c\u6d4b\u8bd5-zeng","241":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u4eba\u5934\u9a6cdy2\u9879\u76ee","242":"DELL\u6296\u97f3\u9884\u6e05\u6d17","243":"\u5bb6\u6e05\u9884\u6e05\u6d17","244":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 B\u7ad9\u6570\u636e\u8d2d\u4e70\u6d4b\u8bd5","245":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u573a\u666f\u7537\u88c5\u4e00\u6b21\u6027\u9879\u76ee","246":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u4eac\u4e1c\u519c\u673a\u4e00\u6b21\u6027\u9879\u76ee","247":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u76d2\u9a6c\u76ca\u6d77\u5609\u91cc2022","248":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 oppo\u5e73\u677f\u7535\u8111","249":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 AGF\u6d53\u7f29\u5496\u5561","250":"\u6ef4\u9732sku","251":"\u82ad\u514b\u513f\u7ae5\u795b\u75a4\u818f","252":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u9762\u819c\u6d4b\u8bd5","253":"\u996e\u6599\u6807\u51c6\u5e932022","254":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u670d\u88c5\u7eaf\u7f8a\u6bdb-\u9884\u8c03\u67e5","255":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 AGF\u901f\u6eb6\u5496\u5561","256":"\u9999\u5948\u513f-\u5f97\u7269","257":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u4e2a\u62a4\u5bb6\u6e05\u6570\u636e\u5e93","258":"\u6b27\u83b1\u96c5\u7f8e\u5986","259":"\u6b27\u83b1\u96c5\u7f8e\u5986-2022","260":"Coty-\u6b62\u6c57\u9732","261":"Nike\u6296\u97f3","262":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u82b1\u738b\u9632\u6652\u971c","263":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u8425\u517b\u4fdd\u5065\u54c1\u9884\u6e05\u6d17","264":"\u5564\u9152","265":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5564\u9152","266":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5564\u9152","267":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5564\u9152","268":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u8010\u6d88\u767e\u573a\u5ba3\u8bb2\u6807\u51c6\u5e93","269":"3M\u9632\u62a4-\u773c\u53e3\u8033\u9762\u9632\u62a4\u670d","270":"qbt\u60c5\u62a5\u901a\u5347\u7ea7\u91cd\u70b9\u5927\u7c7b\u5173\u952e\u5c5e\u6027\u68b3\u7406","271":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u767e\u8349\u5473\u96f6\u98df","272":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7c73\u8bfa\u5730\u5c14\u62a4\u53d1\u4e00\u6b21\u6027\u9879\u76ee","273":"\u96c5\u8bd7\u5170\u9edb\u5934\u53d1\u529f\u6548(\u6307\u5b9a\u5e97\u94fa)","274":"\u963f\u8fea\u6307\u5b9a\u5e97\u94fa","275":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","276":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","277":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","278":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","279":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","280":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa\u9884\u8c03\u67e5","281":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","282":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","283":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","284":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","285":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","286":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","287":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","288":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","289":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","290":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","291":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","292":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa\u9884\u8c03\u67e5","293":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","294":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u963f\u8fea\u6307\u5b9a\u5e97\u94fa","295":"\u5a74\u513f\u8f85\u98df\u9879\u76ee","296":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u7f8e\u5986-\u5929\u732b\u6dd8\u5b9d","297":"\u6db2\u6001\u5976\u9884\u6e05\u6d17\u9879\u76ee","298":"BEL\u829d\u58eb\u5976\u916a","299":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5f97\u7269\u6f6e\u978b\u8d27\u53f7\u8c03\u67e5","300":"Babycare\u4e09\u5dfe\u9879\u76ee","301":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5f69\u5986\u6d88\u8d39\u5927\u76d8","302":"\u96c5\u8bd7\u5170\u9edb\u672a\u6e05\u6d17","303":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5ba0\u7269\u96f6\u98df","304":"Nike\u963f\u91cc\u6307\u5b9a\u5e97\u94fa","305":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5b89\u5229\u8840\u7cd6\u76f8\u5173\u4e34\u65f6\u8c03\u67e5","306":"\u67d3\u53d1\u818f\u9884\u6e05\u6d17","307":"\u4e1d\u5854\u82992023","308":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5bb6\u6e05-\u5934\u53d1\u6807\u51c6\u5e93","309":"\u4e2a\u62a4\u6e05\u6d01\u5de5\u5177-\u5973\u5200\u8eab\u4f53\u9664\u6bdb","310":"\u5386\u53f2\u9879\u76ee\u5df2\u5220\u9664 \u5609\u5b9e\u591a\u7279\u6b8a\u5b9a\u5236\u9879\u76ee","311":"ChocolaBB\u9879\u76ee\u6e05\u6d17","312":"\u767e\u8349\u5473\u679c\u5e72","313":"LV-\u6d17\u53d1\u6c34","314":"\u72ee\u738b\u53e3\u8154","315":"\u963f\u91cc\u5973\u6027\u54c1\u8d28\u52a9\u7720\u9884\u8c03\u67e5","316":"\u5929\u732b\u53e3\u8154\u62a4\u7406\/\u57ce\u5e02\u5496\u5561\u9884\u8c03\u67e5","317":"","318":"\u82b1\u738b\u7535\u70ed\u773c\u7f69","319":"\u5e1d\u4e9a\u5409\u6b27\u6d0b\u9152\u9879\u76ee","320":"\u4ea8\u6c0f\u8c03\u5473\u6599","321":"\u4e00\u6b21\u6027\u4e94\u54c1\u724c\u65d7\u8230\u5e97\u5185\u5bb9\u529b\u9879\u76ee","322":"\u5229\u6d01\u65f6sku\u9879\u76ee2023","323":"\u5a74\u513f\u7eb8\u5c3f\u88e4\u62c9\u62c9\u88e4","324":"\u5a74\u513f\u7eb8\u5c3f\u88e4\u62c9\u62c9\u88e4","325":"\u6bcd\u5a74\u5927\u76d8","326":"\u7f8e\u5fb7\u4e50\u4eac\u4e1c\u6570\u636e","327":"\u6bcd\u5a74\u6d17\u62a4\u9884\u6e05\u6d172023","328":"\u81a8\u5316\u98df\u54c1","329":"\u51c9\u978b\/\u4eb2\u5b50\u978b","330":"\u692d\u5706\u673a\u56db\u4e2a\u54c1\u724c","331":"\u79d1\u52d2bi","332":"\u679c\u9152","333":"\u51b7\u51bb\u85af\u6761\/\u85af\u997c","334":"coty\u7c89\u5e95\u6db2\u6307\u5b9a\u5e97\u94fa","335":"\u5185\u5bb9\u529b\u996e\u6599\u8dd1\u53e3\u5473for\u6768\u8001\u5e08","336":"PDD\u7eb8\u5c3f\u88e4\u62c9\u62c9\u88e4","337":"coty\u6c14\u57absku\u6307\u5b9a\u5e97\u94fa","338":"\u5229\u6d01\u65f6\u6ef4\u9732 \u6c90\u6d74\u9732\u9999\u7682","339":"\u674e\u9526\u8bb0\u751f\u62bd\u869d\u6cb9","340":"pola\u5168\u5e73\u53f0","341":"\u5e72\u773c\u75c7\u4e00\u6b21\u6027","342":"\u5185\u5bb9\u529b\u73a9\u5177\u9879\u76eefor\u6768\u8001\u5e08","343":"\u9edb\u73c25\u6b3e\u4ea7\u54c1\u9884\u8c03\u67e5","344":"\u6e34\u671b\u5ba0\u7269(\u732b\u72d7)\u4e3b\u7cae","345":"\u5185\u5bb9\u529b\u8fd0\u52a8\u978bfor\u6768\u8001\u5e08","346":"\u5ba0\u7269(\u732b\u72d7)\u9a71\u866b","347":"\u8fd0\u52a8\u62a4\u5177(Haleon)\u4e00\u6b21\u6027","348":"\u82b1\u738b\u536b\u751f\u5dfe\u957f\u5ea6\u9884\u8c03\u67e5","349":"\u8fd0\u52a8\u978b\u7684sku\u7b54\u9898","350":"\u4e2a\u62a4\u54c1\u7c7b\u53d6\u6570","351":"\u4ea8\u6c0f\u9171\u6cb9\u756a\u8304\u9171\u6c99\u62c9\u91712024","352":"\u7a7a\u9879\u76ee","353":"PDD\u54c1\u724c\u6e05\u6d17\u6d4b\u8bd5","354":"\u6b27\u83b1\u96c5-pdd","355":"\u4ea8\u6c0f\u4e2d\u9171\u8c03\u5473\u6599","356":"pqq\u6210\u5206\u6d4b\u8bd5\u9879\u76ee","357":"\u4ea8\u6c0f\u897f\u9171\u8c03\u5473\u6599","358":"VIP\u552f\u54c1\u4f1a\u5185\u8863\u6d4b\u8bd5","359":"\u6807\u51c6\u5316\u62a5\u544a\u9879\u76ee\u6d4b\u8bd5(\u5564\u9152)","360":"\u732b\u7cae\u72d7\u7cae\u5e02\u573a\u7814\u7a76\u6807\u51c6\u5e93","361":"\u8840\u7cd6\u4eea\u4e00\u6b21\u6027\u8dd1\u6807\u51c6\u62a5\u544a","362":"\u6b27\u83b1\u96c5-dy","363":"\u7ae5\u978b\u6807\u51c6\u5e93","364":"\u6d0b\u9152\u6807\u51c6\u5e93","365":"puig\u5f97\u7269","366":"\u7f8e\u5986\u5927\u5e93-\u6d4b\u8bd5\u7248","367":"\u65e0\u9650\u6781\u6574\u4f53\u5e02\u573a","368":"\u6d17\u7897\u673a\u7528\u6d17\u6da4\u5242","369":"\u6fb3\u4e50\u5bb6\u9a71\u868a\u4ea7\u54c1\u4e00\u6b21\u6027\u9879\u76ee","370":"\u7f8e\u7eb3\u91cc\u5c3c\u795b\u75a4\u9879\u76ee","371":"\u7f8e\u5986Oral","372":"\u610f\u9762\u4e00\u6b21\u6027\u9879\u76ee2409"};
+
+    function create() {
+        if (!window.confirm('确认添加清洗任务！')) {
+            return
+        }
+        let bid = $('#bid').val()
+        let bname = $('#bname').val()
+        let smonth = $('#smonth').val()
+        let emonth = $('#emonth').val()
+        let ctime = $('#ctime').val()
+        let priority = $('#priority').val()
+        let tbl = $('#tbl').val()
+        let repeat = $('#repeat').val()
+        let where = $('#where').val()
+        let test_choose = $('#test_choose').val()
+        let is_test = $('#is_test').val()
+
+        if (bid == '' || bid == 0) {
+            window.alert('bid is empty')
+            return
+        }
+
+        params = {
+            bid: bid,
+            batchName: bname,
+            smonth: smonth,
+            emonth: emonth,
+            priority: priority,
+            tbl: tbl,
+            ctime: ctime,
+            repeat: repeat,
+            where: where,
+            test_choose: test_choose,
+            is_test: is_test
+        }
+        if (repeat == '' || repeat == 0) {
+            route(bid, 'create_clean_task', params, function(res) {
+                refresh()
+            })
+        } else if (ctime == '') {
+            window.alert('重复任务不允许开始时间填空')
+            return
+        } else if (where != '') {
+            window.alert('重复任务不允许限制清洗范围')
+            return
+        } else {
+            route(bid, 'create_repeat_task', params, function(res) {
+                refresh_p()
+            })
+        }
+    }
+
+    function detail(bid, tid) {
+        if (bid > 0) {
+            params = {
+                'tid': tid
+            }
+            route(bid, 'view_clean_task', params, function(res) {
+                window.sheetv.openWorksheet()
+                window.sheetv.setData(res)
+            })
+        }
+    }
+
+    function modify(bid, tid) {
+        if (!window.confirm('确认修改任务！')) {
+            return
+        }
+
+        pri = null
+        pt = null
+        d = window.sheet.getData()
+        d.forEach(v => {
+            if (v[0] == bid && v[2] == tid) {
+                pri = v[12]
+                pt = v[13]
+            }
+        });
+        if (pri == null || pt == null) {
+            refresh()
+            return
+        }
+        params = {
+            'tid': tid,
+            'pt': pt,
+            'pri': pri
+        }
+
+        route(bid, 'modify_clean_task', params, function(res) {
+            refresh()
+        })
+    }
+
+    function stop(bid, tid) {
+        if (!window.confirm('确认终止任务！')) {
+            return
+        }
+        params = {
+            'tid': tid
+        }
+        route(bid, 'kill_clean_task', params, function(res) {
+            refresh()
+        })
+    }
+
+    function retry(bid, tid) {
+        if (!window.confirm('确认开始任务！')) {
+            return
+        }
+        params = {
+            'tid': tid
+        }
+        route(bid, 'retry_clean_task', params, function(res) {
+            refresh()
+        })
+    }
+
+    function modify_r(bid, id) {
+        if (!window.confirm('确认修改任务！')) {
+            return
+        }
+        pri = null
+        rep = null
+        d = window.sheetp.getData()
+        d.forEach(v => {
+            if (v[0] == id) {
+                rep = v[3]
+                pri = v[4]
+                smonth = v[5]
+                emonth = v[6]
+                clntime = v[7]
+            }
+        });
+        if (rep == null || pri == null) {
+            refresh_p()
+            return
+        }
+        params = {
+            'id': id,
+            'rep': rep,
+            'pri': pri,
+            'smonth': smonth,
+            'emonth': emonth,
+            'clntime': clntime,
+        }
+        route(bid, 'modify_repeat_task', params, function(res) {
+            refresh_p()
+        })
+    }
+
+    function delete_r(bid, id) {
+        if (!window.confirm('确认删除任务！')) {
+            return
+        }
+        params = {
+            'id': id
+        }
+        route(bid, 'delete_repeat_task', params, function(res) {
+            refresh_p()
+        })
+    }
+
+    function refresh() {
+        params = {}
+        route(0, 'clean_task', params, function(res) {
+            $('#msg').html('当前在线清洗机数量 ' + res['server_count'] + ' 每kw数据清洗时间 ' + res['hash_rate'] + 's')
+            init['clean_task'] = res['data']
+            window.sheet.setData(res['data'])
+        })
+    }
+
+    function refresh_p() {
+        params = {}
+        route(0, 'clean_task_plan', params, function(res) {
+            window.sheetp.setData(res)
+        })
+    }
+
+    function route(id, host, data, callback) {
+        $('body').append('<div class="loading"><span class="spinner-border"></span> Loading...</div>')
+        $('.btn').attr('disabled', 'disabled');
+        $.ajax({
+            url: "../" + host + "/" + id,
+            type: "POST",
+            async: true,
+            dataType: "json",
+            headers: {
+                'X-CSRFToken': getCSRFToken()
+            },
+            data: {
+                id: id,
+                host: host,
+                data: JSON.stringify(data),
+                _csrf: token,
+            },
+            success: function(result) {
+                $('.btn').removeAttr('disabled');
+                $('.loading').remove()
+                let code = result.code;
+                if (code<0 || code>200) {
+                    let errmsg = result.errmsg;
+                    window.alert(errmsg);
+                    return;
+                }
+                callback(result.data)
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                $('.btn').removeAttr('disabled');
+                $('.loading').remove()
+                window.alert("处理时发生错误: " + textStatus);
+            },
+        });
+    }
+    // 筛选数据
+    function toggleAll() {
+        isAll = !isAll
+        const d = init['clean_task']
+        let res = d
+        if (!isAll) {
+            res = d.filter((item) => {
+                return !['已完成'].includes(item[8])
+            })
+            console.log(res)
+        }
+        window.sheet.setData(res)
+    }
+
+    counter_down = 0
+
+    function loop() {
+        if (counter_down <= 0) {
+            counter_down = 30
+            refresh()
+        }
+        counter_down -= 1
+        // $('#refresh').html('刷新（下次自动刷新' + (counter_down * 10) + 's）')
+        // setTimeout(loop, 10000);
+    }
+
+    let isAll = true
+    let init = {}
+    $(function() {
+        $('.input-date').datetimepicker({
+            format: "yyyy-mm-01",
+            language: "zh-CN",
+            multidate: false,
+            todayHighlight: true,
+            clearBtn: true,
+            minView: 2,
+            autoclose: true,
+        });
+
+        $('.input-time').datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            language: "zh-CN",
+            multidate: false,
+            todayHighlight: true,
+            clearBtn: true,
+            autoclose: true,
+        });
+
+        cols = [{
+                'title': 'id',
+                'width': 50
+            },
+            {
+                'title': 'bid',
+                'width': 50
+            },
+            {
+                'title': 'eid',
+                'width': 50
+            },
+            {
+                'title': 'repeat',
+                'width': 50
+            },
+            {
+                'title': 'priority',
+                'width': 50
+            },
+            {
+                'title': 'smonth',
+                'width': 100
+            },
+            {
+                'title': 'emonth',
+                'width': 100
+            },
+            {
+                'title': 'cleanTime',
+                'width': 150
+            },
+            {
+                'title': 'createTime',
+                'width': 150
+            },
+            {
+                'title': 'name',
+                'width': 150
+            },
+            {
+                'title': '',
+                'width': 200,
+                'type': 'html'
+            }
+        ]
+        data = [
+            []
+        ]
+        cfg = {
+            worksheetName: '周期性任务',
+            allowMoveWorksheet: false,
+            allowRenameWorksheet: false,
+            allowDeleteWorksheet: false,
+            data: data,
+            columns: cols,
+            filters: true,
+            tableOverflow: true,
+            defaultColAlign: 'center',
+            tableWidth: (document.body.clientWidth - 100) + 'px',
+            tableHeight: (document.body.clientHeight - 150) + 'px',
+            editable: true,
+            allowInsertColumn: false,
+            allowDeleteColumn: false,
+            allowRenameColumn: false,
+            defaultColWidth: 300,
+            updateTable: function(el, cell, x, y, source, value, label) {
+                if (x < 3 || x > 7) {
+                    cell.classList.add('readonly')
+                    cell.style.color = 'black'
+                }
+            },
+            license: '39130-64ebc-bd98e-26bc4xx'
+        }
+
+        window.sheetp = jexcel(document.getElementById('spreadsheet'), cfg);
+
+        cols = [{
+                'title': '项目id',
+                'width': 50,
+                'type': 'number'
+            },
+            {
+                'title': '项目名',
+                'width': 100
+            },
+            {
+                'title': '任务id',
+                'width': 100
+            },
+            {
+                'title': '清洗表',
+                'width': 200
+            },
+            {
+                'title': '清洗范围',
+                'width': 200
+            },
+            {
+                'title': '任务数',
+                'width': 50
+            },
+            {
+                'title': '完成',
+                'width': 50
+            },
+            {
+                'title': '失败',
+                'width': 50
+            },
+            {
+                'title': '进行中',
+                'width': 50
+            },
+            {
+                'title': '子任务平均用时',
+                'width': 100
+            },
+            {
+                'title': '剩余时间',
+                'width': 100
+            },
+            {
+                'title': '创建时间',
+                'width': 150
+            },
+            {
+                'title': '优先级',
+                'width': 50
+            },
+            {
+                'title': '计划开始时间',
+                'width': 150
+            },
+            {
+                'title': '预计开始时间',
+                'width': 150
+            },
+            {
+                'title': '预计完成时间',
+                'width': 150
+            },
+            {
+                'title': '实际开始时间',
+                'width': 150
+            },
+            {
+                'title': '实际完成时间',
+                'width': 150
+            },
+            {
+                'title': '',
+                'width': 200,
+                'type': 'html'
+            }
+        ]
+        data = [
+            []
+        ]
+        cfg = {
+            worksheetName: '清洗任务',
+            allowMoveWorksheet: false,
+            allowRenameWorksheet: false,
+            allowDeleteWorksheet: false,
+            data: data,
+            columns: cols,
+            filters: true,
+            freezeColumns: 2,
+            tableOverflow: true,
+            defaultColAlign: 'center',
+            tableWidth: (document.body.clientWidth - 100) + 'px',
+            tableHeight: (document.body.clientHeight - 150) + 'px',
+            editable: true,
+            allowInsertColumn: false,
+            allowDeleteColumn: false,
+            allowRenameColumn: false,
+            defaultColWidth: 300,
+            updateTable: function(obj, cell, col, row, val) {
+                cell.classList.add('readonly')
+                cell.style.color = 'black'
+
+                if (col == 6) {
+                    cell.style.color = '#00CC00'
+                    cell.style.fontWeight = 'bold'
+                } else if (col == 7) {
+                    cell.style.color = '#FF0000'
+                    cell.style.fontWeight = 'bold'
+                } else if (col == 12 || col == 13) {
+                    cell.classList.remove('readonly')
+                }
+            },
+            license: '39130-64ebc-bd98e-26bc4xx'
+        }
+
+        window.sheet = jexcel(document.getElementById('spreadsheet'), cfg);
+
+        cols = [{
+                'title': 'id',
+                'width': 50
+            },
+            {
+                'title': 'task_id',
+                'width': 100
+            },
+            {
+                'title': 'bid',
+                'width': 50
+            },
+            {
+                'title': 'eid',
+                'width': 50
+            },
+            {
+                'title': 'server_ip',
+                'width': 100
+            },
+            {
+                'title': 'process_id',
+                'width': 100
+            },
+            {
+                'title': 'priority',
+                'width': 50
+            },
+            {
+                'title': 'retry',
+                'width': 50
+            },
+            {
+                'title': 'CPU',
+                'width': 50
+            },
+            {
+                'title': 'RAM',
+                'width': 50
+            },
+            {
+                'title': 'count',
+                'width': 100
+            },
+            {
+                'title': 'params',
+                'width': 300
+            },
+            {
+                'title': 'status',
+                'width': 100
+            },
+            {
+                'title': 'kill',
+                'width': 50
+            },
+            {
+                'title': 'msg',
+                'width': 100
+            },
+            {
+                'title': 'planTime',
+                'width': 150
+            },
+            {
+                'title': 'beginTime',
+                'width': 150
+            },
+            {
+                'title': 'completedTime',
+                'width': 150
+            },
+            {
+                'title': 'createTime',
+                'width': 150
+            }
+        ]
+        data = [
+            []
+        ]
+        cfg = {
+            worksheetName: '子任务',
+            allowMoveWorksheet: false,
+            allowRenameWorksheet: false,
+            allowDeleteWorksheet: false,
+            data: data,
+            columns: cols,
+            search: false,
+            filters: false,
+            tableOverflow: true,
+            defaultColAlign: 'left',
+            tableWidth: (document.body.clientWidth - 100) + 'px',
+            tableHeight: (document.body.clientHeight - 150) + 'px',
+            editable: false,
+            allowInsertColumn: false,
+            allowDeleteColumn: false,
+            allowRenameColumn: false,
+            defaultColWidth: 300,
+            license: '39130-64ebc-bd98e-26bc4xx'
+        }
+        window.sheetv = jexcel(document.getElementById('spreadsheet'), cfg);
+
+        window.sheet.openWorksheet()
+
+        loop()
+        refresh_p()
+    })
+</script>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="container">
+            <p class="pull-left">&copy; cleaner 2024</p>
+        </div>
+    </footer>
+
+<script src="{% static 'dist/JS/yii.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/jquery.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/jquery-ui.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/bootstrap.js' %}" charset="utf-8"></script>
+
+</body>
+
+</html>

@@ -14,6 +14,7 @@ urlpatterns = [
     path('fss_shop/', views.fss_shop, name='lv_name'),
     path('check_fss/', views.check_fss, name='check_fss'),
     path('fss_task/', views.fss_task, name='fss_task'),
+
 ]
 
 if settings.DEBUG:

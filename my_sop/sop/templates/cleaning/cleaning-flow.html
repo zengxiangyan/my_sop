@@ -44,7 +44,7 @@
 <span class="icon-bar"></span>
 <span class="icon-bar"></span>
 <span class="icon-bar"></span></button><a class="navbar-brand" href="https://cleaner.ecdataway.com/cleaner/index.php">Data Cleaner</a></div><div id="w1-collapse" class="collapse navbar-collapse"><ul id="w2" class="navbar-nav navbar-right nav"><li><a href="https://cleaner.ecdataway.com/cleaner/index.php?r=site%2Findex">Home</a></li>
-<li><form action="https://cleaner.ecdataway.com/cleaner/index.php?r=admin%2Fdefault%2Flogout" method="post"><button type="submit" class="btn btn-link logout">Logout (zeng.xiangyan)</button></form></li></ul></div></div></nav>
+<li><form action="../admin/logout/" method="post"><button type="submit" class="btn btn-link logout">Logout ({{user}})</button>{% csrf_token %}</form></li></ul></div></div></nav>
         <div class="container">
 
             <ul class="breadcrumb"><li><a href="https://cleaner.ecdataway.com/cleaner/index.php">Home</a></li>
@@ -630,7 +630,7 @@
     'admin/clean-category/index',
     'admin/clean-pos/index',
     'admin/rule-test/index',
-    'admin/clean-task/index',
+    'clean-task',
     'admin/etable-item-search/index',
     '',
     'admin/clean-target/index',
@@ -1075,7 +1075,7 @@
   function checkBatchInfo(batchInfo) {
     return new Promise((resolve, reject) => {
       $.ajax({
-        url: "../easy_clean",
+        url: "../create_clean_task/"+batchInfo.batchId,
         async: true,
         type: "POST",
         dataType: "JSON",

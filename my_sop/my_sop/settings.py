@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django_rq',
     'sop',
     'cleaning',
+    'report',
 ]
 
 RQ_QUEUES = {
@@ -56,6 +57,7 @@ RQ_QUEUES = {
         'PORT': 6379,
         'DB': 0,
         'DEFAULT_TIMEOUT': 108000,
+        'PASSWORD': 'nint'
     },
 }
 
@@ -76,6 +78,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'my_sop.middleware.LoginRequiredMiddleware',  # 替换为实际路径
     # 'websocket.middleware.WebSocketMiddleware',
 ]
 

@@ -2,10 +2,11 @@ from django.shortcuts import render
 from . import connect_clickhouse
 from . import create_table
 from django.http import HttpResponseRedirect
-# from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt
 from sop.models import viewed_sp
 from django.db.models import Max
-
+from .forms import SavedQueryForm
+from .models import SavedQuery
 from django.http import JsonResponse
 import httpx
 from django.urls import reverse
@@ -133,13 +134,70 @@ def get_field(col_list):
     print(cols)
     return cols
 
-def sql_search(request):
+def sql_search_new(request):
     if request.method == 'POST':
         data = json.loads(request.body)
+        print(data)
+        db = data.get('db')
         sql = data.get('sql')
         stop_word = ['DROP','DELETE','UPDATE','ALTER','CREATE','INSERT','TRUNCATE','ADD','RENAME']
         for s in stop_word:
-            if s in sql.upper():
+            if s in sql.upper().replace('CREATE_TIME','').replace('STORENAME',''):
+                print(s)
+                return JsonResponse({"code":500,'status': 'error', 'msg': '除SELETE外的操作一律不允许通过！！！'})
+        try:
+            sql_query = connect_clickhouse.connect(db, sql)
+            # 处理 NaN, Infinity 和 -Infinity 值，将其转换为 None 或空字符串
+            def sanitize_data(data):
+                if isinstance(data, list):
+                    return [sanitize_data(item) for item in data]
+                elif isinstance(data, dict):
+                    return {key: sanitize_data(value) for key, value in data.items()}
+                elif isinstance(data, float):
+                    if data != data:  # NaN
+                        return None  # 或者返回空字符串 ""
+                    elif data == float('inf') or data == float('-inf'):  # Infinity 和 -Infinity
+                        return None  # 或者返回空字符串 ""
+                return data  # 保持其他值不变
+
+            sanitized_query = sanitize_data(sql_query)
+
+            # 确保数据列表不为空
+            if sanitized_query:
+                cols = get_field(list(sanitized_query[0].keys()))
+            else:
+                cols = []
+
+            js = {
+                "code": 200,
+                "msg": "",
+                "data":{"head":cols,"content":sanitized_query},
+                "count": len(sanitized_query),
+                "type": '',
+            }
+            return JsonResponse(js)
+        except json.JSONDecodeError as e:
+            print(e)
+            return JsonResponse({'status': 'error', 'msg': 'Invalid JSON'}, status=400)
+        except Exception as e:
+            # print(sql_query)
+            return JsonResponse({"code":500,'status': 'error', 'msg': str(e)})
+    else:
+        user = request.user
+        queries = SavedQuery.objects.filter(user=request.user, delete_flag=False).order_by('-update_time').values()
+        # queries_list = list(queries)
+        # print(request.user,queries_list)
+        return render(request, 'sop/sql语法测试_bk.html', locals())
+
+def sql_search(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        print(data)
+        sql = data.get('sql')
+        stop_word = ['DROP','DELETE','UPDATE','ALTER','CREATE','INSERT','TRUNCATE','ADD','RENAME']
+        for s in stop_word:
+            if s in sql.upper().replace('CREATE_TIME','').replace('STORENAME',''):
+                print(s)
                 return JsonResponse({"code":500,'status': 'error', 'msg': '除SELETE外的操作一律不允许通过！！！'})
         try:
             sql_query = connect_clickhouse.connect(1, sql)
@@ -180,6 +238,40 @@ def sql_search(request):
             return JsonResponse({"code":500,'status': 'error', 'msg': str(e)})
     else:
         return render(request, 'sop/sql语法测试.html', locals())
+@csrf_exempt
+def updaterecord(request):
+    if request.method == 'POST':
+        form = SavedQueryForm(request.POST)
+        print(request.POST)
+        if form.is_valid():
+            saved_query = form.save(commit=False)
+            saved_query.user = request.user
+            saved_query.save()
+            return JsonResponse({'code': 0, 'message': '保存成功', 'data': {'id': saved_query.id}})
+        else:
+            return JsonResponse({'code': 1, 'message': '表单无效', 'errors': form.errors})
+    else:
+        form = SavedQueryForm()
+        return JsonResponse({'code': 0, 'data': form.as_p()})
+
+def query_list(request):
+    queries = SavedQuery.objects.filter(user=request.user, delete_flag=False).order_by('-update_time').values()
+    queries_list = list(queries)
+    print(queries_list)
+    return JsonResponse({'queries': queries_list})
+
+def execute_query(request, query_id):
+    query = get_object_or_404(SavedQuery, id=query_id, user=request.user, delete_flag=False)
+    with connection.cursor() as cursor:
+        cursor.execute(query.sql_query)
+        result = cursor.fetchall()
+    return render(request, 'query_result.html', {'result': result})
+
+def delete_query(request, query_id):
+    query = get_object_or_404(SavedQuery, id=query_id, user=request.user)
+    query.delete_flag = True  # 设置删除标志
+    query.save()
+    return redirect('query_list')
 
 # def search(request):
 #     if request.method == 'POST':

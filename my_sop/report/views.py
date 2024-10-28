@@ -253,13 +253,6 @@ def fss_task(request):
         tbl = request.GET.get('table')
         PersonInCharge = request.GET.get('PersonInCharge')
         filter_kwargs = {k: v for k, v in request.GET.items() if v and k not in ['page','limit']}
-        # filter_kwargs = {}
-        # if eid:
-        #     filter_kwargs['eid'] = eid
-        # if tbl:
-        #     filter_kwargs['tbl'] = tbl
-        # if PersonInCharge:
-        #     filter_kwargs['PersonInCharge'] = PersonInCharge
 
         if filter_kwargs:
             queryset = check_fss_task.objects.filter(**filter_kwargs).order_by('-updatetime')
