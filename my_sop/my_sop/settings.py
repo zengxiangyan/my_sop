@@ -27,10 +27,11 @@ DEBUG = True
 ALLOWED_HOSTS = ['*','www.zxy-console.cn','zxy-console.cn','nint.zxy-console.cn', 'localhost', '127.0.0.1']
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_TRUSTED_ORIGINS = [
-    'http://123.249.120.233:3002',
-    'https://123.249.120.233:3002',
-    'http://123.249.120.233:8009',
-    'https://123.249.120.233:8009'
+    'http://117.72.45.190:3000',
+    'https://117.72.45.190:3000',
+    'http://sop.zxy-console.cn',
+    'https://sop.zxy-console.cn',
+    
 ]
 
 APPEND_SLASH  = False
@@ -67,7 +68,7 @@ CELERY_RESULT_BACKEND = 'redis://:nint@117.72.45.190/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
+CELERY_TIMEZONE = 'Asia/Shanghai'
 
 MIDDLEWARE = [
     # 'my_sop.middleware.simple_middleware',

@@ -171,9 +171,20 @@ input[type="submit"], button {
     /* Forms */
 
     label {
+<<<<<<< HEAD
+        font-size: 1rem;
+    }
+
+    /*
+    Minifiers remove the default (text) "type" attribute from "input" HTML
+    tags. Add input:not([type]) to make the CSS stylesheet work the same.
+    */
+    .form-row input:not([type]),
+=======
         font-size: 0.875rem;
     }
 
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
     .form-row input[type=text],
     .form-row input[type=password],
     .form-row input[type=email],
@@ -187,7 +198,11 @@ input[type="submit"], button {
         margin: 0;
         padding: 6px 8px;
         min-height: 2.25rem;
+<<<<<<< HEAD
+        font-size: 1rem;
+=======
         font-size: 0.875rem;
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
     }
 
     .form-row select {
@@ -446,6 +461,12 @@ input[type="submit"], button {
 @media (max-width: 767px) {
     /* Layout */
 
+<<<<<<< HEAD
+    #header, #content {
+        padding: 15px;
+    }
+
+=======
     #header, #content, #footer {
         padding: 15px;
     }
@@ -454,6 +475,7 @@ input[type="submit"], button {
         padding: 0;
     }
 
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
     div.breadcrumbs {
         padding: 10px 15px;
     }
@@ -564,10 +586,13 @@ input[type="submit"], button {
         padding-top: 15px;
     }
 
+<<<<<<< HEAD
+=======
     fieldset.collapsed .form-row {
         display: none;
     }
 
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
     .aligned label {
         width: 100%;
         min-width: auto;

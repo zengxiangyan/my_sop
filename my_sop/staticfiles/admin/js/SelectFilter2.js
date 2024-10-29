@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+/*global SelectBox, gettext, ngettext, interpolate, quickElement, SelectFilter*/
+=======
 /*global SelectBox, gettext, interpolate, quickElement, SelectFilter*/
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
 /*
 SelectFilter2 - Turns a multiple-select box into a filter interface.
 
