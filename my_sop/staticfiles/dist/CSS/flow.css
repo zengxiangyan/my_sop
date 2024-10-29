@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 body {
     font-family: Arial, sans-serif;
 }
@@ -40,4 +41,48 @@ body {
 .section {
     border: 2px dashed black;
     padding: 10px;
+=======
+body {
+    font-family: Arial, sans-serif;
+}
+
+.flowchart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.step {
+    border: 2px solid black;
+    padding: 10px;
+    margin: 10px;
+    text-align: center;
+}
+
+.rectangle {
+    border-radius: 5px;
+}
+
+.oval {
+    border-radius: 50%;
+}
+
+.diamond {
+    width: 120px;
+    height: 120px;
+    transform: rotate(45deg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.diamond > div {
+    transform: rotate(-45deg);
+}
+
+.section {
+    border: 2px dashed black;
+    padding: 10px;
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
 }

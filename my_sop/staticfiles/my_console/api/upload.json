@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "code": 1,
   "msg": "上传成功",
@@ -8,3 +9,15 @@
     ]
   }
 }
+=======
+{
+  "code": 1,
+  "msg": "上传成功",
+  "data": {
+    "url": [
+      "../images/logo.png",
+      "../images/captcha.jpg"
+    ]
+  }
+}
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0

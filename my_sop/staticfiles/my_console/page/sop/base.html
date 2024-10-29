@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% load static %}
 <!DOCTYPE html>
 <html>
@@ -369,3 +370,376 @@ layui.use(['table','form'], function(){
 <script src="{% static 'dist/layui/index.js' %}" charset="utf-8"></script>
 </body>
 </html>
+=======
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Layui</title>
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="stylesheet" href="{% static 'dist/layui/css/layui.css' %}" media="all">
+<style>
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-size: 100px;
+    background: #f2f2f2;
+}
+html {
+    font-size: 100px;
+}
+.box-zyml-table {
+}
+a[lay-event="detail"],
+a[lay-event="del"] {
+    font-family: Helvetica;
+    font-size: .17rem;
+    color: #2A82E4;
+    letter-spacing: 0;
+    font-weight: 400;
+}
+/* 设置删除的按钮样式 */
+.layui-layer-dialog .layui-layer-content {
+    /* 字体大小; !important：提升指定样式规则的应用优先权 */
+    font-size: .16rem !important;
+    line-height: 0 !important;
+    overflow-x: hidden !important;
+    overflow-y: hidden !important;
+    padding: .2rem !important;
+    position: relative;
+    color: #2d2d2d;
+    /* font-weight: bold;  */
+    word-break: break-all;
+}
+.layui-layer-btn {
+    /* //按钮的内边距 */
+    padding: 0px 0px .1rem !important;
+    margin-top: .2rem;
+}
+.layui-layer-btn a {
+    /* 按钮中字体的大小 */
+    height: .28rem !important;
+    line-height: .28rem !important;
+    margin: .05rem .05rem 0 !important;
+    border: .01rem solid #dedede !important;
+    font-size: .16rem !important;
+    border-radius: .02rem !important;
+    padding: 0.005rem 0.15rem !important;
+}
+
+/* 专业门类的数据表格样式 */
+.box-zyml-table .layui-table thead tr{
+    height: .6rem;
+    background: #F9FCFE;
+}
+.box-zyml-table .layui-table tr{
+    height: .6rem;
+}
+.box-zyml-table .layui-table-header{
+    border: none;
+}
+.box-zyml-table .layui-table-header table >thead tr th{
+    font-family: 'PingFangSC-Medium';
+    font-size: .2rem;
+    color: #1A1A1A;
+    letter-spacing: .0067rem;
+    line-height: .3rem;
+    font-weight: 600;
+    border-bottom: .02rem solid rgba(230,230,230,1);
+}
+.box-zyml-table .layui-table head tr{
+    background: #F9FCFE;
+}
+.box-zyml-table .layui-table th:last-child{
+    background: #fff;
+    border: none;
+}
+.box-zyml-table .layui-table-body table tr td{
+    /* border: .01rem solid rgba(230,230,230,1); */
+}
+.box-zyml-table .layui-table tbody td:last-child{
+    background: #fff;
+    border: none;
+}
+/* 专业门类的下拉菜单的样式 */
+.box-zyml-table .layui-form-select .layui-input {
+    height: .4rem;
+    text-align: center;
+    margin-top: -0.06rem;
+    font-family: PingFangSC-Regular;
+    font-size: .2rem;
+    color: #666666;
+    letter-spacing: 0;
+    font-weight: 400;
+}
+.box-zyml-table .layui-form-select .layui-edge{
+    width: .12rem;
+    height: .07rem;
+    color: #999999;
+}
+.box-zyml-table .layui-form-select dl dd.layui-this{
+    background-color: #3389E0;;
+}
+.box-zyml-table .layui-form-select dl dd, .layui-form-select dl dt{
+    padding: 0 .1rem;
+    line-height: .4rem;
+    font-family: PingFangSC-Regular;
+    font-size: .2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+/* 最后一列实现设计稿的样式 */
+.box-zyml-table .layui-table-body table tr td:last-child div{
+    display: flex;
+    align-items: center;
+}
+.box-zyml-table .layui-table-body table tr td:last-child div a{
+    font-family: PingFangSC-Regular;
+    font-size: .18rem;
+    color: #3389E0;
+    letter-spacing: 0;
+    text-align: center;
+    font-weight: 400;
+    margin-left: .12rem;
+}
+.box-zyml-table .layui-table-body table tr td:last-child div .yuan{
+    display: inline-block;
+    width: .24rem;
+    height: .24rem;
+    background: #3389E0;
+    border-radius: 50%;
+    position: relative;
+    margin-left: .2rem;
+}
+.box-zyml-table .layui-table-body table tr td:last-child div .yuan >div{
+    position: absolute;
+    width: .18rem;
+    height: .02rem;
+    background: #fff;
+    top: 45%;
+    left: .03rem;
+}
+</style>
+
+</head>
+<body class="layui-layout-body">
+{{ eid|json_script:"eid" }}
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo">ND数据查询中心</div>
+    <!-- 头部区域（可配合layui已有的水平导航） -->
+    <ul class="layui-nav layui-layout-left">
+      <li class="layui-nav-item"><a href="#" data-url="/Test01.aspx" data-id="11" data-title="选项a" class="site-demo-active" data-type="tabAdd">控制台</a></li>
+      <li class="layui-nav-item"><a href="#">商品管理</a></li>
+      <li class="layui-nav-item"><a href="#">用户</a></li>
+      <li class="layui-nav-item">
+        <a href="javascript:;">其它系统</a>
+        <dl class="layui-nav-child">
+          <dd><a href="#">邮件管理</a></dd>
+          <dd><a href="#">消息管理</a></dd>
+          <dd><a href="http://10.21.90.130:8000" target="_blank" title="点击查看">ChatGpt接口1</a></dd>
+          <dd><a href="http://10.21.90.130:1002" target="_blank" title="点击查看">ChatGpt接口2</a></dd>
+        </dl>
+      </li>
+      <li class="layui-inline">
+          <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;选择数据源：</label>
+         <div class="layui-input-inline">
+          <select name="x1" lay-verify="required" class="layui-bg-black" style="width:240px;height:30px;color: white;border-radius: 10px;">
+            <option value="92192_E_0523">92192_E_0523</option>
+          </select>
+         </div>
+      </li>
+
+    </ul>
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+          <img src="http://t.cn/RCzsdCq" class="layui-nav-img" />
+          用户姓名
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="#">基本资料</a></dd>
+          <dd><a href="#">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="#">退出</a></li>
+    </ul>
+  </div>
+
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"  class="toggle">默认展开</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="#" data-url="/Test01.aspx" data-id="11" data-title="选项a" class="site-demo-active" data-type="tabAdd">选项a</a>
+                        </dd>
+                        <dd>
+                            <a href="#" data-url="/Test01.aspx" data-id="22" data-title="选项b"  class="site-demo-active" data-type="tabAdd">选项b</a>
+                        </dd>
+                        <dd>
+                            <a href="#">跳转</a>
+                        </dd>
+                    </dl>
+                </li>
+          <li class="layui-nav-item layui-nav-itemed">
+                    <a href="javascript:;"  class="toggle">二级导航示例</a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="#" data-url="/Test01.aspx" data-id="11" data-title="选项a" class="site-demo-active" data-type="tabAdd">子菜单</a>
+                        </dd>
+                        <dd>
+                            <a href="#" data-url="/Test01.aspx" data-id="22" data-title="选项b" class="site-demo-active" data-type="tabAdd">子菜单</a>
+                        </dd>
+                        <dd>
+                            <a href="#">跳转</a>
+                        </dd>
+                    </dl>
+                </li>
+        <li class="layui-nav-item"><a href="#" class="toggle">一级导航示例</a></li>
+        <li class="layui-nav-item"><a href="#">一级导航示例</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="layui-tab" lay-filter="demo" lay-allowclose="true" style="margin-left: 200px;">
+                <ul class="layui-tab-title">
+                </ul>
+                <ul class="rightmenu" style="display: none;position: absolute;">
+                    <li data-type="closethis">关闭当前</li>
+                    <li data-type="closeall">关闭所有</li>
+                </ul>
+            </div>
+
+ <%-- <div class="layui-body">
+    <!-- 表单及表格区域 -->
+    <div style="margin-bottom: 20px;"></div>
+    <div class="box-zyml-table">
+        <table id="idTest" lay-filter="demo"></table>
+    </div>
+</div>
+<!-- 数据表格中的删除 -->
+<script type="text/html" id="barDemo">
+    <div>
+        <div class="yuan">
+            <div></div>
+        </div>
+        <a class="" lay-event="del">保存</a>
+    </div>
+</script>
+
+<script type="text/html" id="operation_Checked">
+    <select name="operation" lay-filter="selectDemo3" value="不显示">
+        <option value="">请选择</option>
+        <option value="不显示">不显示</option>
+        <option value="普通属性">普通属性</option>
+        <option value="度量属性(聚合值)">度量属性(聚合值)</option>
+    </select>
+</script>
+
+</div>
+<!--  </div>--%>-->
+
+<!--  <div class="layui-footer">-->
+<!--    &lt;!&ndash; 底部固定区域 &ndash;&gt;-->
+<!--    © layui.com - 底部固定区域-->
+<!--  </div>-->
+<!--</div>-->
+<script src="{% static 'dist/layui/layui.js' %}" charset="utf-8"></script>
+<script>
+$(function () {
+    //适配图表table中的文字样式大小
+    function getFontSize(size, defalteWidth = 1920) {
+        let clientWidth = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+        console.log(clientWidth);
+        if (!clientWidth) return size;
+        let scale = (clientWidth / defalteWidth);
+        return Number((size * scale).toFixed(3));
+    }
+
+    //监听页面宽度,自适应窗口尺寸
+    $(window).resize(function () {
+        // window.location.reload()
+        //  监控窗口宽度变化
+        let width = $(window).width();
+        let size = (100 * width) / 1920;
+        $(document.body).css("font-size", size + "px");
+        $("html").css("font-size", size + "px");
+        $("body").css("font-size", size + "px");
+
+    });
+
+    //重新加载页面时候执行,自适应窗口尺寸
+    $(window).load(function () {
+        let width = $(window).width();
+        let size = (100 * width) / 1920;
+        $(document.body).css("font-size", size + "px");
+        $("html").css("font-size", size + "px");
+        $("body").css("font-size", size + "px");
+        layui.table.reload("moren")
+    });
+});
+</script>
+<script>
+layui.use(['table','form'], function(){
+    var table = layui.table;
+    $ = layui.$;
+    form = layui.form;
+    table.render({
+    elem:'#idTest',
+    data:[{"name":"子品类","operation":"不显示"},{"name":"品牌","operation":"不显示"},{"name":"是否人工答题","operation":"不显示"}],
+    toolbar: true, //仅开启工具栏，不显示左侧模板
+<!--    toolbar: '#demoTable',-->
+    totalRow: true, //开启合计行
+    page:true,//开启分页
+    request: {
+    pageName: 'page', //页码的参数名称，默认：page,
+    limitName: 'limit' //每页数据量的参数名，默认：limit
+    },
+    height:'full-140',
+    limit:10,
+    limits:[10,20,30,40,50,100,200],
+    cols:[[
+    // 表头，对应数据格式，此示例只设置3格
+    // 若不填写width列宽将自动分配
+    {type: 'checkbox'},
+    {field:'name',title:'name'},
+    {field:'operation',title:'operation',templet:'#operation_Checked' },
+    {title:'edit',  toolbar: '#barDemo'}
+   ]],
+   error: function (res, msg) {
+        console.log(res, msg)
+    },
+     /* 解决下拉菜单被遮挡的问题 */
+   done: function (res, curr, count) {
+        $(".layui-table-body, .layui-table-box, .layui-table-cell").css('overflow','visible');
+        var tableData = table.cache['idTest']; // 为table id
+        console.log(tableData);
+        viewObj.tbData = res.data;
+        form.render();
+    }
+   });
+
+  form.on('select(selectDemo3)', function (data) {
+        console.log(data.elem);
+        var elem = $(data.elem);
+        var trElem = elem.parents('tr');
+        console.log(trElem);
+        var tableData = table.cache['idTest']; // 为table id
+        console.log(tableData);
+        // 更新到表格的缓存数据中，才能在获得选中行等等其他的方法中得到更新之后的值
+        tableData[trElem.data('index')][elem.attr('name')] = data.value;
+    });
+});
+</script>
+<script src="{% static 'dist/layui/index.js' %}" charset="utf-8"></script>
+</body>
+</html>
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
