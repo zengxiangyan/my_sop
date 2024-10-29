@@ -1,8 +1,5 @@
 import datetime
 import json
-import sys
-import os
-from os.path import abspath, join, dirname
 import os
 import sys
 from django.shortcuts import get_object_or_404
@@ -14,9 +11,10 @@ print(project_root)
 sys.path.append(project_root)
 
 # 设置 DJANGO_SETTINGS_MODULE 环境变量
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "my_sop.my_sop.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "my_sop.settings")
 
 import django
+from django.db import connection
 django.setup()
 from cleaning.models import CleanBatchLog,CleanBatch,CleanCron
 
@@ -117,10 +115,12 @@ def add_task(batch_id,eid,task_id,priority,scripts,params):
     return clean_cron_task
 
 def cleaning(batch_id,task_id,scripts):
-
     progress_record, created = CleanBatchLog.objects.get_or_create(batch_id=get_object_or_404(CleanBatch, batch_id=batch_id), eid=10716,
                                          type='clean',task_id=task_id, status='process',process='清洗中')
 
+    # print(batch_id,created,progress_record.id)
+    # print(CleanBatchLog.objects.all().values())
+    # print(connection.settings_dict)
     # process_where = "platform = 'douyin' and time = '2024-08-01' and newno<56029690 "
     process_where = json.loads(progress_record.params)['w'].replace('date','time')
     comments = progress_record.comments
@@ -234,6 +234,7 @@ def cleaning(batch_id,task_id,scripts):
     progress_record.save()
 
 if __name__ == "__main__":
+    print(1111)
     # process_log(53845728)
-    # cleaning()
-    convert_brand()
+    # cleaning(batch_id=362,task_id=1730127706,scripts={'import_brand': {'path': '/mnt/d/my_sop/my_sop/cleaning/model/plugins/batch362/程序/1程序/1程序/', "script": 'import_brand.py'}})
+    # convert_brand()
