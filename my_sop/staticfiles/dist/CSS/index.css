@@ -1,0 +1,27 @@
+/*您可以将下列样式写入自己的样式表中*/
+	.childBody{padding: 15px;}
+	/*layui 元素样式改写*/
+	.layui-table th{font-weight: bold;}
+	.layui-btn-sm{line-height: normal; font-size: 12.5px;}
+	.layui-table-view .layui-table-body{min-height: 256px;}
+	.layui-table-cell .layui-input.layui-unselect{height: 30px; line-height: 30px;}
+
+	/*设置 layui 表格中单元格内容溢出可见样式*/
+	.table-overlay .layui-table-view,
+	.table-overlay .layui-table-box,
+	.table-overlay .layui-table-body{overflow: visible;}
+	.table-overlay .layui-table-cell{height: auto; overflow: visible;}
+
+	/*文本对齐方式*/
+	.text-center{text-align: center;}
+	* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    font-size: 100px;
+    background: #f2f2f2;
+}
+html {
+    font-size: 100px;
+}

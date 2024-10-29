@@ -127,19 +127,15 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'my_sop',
-        # 'USER': 'zeng.xiangyan',
-        # 'PASSWORD': 'nint@2024',
-        # 'HOST': '123.249.120.233',
-        'USER': 'zxy',
-        'PASSWORD': '13639054279zxy',
-        'HOST': '10.21.90.130',
+        'USER': 'zeng.xiangyan',
+        'PASSWORD': 'nint@2024',
+        'HOST': '123.249.120.233',
+        # 'USER': 'zxy',
+        # 'PASSWORD': '13639054279zxy',
+        # 'HOST': '10.21.90.130',
         'PORT': '3306',
     }
 }
-
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
-)
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -183,8 +179,10 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
