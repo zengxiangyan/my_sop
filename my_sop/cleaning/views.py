@@ -45,6 +45,20 @@ def cleaner(request):
         return render(request, 'cleaning/cleaning-flow.html', {"batchId":batchId,"batchName":batchName,"eid":eid})
 
     return render(request, 'sop/404.html', locals())
+
+def share_rules(request,id):
+    file_path = r'./cleaning/model/plugins/batch{}/rules/rules.xlsx'.format(id)
+    if os.path.exists(file_path):
+        response = FileResponse(open(file_path, 'rb'))  # 打开文件进行读取
+        mime_type, _ = mimetypes.guess_type(file_path)
+        response['Content-Type'] = mime_type or 'application/octet-stream'
+        filename = os.path.basename(file_path)
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(quote(filename))  # 设置为附件形式并指定默认文件名
+        return response
+    else:
+        # 如果文件不存在，返回404
+        return JsonResponse({'code':404,'errmsg':'rules配置文件未找到。'})
+
 def clean_rules(request):
     if request.method == 'POST':
         file = request.FILES.get('file')
@@ -54,9 +68,16 @@ def clean_rules(request):
             # 读取 Excel 文件
             file_data = file.read()
             workbook = load_workbook(filename=BytesIO(file_data))
-            print(sys.path[0])
-            workbook.save(r'./cleaning/model/plugins/batch{}/rules/rules.xlsx'.format(batchId,batchId))
-            js = {'code': 200, 'data': '文件上传成功\n共包含【{}】等[{}]个sheet'.format(workbook.sheetnames[0],len(workbook.sheetnames))}
+            workbook.save(r'./cleaning/model/plugins/batch{}/rules/rules.xlsx'.format(batchId, batchId))
+            result = rules_save.apply_async((batchId,), queue='default_queue')
+
+            # result = AsyncResult(result.task_id)
+            # if result.ready():
+            #     return JsonResponse({'status': 'completed', 'result': result.result})
+            # else:
+            #     return JsonResponse({'status': 'pending'})
+            js = {'code': 200,
+                  'data': '文件上传成功\n共包含【{}】等[{}]个sheet\ntask_id:{}'.format(workbook.sheetnames[0],len(workbook.sheetnames),result.id)}
             if batchId == 362:
                 module = dynamic_import(batchId)
                 if module:
@@ -73,6 +94,7 @@ def clean_rules(request):
 def download_rules(request):
     batchId = request.GET.get('batchId')
     file = request.GET.get('file','rules')
+    print(file)
     file_path = os.path.join(f'./cleaning/model/plugins/batch{batchId}/rules/{file}.xlsx')  # 构建文件的绝对路径
     if os.path.exists(file_path):
         response = FileResponse(open(file_path, 'rb'))  # 打开文件进行读取
@@ -371,71 +393,12 @@ def clean_task_plan(request,id):
     js = {"code": 0, "data": [[]]}
     return JsonResponse(js)
 
-# def easy_clean(request):
-#     if request.method == 'POST':
-#         print(request.POST)
-#         data = json.loads(request.POST.get('data'))
-#         user = data.get('r')
-#         batch_id = data.get('bid')
-#         batch_name = data.get('batchName')
-#         where = data.get('where', '1')
-#         priority = data.get('priority', 0)
-#         tbl = data.get('tbl', None)
-#         s_date = data.get('smonth').replace('/', '-')[0:10]
-#         e_date = data.get('emonth').replace('/', '-')[0:10]
-#         is_test = data.get('is_test', '')
-#         test_choose = data.get('test_choose', '')
-#         real_batchName = CleanBatch.objects.get(batch_id=batch_id).name
-#         task_id = int(datetime.datetime.now().timestamp())
-#         eid = CleanBatch.objects.get(batch_id=batch_id).eid
-#
-#         if real_batchName!=batch_name:
-#             js = {
-#                 "code": 0,
-#                 "errmsg": "Batch ID: {batchId} \n正确名称为: {real_batchName} \n输入为: {batchName}\n"
-#                 .format(batchId=batch_id, real_batchName=real_batchName, batchName=batch_name)
-#             }
-#             return JsonResponse(js)
-#         print("清洗状态检查：",len(CleanBatchLog.objects.filter(Q(batch_id=batch_id) & ~Q(status__in= ['complete','error']))))
-#         if len(CleanBatchLog.objects.filter(Q(batch_id=batch_id) & ~Q(status__in= ['complete','error']))):
-#             js = {
-#                 "code": 0,
-#                 "errmsg": "batchId{}正在清洗中，请不要重复添加".format(batch_id)
-#             }
-#             return JsonResponse(js)
-#         params = json.dumps({
-#             "w": f"1 AND (date >= '{s_date}') AND (date < '{e_date}')",
-#             "s": s_date,
-#             "e": e_date
-#         })
-#         CleanBatchLog.objects.create(batch_id=get_object_or_404(CleanBatch, batch_id=batch_id),eid=eid,type='clean',task_id=task_id,status='process',
-#                 process='清洗中',params=params)
-#         task_id = str(int(time.time()))
-#         queue = django_rq.get_queue('default')
-#         module = dynamic_import(batch_id)
-#         if module:
-#             print("batchId{}模型导入".format(batch_id))
-#             module.add_task()
-#             job = queue.enqueue(module.cleaning, task_id)
-#             js = {
-#                 "code": 200,
-#                 "msg": "batchId{}清洗任务添加成功".format(batch_id)
-#             }
-#             return JsonResponse(js)
-#         js = {
-#             "code": 0,
-#             "msg": "batchId{}清洗清洗模型异常".format(batch_id)
-#         }
-#         return JsonResponse(js)
-#
-#     else:
-#         return render(request, 'sop/404.html')
 
-from my_sop.task import my_task
+from my_sop.task import rules_save
 from celery.result import AsyncResult
 def create_task(request):
     # result = my_task.delay('测试任务调度')
-    result = my_task.apply_async(('测试任务调度',), queue='default_queue')
+    result = my_task.apply_async(('测试任务调度{}'.format(1+1),), queue='default_queue')
     return JsonResponse({'task_id': result.id})
 
 
