@@ -35,6 +35,14 @@
         background-position: calc(100% - 8px) 9px;
     }
 
+<<<<<<< HEAD
+=======
+    [dir="rtl"] .related-widget-wrapper-link + .selector {
+        margin-right: 0;
+        margin-left: 15px;
+    }
+
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
     [dir="rtl"] .selector .selector-filter label {
         margin-right: 0;
         margin-left: 8px;
@@ -53,6 +61,7 @@
         padding-left: 0;
         padding-right: 16px;
     }
+<<<<<<< HEAD
 
     [dir="rtl"] .selector-add {
         background-position: 0 -80px;
@@ -69,6 +78,8 @@
     [dir="rtl"] .active.selector-remove:focus, .active.selector-remove:hover {
         background-position: 0 -140px;
     }
+=======
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
 }
 
 /* MOBILE */
@@ -92,6 +103,7 @@
     [dir="rtl"] .aligned .vCheckboxLabel {
         padding: 1px 5px 0 0;
     }
+<<<<<<< HEAD
 
     [dir="rtl"] .selector-remove {
         background-position: 0 0;
@@ -108,4 +120,6 @@
     [dir="rtl"] .active.selector-add:focus, .active.selector-add:hover {
         background-position: 0 -60px;
     }
+=======
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
 }

@@ -24,18 +24,14 @@ SECRET_KEY = '-f4qc84e++2gxp#z+c9nj0m6tpq654a+4%io5d9sjg!z@b8mba'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*','www.zxy-console.cn','sop.zxy-console.cn','brush.zxy-console.cn','zxy-console.cn','nint.zxy-console.cn', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*','www.zxy-console.cn','zxy-console.cn','nint.zxy-console.cn', 'localhost', '127.0.0.1']
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_TRUSTED_ORIGINS = [
-    'http://123.249.120.233:3002',
-    'https://123.249.120.233:3002',
-    'http://123.249.120.233:8009',
-    'https://123.249.120.233:8009',
     'http://117.72.45.190:3000',
     'https://117.72.45.190:3000',
-    'https://brush.zxy-console.cn',
+    'http://sop.zxy-console.cn',
     'https://sop.zxy-console.cn',
-    'http://localhost:8000', 
+    
 ]
 
 APPEND_SLASH  = False
@@ -72,7 +68,7 @@ CELERY_RESULT_BACKEND = 'redis://:nint@117.72.45.190/0'
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
+CELERY_TIMEZONE = 'Asia/Shanghai'
 
 MIDDLEWARE = [
     # 'my_sop.middleware.simple_middleware',
@@ -142,10 +138,6 @@ DATABASES = {
     }
 }
 
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
-)
-
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
 
@@ -188,12 +180,10 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
-)
-
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'

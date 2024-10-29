@@ -8,6 +8,7 @@ urlpatterns = [
     path('save', views.save, name='save'),
     path('cleaner/', views.cleaner, name='cleaner'),
     path('clean_rules/', views.clean_rules, name='clean_rules'),
+    path('share/<int:id>', views.share_rules, name='share_rules'),
     path('download-rules', views.download_rules, name='download-rules'),
     path('clean_process/', views.clean_process, name='clean_process'),
     # path('easy_clean', views.create_clean_task, name='easy_clean'),
