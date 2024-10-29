@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponse
-
 from django.shortcuts import redirect
 from django.urls import reverse
 from urllib.parse import urlencode
 
+from django.shortcuts import redirect
+from django.urls import reverse
 
 class LoginRequiredMiddleware:
     def __init__(self, get_response):
@@ -14,12 +15,15 @@ class LoginRequiredMiddleware:
         # 检查用户是否已认证
         if not request.user.is_authenticated:
             login_url = reverse('admin:login')
-            # 添加静态文件路径的排除规则
-            if not request.path.startswith(login_url) and not request.path.startswith('/static/'):
-                return redirect(f'{login_url}?{urlencode({"next": request.path})}')
+            # 排除静态文件请求
+            if not request.path.startswith('/static/') and not request.path.startswith(login_url) and not request.path.startswith('/share/'):
+                return redirect(f'{login_url}?next={request.path}')
 
         response = self.get_response(request)
         return response
+
+
+
 
 
 
@@ -40,10 +44,4 @@ class XFrameOptionsMiddleware:
     def get_xframe_options_value(self, request):
 
         return 'SAMEORIGIN'
-
-
-
-
-
-
 

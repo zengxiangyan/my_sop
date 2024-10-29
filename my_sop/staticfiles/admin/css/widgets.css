@@ -519,9 +519,25 @@ span.clearable-file-input label {
     background: url(../img/calendar-icons.svg) 0 0 no-repeat;
 }
 
+<<<<<<< HEAD
 .calendarnav-next {
     right: 10px;
     background: url(../img/calendar-icons.svg) 0 -15px no-repeat;
+=======
+.calendarbox .calendarnav-previous:focus,
+.calendarbox .calendarnav-previous:hover {
+    background-position: 0 -15px;
+}
+
+.calendarnav-next {
+    right: 10px;
+    background: url(../img/calendar-icons.svg) 0 -30px no-repeat;
+}
+
+.calendarbox .calendarnav-next:focus,
+.calendarbox .calendarnav-next:hover {
+    background-position: 0 -45px;
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
 }
 
 .calendar-cancel {

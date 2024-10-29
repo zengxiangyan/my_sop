@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% load static %}
 <!DOCTYPE html>
 <html>
@@ -60,3 +61,67 @@ editor.on('change', resizeEditor);
 </body>
 </html>
 
+=======
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="{% static 'dist/CSS/codemirror.css' %}" media="all">
+  <script src="{% static 'dist/JS/codemirror.js' %}"></script>
+  <script src="{% static 'dist/JS/sql.js' %}"></script> <!-- SQL 语法模式文件 -->
+  <style>
+    /* 自定义 CodeMirror 样式 */
+    .CodeMirror {
+      height: 300px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    .CodeMirror-scroll {
+      overflow: auto !important;
+    }
+  .card {
+    width: 100px; /* 设置卡片的宽度 */
+    /* 其他样式属性 */
+  }
+
+  .editor-container {
+    width: 100%; /* 编辑器容器宽度设置为卡片宽度 */
+    /* 其他样式属性 */
+  }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="layui-card-header">提交SQL:</div>
+    <div class="editor-container">
+      <div id="editor"></div>
+    </div>
+  </div>
+
+  <script>
+  // 初始化 CodeMirror
+var editor = CodeMirror(document.getElementById('editor'), {
+  mode: 'text/x-sql', // 设置语法模式为 SQL
+  theme: 'default', // 设置主题样式
+  lineNumbers: true, // 显示行号
+  indentUnit: 2, // 缩进单位为 2 个空格
+  autofocus: true, // 自动聚焦
+  viewportMargin: Infinity // 设置 viewportMargin 为 Infinity
+});
+
+// 设置编辑器高度随内容自动调整
+function resizeEditor() {
+  editor.setSize(null, 'auto');
+}
+resizeEditor(); // 初始化时调整一次高度
+
+// 监听编辑器内容变化事件，实时调整高度
+editor.on('change', resizeEditor);
+
+
+  </script>
+</body>
+</html>
+
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0

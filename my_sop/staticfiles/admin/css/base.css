@@ -13,7 +13,10 @@ html[data-theme="light"],
     --body-fg: #333;
     --body-bg: #fff;
     --body-quiet-color: #666;
+<<<<<<< HEAD
     --body-medium-color: #444;
+=======
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
     --body-loud-color: #000;
 
     --header-color: #ffc;
@@ -85,8 +88,11 @@ html[data-theme="light"],
         "Segoe UI Emoji",
         "Segoe UI Symbol",
         "Noto Color Emoji";
+<<<<<<< HEAD
 
     color-scheme: light;
+=======
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
 }
 
 html, body {
@@ -150,6 +156,10 @@ h1 {
     margin: 0 0 20px;
     font-weight: 300;
     font-size: 1.25rem;
+<<<<<<< HEAD
+=======
+    color: var(--body-quiet-color);
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
 }
 
 h2 {
@@ -165,7 +175,11 @@ h2.subhead {
 h3 {
     font-size: 0.875rem;
     margin: .8em 0 .3em 0;
+<<<<<<< HEAD
     color: var(--body-medium-color);
+=======
+    color: var(--body-quiet-color);
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
     font-weight: bold;
 }
 
@@ -173,7 +187,10 @@ h4 {
     font-size: 0.75rem;
     margin: 1em 0 .8em 0;
     padding-bottom: 3px;
+<<<<<<< HEAD
     color: var(--body-medium-color);
+=======
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
 }
 
 h5 {
@@ -220,10 +237,13 @@ fieldset {
     border-top: 1px solid var(--hairline-color);
 }
 
+<<<<<<< HEAD
 details summary {
     cursor: pointer;
 }
 
+=======
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
 blockquote {
     font-size: 0.6875rem;
     color: #777;
@@ -320,7 +340,11 @@ td, th {
 }
 
 th {
+<<<<<<< HEAD
     font-weight: 500;
+=======
+    font-weight: 600;
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
     text-align: left;
 }
 
@@ -341,7 +365,11 @@ tfoot td {
 }
 
 thead th.required {
+<<<<<<< HEAD
     font-weight: bold;
+=======
+    color: var(--body-loud-color);
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
 }
 
 tr.alt {
@@ -489,6 +517,7 @@ textarea {
     vertical-align: top;
 }
 
+<<<<<<< HEAD
 /*
 Minifiers remove the default (text) "type" attribute from "input" HTML tags.
 Add input:not([type]) to make the CSS stylesheet work the same.
@@ -496,6 +525,10 @@ Add input:not([type]) to make the CSS stylesheet work the same.
 input:not([type]), input[type=text], input[type=password], input[type=email],
 input[type=url], input[type=number], input[type=tel], textarea, select,
 .vTextField {
+=======
+input[type=text], input[type=password], input[type=email], input[type=url],
+input[type=number], input[type=tel], textarea, select, .vTextField {
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
     border: 1px solid var(--border-color);
     border-radius: 4px;
     padding: 5px 6px;
@@ -504,6 +537,7 @@ input[type=url], input[type=number], input[type=tel], textarea, select,
     background-color: var(--body-bg);
 }
 
+<<<<<<< HEAD
 /*
 Minifiers remove the default (text) "type" attribute from "input" HTML tags.
 Add input:not([type]) to make the CSS stylesheet work the same.
@@ -511,6 +545,11 @@ Add input:not([type]) to make the CSS stylesheet work the same.
 input:not([type]):focus, input[type=text]:focus, input[type=password]:focus,
 input[type=email]:focus, input[type=url]:focus, input[type=number]:focus,
 input[type=tel]:focus, textarea:focus, select:focus, .vTextField:focus {
+=======
+input[type=text]:focus, input[type=password]:focus, input[type=email]:focus,
+input[type=url]:focus, input[type=number]:focus, input[type=tel]:focus,
+textarea:focus, select:focus, .vTextField:focus {
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
     border-color: var(--body-quiet-color);
 }
 
@@ -894,10 +933,16 @@ a.deletelink:focus, a.deletelink:hover {
     margin-right: -300px;
 }
 
+<<<<<<< HEAD
 @media (forced-colors: active) {
   #content-related {
       border: 1px solid;
   }
+=======
+#footer {
+    clear: both;
+    padding: 10px;
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
 }
 
 /* COLUMN TYPES */
@@ -945,12 +990,15 @@ a.deletelink:focus, a.deletelink:hover {
     text-decoration: underline;
 }
 
+<<<<<<< HEAD
 @media (forced-colors: active) {
   #header {
       border-bottom: 1px solid;
   }
 }
 
+=======
+>>>>>>> c7ad5a18749c6af59354deb3728da04e8b425ab0
 #branding {
     display: flex;
 }
