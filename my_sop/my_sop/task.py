@@ -37,6 +37,6 @@ def download_file_from_django(url, save_path):
 def rules_save(self,batchId):
     url = f'https://sop.zxy-console.cn/share/{batchId}'  # 替换为实际的 URL
     print(f"开始下载文件: {url}")
-    save_path = './cleaning/model/plugins/batch{}/rules/rules111.xlsx'.format(batchId)
+    save_path = './cleaning/model/plugins/batch{}/rules/rules.xlsx'.format(batchId)
     download_file_from_django(url, save_path)
     return 1
