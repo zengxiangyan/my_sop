@@ -31,7 +31,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://117.72.45.190:3000',
     'http://sop.zxy-console.cn',
     'https://sop.zxy-console.cn',
-    
+    'http://10.21.90.130',
+    'http://127.0.0.1',
 ]
 
 APPEND_SLASH  = False
@@ -60,11 +61,19 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 108000,
         'PASSWORD': 'nint'
     },
+    'report': {
+        'HOST': '117.72.45.190',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 108000,
+        'PASSWORD': 'nint'
+    },
 }
 
 # Celery configuration
-CELERY_BROKER_URL = 'redis://:nint@117.72.45.190/0'
-CELERY_RESULT_BACKEND = 'redis://:nint@117.72.45.190/0'
+CELERY_BROKER_URL = 'redis://:nint@117.72.45.190:6379/0'
+CELERY_RESULT_BACKEND = 'redis://:nint@117.72.45.190:6379/0'
+CELERY_TASK_RESULT_EXPIRES = None
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'

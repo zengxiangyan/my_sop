@@ -18,7 +18,9 @@ from django.db import connection
 django.setup()
 from cleaning.models import CleanBatchLog,CleanBatch,CleanCron
 
+sys.path.insert(0, join(abspath(dirname(__file__)), './程序/zfh_scirpt/console/'))
 sys.path.insert(0, join(abspath(dirname(__file__)), './程序/1程序/1程序/'))
+
 from classifier import *
 import application as app
 
@@ -91,8 +93,8 @@ def process_log(newno,define_json):
 def add_task(batch_id,eid,task_id,priority,scripts,params):
     if not priority:
         priority = 0
-    script_path1 = join(abspath(dirname(__file__)), './程序/1程序/1程序/')  # 清洗脚本路径
-    script_path2 = join(abspath(dirname(__file__)), './程序/zfh_scirpt/console/')  # 清洗脚本路径
+    script_path1 = sys.path[0]  # 清洗脚本路径
+    script_path2 = sys.path[1]  # 清洗脚本路径
 
     script_dict = {
         "import_brand": {"path": script_path1, "script": 'import_brand.py'},
@@ -114,7 +116,8 @@ def add_task(batch_id,eid,task_id,priority,scripts,params):
                                 params=progress_record.params,minCPU=16,minRAM=16,server_ip='default')
     return clean_cron_task
 
-def cleaning(batch_id,task_id,scripts):
+def cleaning(batch_id, task_id, scripts):
+    print(scripts)
     progress_record, created = CleanBatchLog.objects.get_or_create(batch_id=get_object_or_404(CleanBatch, batch_id=batch_id), eid=10716,
                                          type='clean',task_id=task_id, status='process',process='清洗中')
 
@@ -236,5 +239,5 @@ def cleaning(batch_id,task_id,scripts):
 if __name__ == "__main__":
     print(1111)
     # process_log(53845728)
-    # cleaning(batch_id=362,task_id=1730127706,scripts={'import_brand': {'path': '/mnt/d/my_sop/my_sop/cleaning/model/plugins/batch362/程序/1程序/1程序/', "script": 'import_brand.py'}})
+    cleaning(batch_id=362,task_id=1730258236,scripts={'import_brand': {'path': './程序/1程序/1程序/', "script": 'import_brand.py'}})
     # convert_brand()
