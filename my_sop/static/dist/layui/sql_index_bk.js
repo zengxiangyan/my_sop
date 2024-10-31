@@ -477,10 +477,11 @@ layui.use(['jquery', 'laydate', 'form', 'layer'], function () {
         var title = $(this).children('.layuimini-notice-title').text(),
             noticeTime = $(this).children('.layuimini-notice-extra').text(),
             db_this = $(this).find('#dbquery').val(),
+            sql_query_elem = $(this).find('#sqlquery')
             content = $(this).children('.layuimini-notice-content').html();
-        sql_query = sql_query.replace(/\\n/g, '\n');
         
         var sql_query = sql_query_elem.length ? sql_query_elem.val() : '';
+        sql_query = sql_query.replace(/\\n/g, '\n');
         console.log(sql_query);
         var html = '<div style="padding:15px 20px; text-align:justify; line-height: 22px;border-bottom:1px solid #e2e2e2;background-color: #e2e2e2;color: #73879C">\n' +
             '<div style="text-align: center;margin-bottom: 20px;font-weight: bold;border-bottom:1px solid #718fb5;padding-bottom: 5px"><h4 class="text-danger">' + title + '</h4></div>\n' +

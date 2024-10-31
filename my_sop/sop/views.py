@@ -137,7 +137,7 @@ def get_field(col_list):
 def sql_search_new(request):
     if request.method == 'POST':
         data = json.loads(request.body)
-        print(data)
+        # print(data)
         db = data.get('db')
         sql = data.get('sql')
         stop_word = ['DROP','DELETE','UPDATE','ALTER','CREATE','INSERT','TRUNCATE','ADD','RENAME']

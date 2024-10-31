@@ -1,7 +1,8 @@
 import datetime
 import ast
 from django.shortcuts import render
-
+from report.task import run_report,dynamic_import
+from celery.result import AsyncResult
 from sop.models import report_task,check_fss_task
 from sop import connect_clickhouse
 from django.http import HttpResponseRedirect,JsonResponse
@@ -18,7 +19,6 @@ from urllib.parse import quote
 import pandas as pd
 # Create your views here.
 import json
-import importlib
 import sys
 import django_rq
 from .check_fss import main,get_task_id
@@ -26,18 +26,6 @@ from os.path import abspath, join, dirname
 sys.path.insert(0, join(abspath(dirname(__file__)), '../'))
 import application as app
 import models.entity_manager as entity_manager
-
-def dynamic_import(batch_id):
-    module_name = f"batch{batch_id}"
-    try:
-        # 尝试动态导入模块
-        module = importlib.import_module(f"..{module_name}", package=__name__)
-        return module
-    except ImportError as e:
-        # 处理导入错误
-        print(f"Error importing module: {e}")
-        return None
-
 
 def search(request):
     if request.method == 'GET':
@@ -117,12 +105,16 @@ def add(request):
         module = dynamic_import(batchid)
         if module:
             # 如果模块导入成功，可以使用该模块
-            Status,fileUrl = module.run(start_date,end_date)
-            UpdateTime = datetime.datetime.now()
-            pvPanelInfo = report_task.objects.filter(BatchId=batchid).order_by('-UpdateTime').values("UseModel","ReportName","PersonInCharge").first()
-            UseModel, ReportName, PersonInCharge = pvPanelInfo['UseModel'],pvPanelInfo['ReportName'],pvPanelInfo['PersonInCharge']
-            report_task.objects.create(BatchId=batchid, UseModel=UseModel, ReportName=fileUrl,DateRange=start_date + '~' + end_date
-                                       ,Status=Status,UpdateTime=UpdateTime,PersonInCharge=PersonInCharge,fileUrl='../media/?path=batch'+batchid+'/'+fileUrl)
+            queue = django_rq.get_queue('report')
+            print(request.user)
+            job = queue.enqueue(run_report,batchid,request.user, start_date,end_date)
+            # result = run_report.apply_async((batchid,start_date,end_date), queue='default_queue')
+            # Status,fileUrl = module.run(start_date,end_date)
+            # UpdateTime = datetime.datetime.now()
+            # pvPanelInfo = report_task.objects.filter(BatchId=batchid).order_by('-UpdateTime').values("UseModel","ReportName","PersonInCharge").first()
+            # UseModel, ReportName, PersonInCharge = pvPanelInfo['UseModel'],pvPanelInfo['ReportName'],pvPanelInfo['PersonInCharge']
+            # report_task.objects.create(BatchId=batchid, UseModel=UseModel, ReportName=fileUrl,DateRange=start_date + '~' + end_date
+            #                            ,Status=Status,UpdateTime=UpdateTime,PersonInCharge=PersonInCharge,fileUrl='../media/?path=batch'+batchid+'/'+fileUrl)
         #         pass
             return JsonResponse({'code': 200, "msg":"正在制作报告"})
         # except:
