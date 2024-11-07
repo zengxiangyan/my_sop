@@ -58,7 +58,7 @@ RQ_QUEUES = {
         'HOST': '117.72.45.190',
         'PORT': 6379,
         'DB': 0,
-        'DEFAULT_TIMEOUT': 108000,
+        'DEFAULT_TIMEOUT': 36000,
         'PASSWORD': 'nint'
     },
     'report': {
@@ -144,6 +144,10 @@ DATABASES = {
         # 'PASSWORD': '13639054279zxy',
         # 'HOST': '10.21.90.130',
         'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'connect_timeout': 36000,
+        },
     }
 }
 

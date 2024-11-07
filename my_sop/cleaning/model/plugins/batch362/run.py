@@ -3,7 +3,8 @@ import json
 import os
 import sys
 from django.shortcuts import get_object_or_404
-
+from django.db import OperationalError
+from django.db import connection
 from os.path import abspath, join, dirname
 # 设置项目根目录
 project_root = abspath(join(dirname(__file__), '../../../..'))
@@ -18,7 +19,7 @@ from django.db import connection
 django.setup()
 from cleaning.models import CleanBatchLog,CleanBatch,CleanCron
 
-sys.path.insert(0, join(abspath(dirname(__file__)), './程序/zfh_scirpt/console/'))
+sys.path.insert(0, join(abspath(dirname(__file__)), './'))
 sys.path.insert(0, join(abspath(dirname(__file__)), './程序/1程序/1程序/'))
 
 from classifier import *
@@ -93,8 +94,8 @@ def process_log(newno,define_json):
 def add_task(batch_id,eid,task_id,priority,scripts,params):
     if not priority:
         priority = 0
-    script_path1 = sys.path[0]  # 清洗脚本路径
-    script_path2 = sys.path[1]  # 清洗脚本路径
+    script_path1 = '/程序/1程序/1程序/'  # 清洗脚本路径
+    script_path2 = '/程序/zfh_scirpt/console/' # 清洗脚本路径
 
     script_dict = {
         "import_brand": {"path": script_path1, "script": 'import_brand.py'},
@@ -143,7 +144,8 @@ def cleaning(batch_id, task_id, scripts):
     if '清洗四级类目' in scripts:
         cmds["清洗四级类目"] = cmds["清洗四级类目"][0:2]
     for k,cmd in cmds.items():
-        os.chdir(scripts[k]["path"])
+        print(sys.path[1] + scripts[k]["path"])
+        os.chdir(sys.path[1] + scripts[k]["path"])
         try:
             # 启动子进程
             process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8',
@@ -178,15 +180,57 @@ def cleaning(batch_id, task_id, scripts):
                     stdout, stderr = process.communicate()
                     print("Standard Output after kill:", stdout)
                     print("Standard Error after kill:", stderr)
+
             if process.returncode == 0:
-                progress_record, created = CleanCron.objects.get_or_create(batch_id=batch_id,task_id=task_id, status='process',type=k)
+                try:
+                    progress_record, created = CleanCron.objects.get_or_create(
+                        batch_id=batch_id,
+                        task_id=task_id,
+                        status='process',
+                        type=k
+                    )
+                except OperationalError as e:
+                    if e.args[0] == 2006:  # MySQL server has gone away
+                        logger.warning("MySQL server has gone away. Reconnecting...")
+                        connection.close()
+                        connection.connect()
+                        progress_record, created = CleanCron.objects.get_or_create(
+                            batch_id=batch_id,
+                            task_id=task_id,
+                            status='process',
+                            type=k
+                        )
+                    else:
+                        logger.error(f"OperationalError during get_or_create: {e}")
+                        raise
+
                 progress_record.process = 'completed'
                 progress_record.status = 'completed'
                 progress_record.completedTime = datetime.datetime.now()
                 progress_record.msg = progress_record.msg.replace('统计任务中...', '已完成')
-                progress_record.save()
+
+                # 封装保存逻辑并处理潜在的连接问题
+                while True:
+                    try:
+                        progress_record.save()
+                        break  # 保存成功，退出循环
+                    except (OperationalError, django.db.utils.InterfaceError) as e:
+                        if e.args[0] == 2006:  # MySQL server has gone away
+                            logger.warning("MySQL server has gone away during save. Reconnecting...")
+                            connection.close()
+                            connection.connect()
+                        else:
+                            logger.error(f"Error saving progress record: {e}")
+                            raise  # 重新抛出异常以处理
             else:
-                progress_record, created = CleanCron.objects.get_or_create(batch_id=batch_id,task_id=task_id, status='process',type=k)
+                try:
+                    progress_record, created = CleanCron.objects.get_or_create(batch_id=batch_id,task_id=task_id, status='process',type=k)
+                except OperationalError as e:
+                    if e.args[0] == 2006:  # MySQL server has gone away
+                        connection.close()
+                        connection.connect()
+                        progress_record, created = CleanCron.objects.get_or_create(batch_id=batch_id, task_id=task_id,status='process', type=k)
+
                 progress_record.process = 'error'
                 progress_record.status = 'error'
                 progress_record.msg = progress_record.msg.replace('统计任务中...', stderr)
@@ -239,5 +283,6 @@ def cleaning(batch_id, task_id, scripts):
 if __name__ == "__main__":
     print(1111)
     # process_log(53845728)
-    cleaning(batch_id=362,task_id=1730258236,scripts={'import_brand': {'path': './程序/1程序/1程序/', "script": 'import_brand.py'}})
+
+    # cleaning(batch_id=362,task_id=1730800700,scripts={'清洗品牌2': {'path': '/mnt/d/my_sop/my_sop/cleaning/model/plugins/batch362/./程序/1程序/1程序/', "script": 'run.dy.brand2_20240509.py'}})
     # convert_brand()
