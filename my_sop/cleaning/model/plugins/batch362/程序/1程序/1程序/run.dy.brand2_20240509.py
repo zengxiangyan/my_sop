@@ -153,9 +153,13 @@ def process():
             print("操作已取消。")
             exit()
     else:
-        db.execute("TRUNCATE TABLE {table3}".format(table3=table3))
+        print("DELETE FROM {table3} WHERE {process_where}".format(table3=table3, process_where=process_where))
+        db.execute("DELETE FROM {table3} WHERE {process_where}".format(table3=table3, process_where=process_where))
         db.commit()
-        print("已成功清空表 {}。".format(table3))
+        print("已成功删除满足条件 {process_where} 的数据。".format(process_where=process_where))
+        # db.execute("TRUNCATE TABLE {table3}".format(table3=table3))
+        # db.commit()
+        # print("已成功清空表 {}。".format(table3))
 
     task_count = (max_no - min_no) // default_limit + (1 if (max_no - min_no) % default_limit != 0 else 0)
     pbar = tqdm(total=task_count, desc="process", leave=True)

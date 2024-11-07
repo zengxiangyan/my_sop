@@ -69,15 +69,16 @@ def clean_rules(request):
             file_data = file.read()
             workbook = load_workbook(filename=BytesIO(file_data))
             workbook.save(r'./cleaning/model/plugins/batch{}/rules/rules.xlsx'.format(batchId, batchId))
-            result = rules_save.apply_async((batchId,), queue='default_queue')
-
+            queue = django_rq.get_queue('default')
+            job = queue.enqueue(rules_save, batchId)
+            # result = rules_save.apply_async((batchId,), queue='default_queue')
             # result = AsyncResult(result.task_id)
             # if result.ready():
             #     return JsonResponse({'status': 'completed', 'result': result.result})
             # else:
             #     return JsonResponse({'status': 'pending'})
             js = {'code': 200,
-                  'data': '文件上传成功\n共包含【{}】等[{}]个sheet\ntask_id:{}'.format(workbook.sheetnames[0],len(workbook.sheetnames),result.id)}
+                  'data': '文件上传成功\n共包含【{}】等[{}]个sheet\ntask_id:{}'.format(workbook.sheetnames[0],len(workbook.sheetnames),job.id)}
             if batchId == 362:
                 module = dynamic_import(batchId)
                 if module:

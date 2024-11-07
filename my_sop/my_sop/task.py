@@ -40,3 +40,6 @@ def rules_save(self,batchId):
     save_path = './cleaning/model/plugins/batch{}/rules/rules.xlsx'.format(batchId)
     download_file_from_django(url, save_path)
     return 1
+
+if __name__ == '__main__':
+    rules_save(362)
