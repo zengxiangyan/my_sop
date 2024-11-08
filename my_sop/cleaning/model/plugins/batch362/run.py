@@ -3,7 +3,7 @@ import json
 import os
 import sys
 from django.shortcuts import get_object_or_404
-from django.db import OperationalError
+from django.db import OperationalError,close_old_connections
 from django.db import connection
 from os.path import abspath, join, dirname
 # 设置项目根目录
@@ -183,6 +183,7 @@ def cleaning(batch_id, task_id, scripts):
 
             if process.returncode == 0:
                 try:
+                    close_old_connections()
                     progress_record, created = CleanCron.objects.get_or_create(
                         batch_id=batch_id,
                         task_id=task_id,
@@ -223,14 +224,8 @@ def cleaning(batch_id, task_id, scripts):
                             logger.error(f"Error saving progress record: {e}")
                             raise  # 重新抛出异常以处理
             else:
-                try:
-                    progress_record, created = CleanCron.objects.get_or_create(batch_id=batch_id,task_id=task_id, status='process',type=k)
-                except OperationalError as e:
-                    if e.args[0] == 2006:  # MySQL server has gone away
-                        connection.close()
-                        connection.connect()
-                        progress_record, created = CleanCron.objects.get_or_create(batch_id=batch_id, task_id=task_id,status='process', type=k)
-
+                close_old_connections()
+                progress_record, created = CleanCron.objects.get_or_create(batch_id=batch_id, task_id=task_id,status='process', type=k)
                 progress_record.process = 'error'
                 progress_record.status = 'error'
                 progress_record.msg = progress_record.msg.replace('统计任务中...', stderr)
@@ -261,6 +256,7 @@ def cleaning(batch_id, task_id, scripts):
                     process.wait(timeout=3)
                 except subprocess.TimeoutExpired:
                     print(f"Process {process.pid} could not be killed.")
+            close_old_connections()
             progress_record, created = CleanCron.objects.get_or_create(batch_id=batch_id,task_id=task_id, status='process',type=k)
             progress_record.process = 'error'
             progress_record.status = 'error'
@@ -284,5 +280,5 @@ if __name__ == "__main__":
     print(1111)
     # process_log(53845728)
 
-    # cleaning(batch_id=362,task_id=1730800700,scripts={'清洗品牌2': {'path': '/mnt/d/my_sop/my_sop/cleaning/model/plugins/batch362/./程序/1程序/1程序/', "script": 'run.dy.brand2_20240509.py'}})
+    cleaning(batch_id=362,task_id=1730978737,scripts={'清洗品牌2': {'path': '/程序/1程序/1程序/', "script": 'run.dy.brand2_20240509.py'}})
     # convert_brand()

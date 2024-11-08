@@ -148,6 +148,7 @@ DATABASES = {
             'charset': 'utf8mb4',
             'connect_timeout': 36000,
         },
+        'CONN_MAX_AGE':3600
     }
 }
 
