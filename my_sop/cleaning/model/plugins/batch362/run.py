@@ -41,6 +41,8 @@ def convert_brand(job):
         while not flag:
             if job.get_status() == 'finished':
                 flag = 1
+            elif job.get_status() == 'failed':
+                raise 'rule.xlsx 更新失败'
             else:
                 print(job.get_status())
                 time.sleep(5)
