@@ -140,9 +140,9 @@ def sql_search_new(request):
         # print(data)
         db = data.get('db')
         sql = data.get('sql')
-        stop_word = ['DROP','DELETE','UPDATE','ALTER','CREATE','INSERT','TRUNCATE','ADD','RENAME']
+        stop_word = ['DROP ','DELETE ','UPDATE ','ALTER ','CREATE ','INSERT ','TRUNCATE ','ADD ','RENAME ']
         for s in stop_word:
-            if s in sql.upper().replace('CREATE_TIME','').replace('STORENAME',''):
+            if s in sql.upper():
                 print(s)
                 return JsonResponse({"code":500,'status': 'error', 'msg': '除SELETE外的操作一律不允许通过！！！'})
         try:
