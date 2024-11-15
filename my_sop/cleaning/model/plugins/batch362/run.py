@@ -2,6 +2,8 @@ import datetime
 import json
 import os
 import sys
+import time
+
 from django.shortcuts import get_object_or_404
 from django.db import OperationalError,close_old_connections
 from django.db import connection
@@ -33,21 +35,34 @@ def to_str(s):
         return ''
     return str(s).strip()
 
-def convert_brand():
-    df = pd.read_excel("./rules/rules.xlsx", sheet_name="brand.lib", dtype=object)
-    output=[]
-    for _, row in df.iterrows():
-        brand_name = to_str(row["BrandName"])
-        brand_en = to_str(row["BrandEN"])
-        brand_zh = to_str(row["BrandCN"])
-        if brand_name:
-            if brand_en:
-                output.append([brand_name, "关键词", brand_en])
-            if brand_zh:
-                output.append([brand_name, "关键词", brand_zh])
+def convert_brand(job):
+    try:
+        flag = 0
+        while not flag:
+            if job.get_status() == 'finished':
+                flag = 1
+            else:
+                print(job.get_status())
+                time.sleep(5)
 
-    df2 = pd.DataFrame(output)
-    df2.to_excel("./rules/convert_brand.xlsx",sheet_name='brand.cv')
+        df = pd.read_excel(sys.path[1]+ "rules/rules.xlsx", sheet_name="brand.lib")
+        output=[]
+        for _, row in df.iterrows():
+            brand_name = to_str(row["BrandName"])
+            brand_en = to_str(row["BrandEN"])
+            brand_zh = to_str(row["BrandCN"])
+            if brand_name:
+                if brand_en:
+                    output.append([brand_name, "关键词", brand_en])
+                if brand_zh:
+                    output.append([brand_name, "关键词", brand_zh])
+
+        df2 = pd.DataFrame(output)
+        df2.to_excel(sys.path[1]+ "rules/convert_brand.xlsx",sheet_name='brand.cv')
+        return 'success'
+    except Exception as e:
+        print(e)
+        return 'error'
 
 def get_info_by_newno(newno):
     # try:
@@ -280,5 +295,5 @@ if __name__ == "__main__":
     print(1111)
     # process_log(53845728)
 
-    cleaning(batch_id=362,task_id=1730978737,scripts={'清洗品牌2': {'path': '/程序/1程序/1程序/', "script": 'run.dy.brand2_20240509.py'}})
+    # cleaning(batch_id=362,task_id=1730978737,scripts={'清洗品牌2': {'path': '/程序/1程序/1程序/', "script": 'run.dy.brand2_20240509.py'}})
     # convert_brand()

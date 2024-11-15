@@ -371,7 +371,7 @@ def main():
     # classifier.load_rules("rules.xlsx", sheet_name="category.rule2")
     classifier.load_rules("rules.xlsx", sheet_name="brand.rule")
 
-    row = {"c4": "", "name": "【奢护控油】KONO控油奢护新国货套装黑标小K瓶蓬松持久留香清爽","trade_props_value":""}
+    row = {"c4": "", "name": "【冠军推荐】到手两瓶天使之颜玻色因人参抗皱精华液 专攻皱纹 眼袋","trade_props_value":""}
     #row = {"c4": "液态精华", "name": "【人 仁和匠心】拍一发二 富勒烯多效修护冻干粉套盒紧致肌肤毛孔", "trade_props_value": ""}
     #row = {"c4": "洗护套装", "name": "【会员尝鲜盒】LorealPro试净爽星河瓶100ml深层控油蓬松持久清爽  ","trade_props_value":""}
     #row = {"c4": "", "name": "【38女神美妆场】IPSA/茵芙莎三色遮瑕遮黑眼圈痘印遮痘保湿遮暇盘","trade_props_value":""}
@@ -383,5 +383,5 @@ def main():
     # 本文件为 name + trade_props_value 一起匹配
 
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
