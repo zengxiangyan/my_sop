@@ -8,12 +8,7 @@ from django.db.models import Max
 from .forms import SavedQueryForm
 from .models import SavedQuery
 from django.http import JsonResponse
-import httpx
-from django.urls import reverse
 import json
-import pandas as pd
-import numpy as np
-import ast
 async def test(request):
     # 异步处理逻辑
     # await some_async_operation()
