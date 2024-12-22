@@ -32,6 +32,7 @@ CSRF_TRUSTED_ORIGINS = [
     'http://sop.zxy-console.cn',
     'https://sop.zxy-console.cn',
     'http://10.21.90.130',
+    'http://10.21.200.200',
     'http://127.0.0.1',
 ]
 
