@@ -91,7 +91,7 @@ def run(starttime,endtime,eid,table,cid):
         df = pd.DataFrame(content).fillna('')
         df['平台'] = df['source2']
         df['Full_path'] = df['lv1name'].fillna('') + \
-                          df['lv2name'].apply(lambda x: '>>' + x if x else '') + \
+                          df['lv2name'] + \
                           df['lv3name'].apply(lambda x: '>>' + x if x else '') + \
                           df['lv4name'].apply(lambda x: '>>' + x if x else '') + \
                           df['lv5name'].apply(lambda x: '>>' + x if x else '')

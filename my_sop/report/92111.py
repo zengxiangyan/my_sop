@@ -580,10 +580,10 @@ def run(data, filepath, savepath,output_ppt):
     mydata = pd.read_csv(data, encoding='utf-8')
     date_range = ['2024 Q3','2024 Q2', '2024 Q1', '2023 Q4', '2023 Q3', '2023 Q2', '2023 Q1', '2022 Q4', '2022 Q3', '2022 Q2',
                   '2022 Q1', '2021 Q4', '2021 Q3', '2021 Q2', '2021 Q1', '2020 Q4', '2020 Q3', '2020 Q2', '2020 Q1']
-    date_range1 = ['2024 Q3']  # 本期报告的数据时间范围(ppt第二页时间范围，常规为对应季度)
-    date_range2 = ['2023 Q3']  # 本期报告的数据时间范围(ppt第二页时间范围，常规为对应季度)，取历史数据计算同比
-    # date_range1 = ['2024 Q1','2023 Q4','2023 Q3']#临时改时间段出报告
-    # date_range2 = ['2023 Q1','2022 Q4','2022 Q3']
+    # date_range1 = ['2024 Q3']  # 本期报告的数据时间范围(ppt第二页时间范围，常规为对应季度)
+    # date_range2 = ['2023 Q3']  # 本期报告的数据时间范围(ppt第二页时间范围，常规为对应季度)，取历史数据计算同比
+    date_range1 = ['2024 Q1','2024 Q2','2024 Q3']#临时改时间段出报告
+    date_range2 = ['2023 Q1','2023 Q2','2023 Q3']
     date_range3 = ['2024 Q3','2024 Q2', '2024 Q1']  # 自然年统计时间范围
     date_range4 = ['2023 Q3','2023 Q2', '2023 Q1']
     date_range5 = ['2024 Q3']  # 财年从7月开始
@@ -604,11 +604,11 @@ def run(data, filepath, savepath,output_ppt):
 def main():
     # run('C:\\Users\\zeng.xiangyan\\Downloads\\92111 (1).csv',
     #     'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\PPT数据表(2.8).xlsx',
-    #     'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\PPT数据表_2024Q3（check）v1.xlsx',
-    #     'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\Prestige haircare panel_2024Q3(10-17).pptx')
+    #     'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\PPT数据表_24Q1-Q3（check）v1.xlsx',
+    #     'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\Prestige haircare panel_24Q1-Q3(12-10).pptx')
 
-    update_pptx('C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\PPT数据表_2024Q3（check）v1.xlsx',
-        'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\Prestige haircare panel_2024Q3(10-17).pptx',update_data=False)
+    update_pptx('C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\PPT数据表_24Q1-Q3（check）v1.xlsx',
+        'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\Prestige haircare panel_24Q1-Q3(12-10).pptx',update_data=False)
 if __name__ == "__main__":
     main()
     # unit_table(table=open_table('C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\PPT数据表(2.8).xlsx'))

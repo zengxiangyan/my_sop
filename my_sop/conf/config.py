@@ -2,22 +2,22 @@ DEBUG = True
 
 DB = {
     'default': {
-        'host': '127.0.0.1',
-        'port': 28026,
+        'host': '192.168.0.10',
+        'port': 63313,
         'name': 'cleaner',
         'user': 'cleanAdmin',
         'password': '6DiloKlm'
     },
     'brush': {
-        'host': '127.0.0.1',
-        'port': 28026,
+        'host': '192.168.0.10',
+        'port': 63313,
         'name': 'brush',
-        'user': 'cleaning',
-        'password': 'Nint2018'
+        'user': 'cleanAdmin',
+        'password': '6DiloKlm'
     },
     'dy2':{
-        'host': '127.0.0.1',
-        'port': 28140,
+        'host': '192.168.0.10',
+        'port': 63053,
         'name': 'douyin2',
         'user': 'apollo-rw',
         'password': 'QBT094bt'
@@ -108,8 +108,8 @@ DB = {
         'password': '6DiloKlm'
     },
     '140_apollo': {
-        'host': '127.0.0.1',
-        'port': 28140,
+        'host': '192.168.0.10',
+        'port': 63053,
         'name': 'douyin2_cleaner',
         'user': 'apollo-rw',
         'password': 'QBT094bt'
@@ -136,8 +136,8 @@ DB = {
         'password': '6DiloKlm'
     },
     '26_apollo': {
-        'host': '127.0.0.1',
-        'port': 28026,
+        'host': '192.168.0.10',
+        'port': 63313,
         'name': 'cleaner',
         'user': 'cleanAdmin',
         'password': '6DiloKlm'
@@ -199,22 +199,22 @@ DB = {
         'password': 'clickp'
     },
     'graph': {
-        'host': '127.0.0.1',
-        'port': 28026,
+        'host': '192.168.0.10',
+        'port': 63313,
         'name': 'graph',
         'user': 'cleanAdmin',
         'password': '6DiloKlm'
     },
     'artificial_new': {
-        'host': '127.0.0.1',
-        'port': 28026,
+        'host': '192.168.0.10',
+        'port': 63313,
         'name': 'artificial',
         'user': 'cleanAdmin',
         'password': '6DiloKlm'
     },
     '26_artificial_new': {
-        'host': '127.0.0.1',
-        'port': 28026,
+        'host': '192.168.0.10',
+        'port': 63313,
         'name': 'artificial',
         'user': 'cleanAdmin',
         'password': '6DiloKlm'
@@ -228,7 +228,7 @@ DB = {
     },
     'chmaster': {
         'host': '192.168.40.195',
-        'port': 28139,
+        'port': 9000,
         'name': 'sop',
         'user': 'kadis_cleaner',
         'password': 'wnEGtEyNIg!4zWx6'
@@ -241,13 +241,6 @@ DB = {
         'password': ''
     },
     'oulaiya': {
-        'host': '10.21.200.122',
-        'port': 3306,
-        'name': 'wq',
-        'user': 'wq',
-        'password': 'Iimps99h'
-    },
-    'wq': {
         'host': '10.21.200.122',
         'port': 3306,
         'name': 'wq',
@@ -282,12 +275,19 @@ GRAPH = {
 
 CLICKHOUSE_HTTP = {
     'chsql': {
-        'host': '127.0.0.1',
-        'port': 28066,
+        'host': '192.168.40.195',
+        'port': 66,
         'name': '',
         'user': '',
         'password': ''
-    }
+    },
+    'chsop': {
+        'host': '192.168.30.192',
+        'port': 8123,
+        'name': 'sop',
+        'user': 'admin',
+        'password': '7kvx4GTg'
+    },
 }
 
 CLICKHOUSE = {
@@ -313,29 +313,29 @@ CLICKHOUSE = {
         'password': 'wnEGtEyNIg!4zWx6'
     },
     'chqbt': {
-        'host': '127.0.0.1',
-        'port': 30139,
+        'host': '192.168.40.195',
+        'port': 9000,
         'name': 'ali',
         'user': 'sop_update_uuid2',
         'password': 'BQRYr0w0hwDUkW4a'
     },
     'chmaster2': {
-        'host': '10.21.90.15',
-        'port': 28066,
+        'host': '192.168.40.195',
+        'port': 66,
         'name': '',
         'user': '',
         'password': ''
     },
     'chsop': {
-        'host': '127.0.0.1',
-        'port': 30192,
-        'name': 'sop_e',
+        'host': '192.168.30.192',
+        'port': 9000,
+        'name': 'sop',
         'user': 'admin',
         'password': '7kvx4GTg'
     },
     'chsop_old': {
-        'host': '127.0.0.1',
-        'port': 31192,
+        'host': '192.168.30.192',
+        'port': 8123,
         'name': 'sop',
         'user': 'admin',
         'password': '7kvx4GTg'
@@ -380,6 +380,14 @@ CLICKHOUSE = {
         'port': 9000,
         'name': 'artificial',
         'user': 'default',
+        'password': ''
+    },
+'contentx01': {
+    #40.199
+        'host': '192.168.40.199',
+        'port': 9000,
+        'name': 'douyin2_cleaner',
+        'user': 'admin',
         'password': ''
     }
 }
