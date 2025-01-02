@@ -116,6 +116,7 @@ def add_task(batch_id,eid,task_id,priority,scripts,params):
 
     script_dict = {
         "import_brand": {"path": script_path1, "script": 'import_brand.py'},
+        "import_tshop": {"path": script_path1, "script": 'import_tshop.py'},
         "三级类目": {"path": script_path1, "script": 'run.dy1.all.202400509.py'},
         "四级类目": {"path": script_path2, "script": 'OrealCategory.py'},
         "清洗品牌1": {"path": script_path1, "script": 'run.dy.brand_20240509.py'},
@@ -158,6 +159,8 @@ def cleaning(batch_id, task_id, scripts):
     ] for k,dic in scripts.items()}
     if 'import_brand' in scripts:
         cmds["import_brand"] = cmds['import_brand'][0:2]
+    if 'import_tshop' in scripts:
+        cmds["import_tshop"] = cmds['import_tshop'][0:2]
     if '清洗四级类目' in scripts:
         cmds["清洗四级类目"] = cmds["清洗四级类目"][0:2]
     for k,cmd in cmds.items():
