@@ -172,11 +172,11 @@ def importdata(sql_list):
         finally:
             cursor.close()
             session.close()
-        if num == 0:
+
+    return newdata        if num == 0:
             newdata = mydata
         else:
             newdata = pd.concat([newdata, mydata], axis=0, ignore_index=True)
-    return newdata
 
 
 def get_source_model(report_date):
