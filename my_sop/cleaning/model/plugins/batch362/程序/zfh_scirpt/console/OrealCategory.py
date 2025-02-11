@@ -20,7 +20,7 @@ file='../data/美发四级关键词.xlsx'
 # 文件可以代码里指定 例如 file='../data/美发四级关键词.xlsx'
 table_name = 'makeupall2'# 测试：'makeupall22'；正式：'makeupall2'
 #date = None
-date = ''  # 时间不写就是跑全量
+date = '2025-01-01'  # 时间不写就是跑全量
 
 
 async def main():
