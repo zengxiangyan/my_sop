@@ -70,6 +70,7 @@ def del_mydata(mydata):
             delete.append('否')
     mydata['seasons'] = seasons
     mydata['体验装剔除'] = delete
+    mydata.loc[mydata['品牌名'] == '大卫尼斯', '品牌名'] = 'davines/大卫尼斯'
     return mydata
 
 
@@ -160,7 +161,7 @@ def function_brand_filldata(mydata, table):
     brand_sort, functions_sort = brand_sorted()
     total_sales = season_total_sales.loc[season_total_sales['seasons'].str.contains("|".join(date_range1))]['销售额'].sum()
     sheet = table['function_panel']
-    brands_dict = {"kerastase/卡诗": "Kerastase*", "sisley": "Sisley", "欧舒丹": "L'occitane","馥绿德雅": "Rene Furterer", "L&rsquo;oreal professionnel/巴黎欧莱雅沙龙专属": "LorealPro*","grow gorgeous": "Grow Gorgeous", "SHISEIDO PROFESSIONAL/资生堂专业美发": "Shiseido Professional","MOROCCANOIL": "MOROCCANOIL*", "丰添": "Foltene*", "Living Proof": "Living Proof","Olaplex ": "Olaplex", "Christophe Robin": "Christophe Robin", "AVEDA": "AVEDA*","davines/大卫尼斯": "Davines"}
+    brands_dict = {"kerastase/卡诗": "Kerastase*", "sisley": "Sisley", "欧舒丹": "L'occitane","馥绿德雅": "Rene Furterer", "L&rsquo;oreal professionnel/巴黎欧莱雅沙龙专属": "LorealPro*","grow gorgeous": "Grow Gorgeous", "SHISEIDO PROFESSIONAL/资生堂专业美发": "Shiseido Professional","MOROCCANOIL": "MOROCCANOIL*", "丰添": "Foltene*", "Living Proof": "Living Proof","Olaplex ": "Olaplex", "Christophe Robin": "Christophe Robin", "AVEDA": "AVEDA*","davines/大卫尼斯": "Davines","大卫尼斯": "Davines"}
 
     # 填充第一列品牌名，按照品牌的销售额降序，不分功效
     for i, brand_name in enumerate(brand_sort):
@@ -213,7 +214,7 @@ def function_brand_filldata(mydata, table):
 
 def function_top_item(mydata, table):
     functions = ['Nourish & repair', 'Anti-Hair Loss', 'Volumizing', 'Oil control', 'Color control', 'Anti-dandruff','Smooth & hydration', 'men care']
-    brands_dict = {"kerastase/卡诗": "Kerastase*", "sisley": "Sisley", "欧舒丹": "L'occitane","馥绿德雅": "Rene Furterer", "L&rsquo;oreal professionnel/巴黎欧莱雅沙龙专属": "LorealPro*","grow gorgeous": "Grow Gorgeous", "SHISEIDO PROFESSIONAL/资生堂专业美发": "Shiseido Professional","MOROCCANOIL": "MOROCCANOIL*", "丰添": "Foltene*", "Living Proof": "Living Proof","Olaplex ": "Olaplex", "Christophe Robin": "Christophe Robin", "AVEDA": "AVEDA*","davines/大卫尼斯": "Davines"}
+    brands_dict = {"kerastase/卡诗": "Kerastase*", "sisley": "Sisley", "欧舒丹": "L'occitane","馥绿德雅": "Rene Furterer", "L&rsquo;oreal professionnel/巴黎欧莱雅沙龙专属": "LorealPro*","grow gorgeous": "Grow Gorgeous", "SHISEIDO PROFESSIONAL/资生堂专业美发": "Shiseido Professional","MOROCCANOIL": "MOROCCANOIL*", "丰添": "Foltene*", "Living Proof": "Living Proof","Olaplex ": "Olaplex", "Christophe Robin": "Christophe Robin", "AVEDA": "AVEDA*","davines/大卫尼斯": "Davines","大卫尼斯": "Davines"}
     for function in functions:
         item_sales = mydata.loc[(mydata['seasons'].str.contains("|".join(date_range1))) & (mydata['功效-' + function] != '否') & (mydata['体验装剔除'] != '剔除')].groupby(['子品类', '品牌名', '功效-' + function, 'tb_item_id'],as_index=False)[['销量', '销售额', '去年同期销售额']].sum().groupby(['子品类', '功效-' + function], as_index=False).apply(lambda x: x.nlargest(10, '销售额'))
         item_sales = item_sales.copy()
@@ -578,18 +579,18 @@ def run(data, filepath, savepath,output_ppt):
                  "摩洛哥油旗舰店": "Moroccanoil", "LorealPro海外旗舰店": "LorealPro Overseas Store",
                  "AVEDA艾梵达官方旗舰店": "Aveda", "Aveda官方海外旗舰店": "Aveda Overseas Store"}
     mydata = pd.read_csv(data, encoding='utf-8')
-    date_range = ['2024 Q3','2024 Q2', '2024 Q1', '2023 Q4', '2023 Q3', '2023 Q2', '2023 Q1', '2022 Q4', '2022 Q3', '2022 Q2',
+    date_range = ['2024 Q4','2024 Q3','2024 Q2', '2024 Q1', '2023 Q4', '2023 Q3', '2023 Q2', '2023 Q1', '2022 Q4', '2022 Q3', '2022 Q2',
                   '2022 Q1', '2021 Q4', '2021 Q3', '2021 Q2', '2021 Q1', '2020 Q4', '2020 Q3', '2020 Q2', '2020 Q1']
-    # date_range1 = ['2024 Q3']  # 本期报告的数据时间范围(ppt第二页时间范围，常规为对应季度)
-    # date_range2 = ['2023 Q3']  # 本期报告的数据时间范围(ppt第二页时间范围，常规为对应季度)，取历史数据计算同比
-    date_range1 = ['2024 Q1','2024 Q2','2024 Q3']#临时改时间段出报告
-    date_range2 = ['2023 Q1','2023 Q2','2023 Q3']
-    date_range3 = ['2024 Q3','2024 Q2', '2024 Q1']  # 自然年统计时间范围
-    date_range4 = ['2023 Q3','2023 Q2', '2023 Q1']
-    date_range5 = ['2024 Q3']  # 财年从7月开始
-    date_range6 = ['2023 Q3']
-    date_range7 = ['2024 Q3','2024 Q2', '2024 Q1', '2023 Q4']  # 过去一年的统计
-    date_range8 = ['2023 Q3','2023 Q2', '2023 Q1', '2022 Q4']
+    # date_range1 = ['2024 Q4']  # 本期报告的数据时间范围(ppt第二页时间范围，常规为对应季度)
+    # date_range2 = ['2023 Q4']  # 本期报告的数据时间范围(ppt第二页时间范围，常规为对应季度)，取历史数据计算同比
+    date_range1 = ['2024 Q1','2024 Q2','2024 Q3','2024 Q4']#临时改时间段出报告
+    date_range2 = ['2023 Q1','2023 Q2','2023 Q3','2023 Q4']
+    date_range3 = ['2024 Q4','2024 Q3','2024 Q2', '2024 Q1']  # 自然年统计时间范围
+    date_range4 = ['2023 Q4','2023 Q3','2023 Q2', '2023 Q1']
+    date_range5 = ['2024 Q4','2024 Q3']  # 财年从7月开始
+    date_range6 = ['2023 Q4','2023 Q3']
+    date_range7 = ['2024 Q4','2024 Q3','2024 Q2', '2024 Q1']  # 过去一年的统计
+    date_range8 = ['2023 Q4','2023 Q3','2023 Q2', '2023 Q1']
 
     del_mydata(mydata)
     table = open_table(filepath)
@@ -602,13 +603,13 @@ def run(data, filepath, savepath,output_ppt):
     update_pptx(savepath,output_ppt)
 
 def main():
-    # run('C:\\Users\\zeng.xiangyan\\Downloads\\92111 (1).csv',
+    # run('C:\\Users\\zeng.xiangyan\\Downloads\\92111 (4).csv',
     #     'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\PPT数据表(2.8).xlsx',
-    #     'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\PPT数据表_24Q1-Q3（check）v1.xlsx',
-    #     'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\Prestige haircare panel_24Q1-Q3(12-10).pptx')
+    #     'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\PPT数据表_24ttl（check）v1.xlsx',
+    #     'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\Prestige haircare panel_24ttl(03-14).pptx')
 
-    update_pptx('C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\PPT数据表_24Q1-Q3（check）v1.xlsx',
-        'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\Prestige haircare panel_24Q1-Q3(12-10).pptx',update_data=False)
+    update_pptx('C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\PPT数据表_24ttl（check）v1.xlsx',
+        'C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\Prestige haircare panel_24ttl(03-14).pptx',update_data=False)
 if __name__ == "__main__":
     main()
     # unit_table(table=open_table('C:\\Users\\zeng.xiangyan\\雅诗兰黛头发功效(指定店铺)\\PPT数据表(2.8).xlsx'))
