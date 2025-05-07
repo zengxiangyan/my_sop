@@ -20,7 +20,7 @@ import django
 from django.db import connection
 django.setup()
 from cleaning.models import CleanBatchLog,CleanBatch,CleanCron
-
+from cleaning.mail import Email
 sys.path.insert(0, join(abspath(dirname(__file__)), './'))
 sys.path.insert(0, join(abspath(dirname(__file__)), './程序/1程序/1程序/'))
 
@@ -295,7 +295,9 @@ def cleaning(batch_id, task_id, scripts):
     progress_record.process = '100'
 
     progress_record.save()
-
+    cl = Email(batch_id)
+    print('batch:{} wq.makeupall 机洗任务{}全部完成'.format(batch_id,task_id))
+    cl.mail('batch:{} wq.makeupall 机洗任务{}全部完成'.format(batch_id,task_id),str(scripts))
 if __name__ == "__main__":
     print(1111)
     # process_log(53845728)
