@@ -295,12 +295,12 @@ def cleaning(batch_id, task_id, scripts):
     progress_record.process = '100'
 
     progress_record.save()
-    cl = Email(batch_id)
+    cl = Email(int(batch_id))
     print('batch:{} wq.makeupall 机洗任务{}全部完成'.format(batch_id,task_id))
-    cl.mail('batch:{} wq.makeupall 机洗任务{}全部完成'.format(batch_id,task_id),str(scripts))
+    cl.mail('batch:{} wq.makeupall 机洗任务{}全部完成'.format(batch_id,task_id),str(scripts),user=['huang.min','guo.weijing'])
 if __name__ == "__main__":
     print(1111)
     # process_log(53845728)
 
-    # cleaning(batch_id=362,task_id=1730978737,scripts={'清洗品牌2': {'path': '/程序/1程序/1程序/', "script": 'run.dy.brand2_20240509.py'}})
+    # cleaning('362', 1746605649, {'import_brand': {'path': '/程序/1程序/1程序/', 'script': 'import_brand.py'}})
     # convert_brand()
