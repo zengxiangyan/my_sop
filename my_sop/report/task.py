@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from celery import shared_task
+# from celery import shared_task
 import importlib
 import datetime
 from sop.models import report_task
@@ -16,22 +16,20 @@ def dynamic_import(batch_id):
         return None
 
 # @shared_task(bind=True,time_limit=3000, soft_time_limit=2500)
-def run_report(batchid,PersonInCharge,start_date,end_date):
+def run_report(task_id,batchid,PersonInCharge,start_date,end_date,params):
     try:
         module = dynamic_import(batchid)
-        Status,fileUrl = module.run(start_date,end_date)
+        progress_record, created = report_task.objects.get_or_create(TaskId=task_id,BatchId=batchid
+                                                                     ,PersonInCharge=PersonInCharge
+                                                                     ,DateRange=start_date + '~' + end_date,Status=0)
+        Status, fileUrl = module.run(start_date, end_date, params)
         UpdateTime = datetime.datetime.now()
-        UseModel,ReportName = '-','-'
-        if fileUrl != '_':
-            pvPanelInfo = report_task.objects.filter(BatchId=batchid).order_by('-UpdateTime').values("UseModel", "ReportName","PersonInCharge").first()
-            UseModel, ReportName, PersonInCharge = pvPanelInfo['UseModel'], pvPanelInfo['ReportName'], pvPanelInfo['PersonInCharge']
+        progress_record.fileUrl = fileUrl
+        progress_record.UpdateTime = UpdateTime
+        progress_record.Status = Status
 
+        progress_record.save()
 
-        report_task.objects.create(BatchId=batchid, UseModel=UseModel, ReportName=fileUrl,
-                               DateRange=start_date + '~' + end_date
-                               , Status=Status, UpdateTime=UpdateTime, PersonInCharge=PersonInCharge,
-                               fileUrl='../media/?path=batch' + batchid + '/' + fileUrl)
     except Exception as e:
         raise e
     return 1
-
