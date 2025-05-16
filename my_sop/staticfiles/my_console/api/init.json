@@ -141,12 +141,6 @@
           "target": "",
           "child": [
             {
-              "title": "添加报表任务",
-              "href": "../report/add/",
-              "icon": "fa fa-snowflake-o",
-              "target": "_self"
-            },
-            {
               "title": "报表下载",
               "href": "../report/save/",
               "icon": "fa fa-shield",
@@ -399,12 +393,6 @@
           "icon": "fa fa-snowflake-o",
           "target": "",
           "child": [
-            {
-              "title": "添加报表任务",
-              "href": "../report/add/",
-              "icon": "fa fa-snowflake-o",
-              "target": "_self"
-            },
             {
               "title": "报表下载",
               "href": "../report/save/",
