@@ -275,7 +275,8 @@
             })
             .then(data => {
                 layer.msg("添加报告任务成功"); // 请求成功的处理
-                $("#importCleanInput").modal("hide")
+                $("#importCleanInput").modal("hide");
+                location.reload();
             })
             .catch(error => {
                 layer.msg('Error:', error); // 请求失败的处理
