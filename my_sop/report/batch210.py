@@ -58,11 +58,13 @@ def run(start_date,end_date,params):
     date_by_dict = {'quarter':"toString(toYear(pkey)) || 'Q' || toString(toQuarter(pkey))",'year':"toYear(pkey)",'month':"toMonth(pkey)"}
     if params:
         date_by = date_by_dict[params.get('date_by','')]
+        key = params.get('date_by','')
     else:
         date_by = date_by_dict['quarter']
+        key = 'quarter'
     try:
         file_path = r'./media/batch210/'
-        file_name = '【{}】batch210_贝德玛_by_quarter数据.csv'.format(str(datetime.fromtimestamp(time.time()))[0:10].replace('-', ''))
+        file_name = '【{}】batch210_贝德玛_by_{}数据.csv'.format(str(datetime.fromtimestamp(time.time()))[0:10].replace('-', ''),key)
         df = get_data(start_date,end_date,date_by)
         if not os.path.exists(file_path):
             os.makedirs(file_path)
