@@ -9,6 +9,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <link rel="stylesheet" href="{% static 'dist/layui/css/layui.css' %}" media="all">
     <link rel="stylesheet" href="{% static 'dist/CSS/public.css' %}" media="all">
+    <link rel="stylesheet" href="{% static 'dist/CSS/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'dist/CSS/jquery-ui.css' %}">
 </head>
 <body>
 <style>
@@ -16,6 +18,48 @@
     border-radius: 10px; /* 设置圆角的大小 */
 }
 </style>
+
+<!-- TODO 机洗弹窗 -->
+<div class="modal fade bs-example-modal-md" id="importCleanInput" role="dialog" tabindex="-1" aria-labelledby="mySmallModalLabel" style="display: none; padding-right: 17px;">
+  {% csrf_token %}
+    <div class="modal-dialog modal-md" role="document">
+    <div class="modal-content" style=" border-radius: 10px;">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+        <h4 class="modal-title">请填入时间和BatchName</h4>
+      </div>
+      <div class="modal-body" id="importCleanInputDisplay">
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="basic-addon">BatchId</span>
+          <input class="form-control" id="batch_id" type="text" aria-describedby="basic-addon1" autocomplete="off" required>
+        </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="start_date">开始时间</span>
+          <input class="form-control input-date" id="CleanstartTime" type="text" aria-describedby="basic-addon1" autocomplete="off" required>
+        </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="end_date">结束时间</span>
+          <input class="form-control input-date" id="CleanendTime" type="text" aria-describedby="basic-addon1" autocomplete="off" required>
+        </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="params">params</span>
+          <input class="form-control" id="ReportParams" type="text" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="confirm-clean" data-id="">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="layuimini-container">
     <div class="layuimini-main">
 
@@ -74,7 +118,10 @@
 
     </div>
 </div>
+<script src="{% static 'dist/JS/jquery.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/jquery-ui.js' %}" charset="utf-8"></script>
 <script src="{% static 'dist/layui/layui.js' %}" charset="utf-8"></script>
+<script src="{% static 'dist/JS/bootstrap.js' %}" charset="utf-8"></script>
 <script>
     layui.use(['form', 'table'], function () {
         var $ = layui.jquery,
@@ -138,21 +185,10 @@
         /**
          * toolbar监听事件
          */
+
         table.on('toolbar(currentTableFilter)', function (obj) {
             if (obj.event === 'add') {  // 监听添加操作
-                var index = layer.open({
-                    title: '添加报告任务',//添加报告任务
-                    type: 2,
-                    shade: 0.2,
-                    maxmin:true,
-                    shadeClose: true,
-                    area: ['45%', '50%'],
-                    content: '../add/',
-                    skin: 'rounded-corner',
-                });
-                $(window).on("resize", function () {
-                    layer.full(index);
-                });
+                $("#importCleanInput").modal("show");
             } else if (obj.event === 'delete') {  // 监听删除操作
                 var checkStatus = table.checkStatus('currentTableId')
                     , data = checkStatus.data;
@@ -201,6 +237,86 @@
             }
         });
 
+        document.getElementById('confirm-clean').addEventListener('click', function() {
+            var batch_id = document.getElementById('batch_id');
+            var start_date = document.getElementById('CleanstartTime');
+            var end_date = document.getElementById('CleanendTime');
+            var params = document.getElementById('ReportParams');
+            if (!batch_id.checkValidity()) {
+                batch_id.reportValidity();
+                return false;
+            }
+            if (!start_date.checkValidity()) {
+                start_date.reportValidity();
+                return false;
+            }
+            if (!end_date.checkValidity()) {
+                end_date.reportValidity();
+                return false;
+            };
+            // 获取 CSRF 令牌值
+            var csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            // 使用fetch发送POST请求
+            fetch('../add/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    // 在请求头中包含 CSRF 令牌
+                    'X-CSRFToken': csrftoken
+                },
+                body: 'batchid=' + encodeURIComponent(batch_id.value) + '&start_date=' + encodeURIComponent(start_date.value) + '&end_date=' + encodeURIComponent(end_date.value) + '&params=' + encodeURIComponent(params.value)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.text(); // 或者 response.json() 如果服务器返回JSON格式
+            })
+            .then(data => {
+                layer.msg("添加报告任务成功"); // 请求成功的处理
+                $("#importCleanInput").modal("hide")
+            })
+            .catch(error => {
+                layer.msg('Error:', error); // 请求失败的处理
+            });
+
+            return false; // 阻止表单默认提交
+        });
+
+        var laydate = layui.laydate;
+        // 获取当前日期
+        var currentDate = new Date();
+        var currentYear = currentDate.getFullYear();
+        var currentMonth = currentDate.getMonth();
+
+        // 如果当前月份是1月，年份减1，月份设置为12月
+        if (currentMonth === 0) {
+            currentYear -= 1;
+            currentMonth = 11; // 11表示12月
+        } else {
+            // 否则，只需月份减1
+            currentMonth -= 1;
+        };
+
+        // 创建上一个月第一天的日期对象
+        var previousMonthFirstDay = new Date(currentYear, currentMonth, 1);
+
+        // 使用Laydate渲染日期选择器
+        laydate.render({
+            elem: '#CleanstartTime',
+            type: 'date',
+            format: 'yyyy-MM-dd',
+            // 设置value为上一个月第一天
+            value: previousMonthFirstDay
+        });
+        laydate.render({
+        elem: '#CleanendTime',
+        type: 'date',
+        format: 'yyyy-MM-dd',
+        // 使用JavaScript获取当月第一天的日期
+        value: new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+        });
     });
 </script>
 

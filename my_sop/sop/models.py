@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -19,12 +20,13 @@ class viewed_sp(models.Model):
     create_date = models.DateField(auto_now_add=True,verbose_name='created')
 
 class report_task(models.Model): #创建报告任务表
+    TaskId = models.IntegerField(default=0)
     BatchId = models.CharField(max_length=50)
     UseModel = models.CharField(max_length=255)
     ReportName = models.CharField(max_length=255)
     DateRange = models.CharField(max_length=50)
     Status = models.IntegerField()
-    UpdateTime = models.DateTimeField()
+    UpdateTime = models.DateTimeField(default=timezone.now)
     PersonInCharge = models.CharField(max_length=100, verbose_name="当前负责人")
     fileUrl = models.CharField(max_length=255)
 

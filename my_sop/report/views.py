@@ -99,23 +99,24 @@ def add(request):
         batchid = request.POST.get('batchid')
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
-        print(batchid,start_date,end_date)
+        params = request.POST.get('params')
+        print(batchid,start_date,end_date,json.loads(params))
         # try:
         # 使用 batch_id 动态导入模块
         module = dynamic_import(batchid)
         if module:
             # 如果模块导入成功，可以使用该模块
+            task_id = int(datetime.datetime.now().timestamp())
             queue = django_rq.get_queue('report')
-            print(request.user)
-            job = queue.enqueue(run_report,batchid,request.user, start_date,end_date)
-            # result = run_report.apply_async((batchid,start_date,end_date), queue='default_queue')
-            # Status,fileUrl = module.run(start_date,end_date)
-            # UpdateTime = datetime.datetime.now()
-            # pvPanelInfo = report_task.objects.filter(BatchId=batchid).order_by('-UpdateTime').values("UseModel","ReportName","PersonInCharge").first()
-            # UseModel, ReportName, PersonInCharge = pvPanelInfo['UseModel'],pvPanelInfo['ReportName'],pvPanelInfo['PersonInCharge']
-            # report_task.objects.create(BatchId=batchid, UseModel=UseModel, ReportName=fileUrl,DateRange=start_date + '~' + end_date
-            #                            ,Status=Status,UpdateTime=UpdateTime,PersonInCharge=PersonInCharge,fileUrl='../media/?path=batch'+batchid+'/'+fileUrl)
-        #         pass
+            pvPanelInfo = report_task.objects.filter(BatchId=batchid).order_by('-UpdateTime').values("UseModel","ReportName","PersonInCharge").first()
+            if pvPanelInfo:
+                UseModel, ReportName, PersonInCharge = pvPanelInfo['UseModel'],pvPanelInfo['ReportName'],pvPanelInfo['PersonInCharge']
+                report_task.objects.create(TaskId=task_id,BatchId=batchid, UseModel=UseModel,DateRange=start_date + '~' + end_date
+                                        ,PersonInCharge=request.user,Status=0)
+            else:
+                report_task.objects.create(TaskId=task_id,BatchId=batchid, UseModel='-', ReportName='-',DateRange=start_date + '~' + end_date
+                                           , PersonInCharge=request.user, Status=0)
+            job = queue.enqueue(run_report,task_id, batchid, request.user, start_date, end_date,params)
             return JsonResponse({'code': 200, "msg":"正在制作报告"})
         # except:
         #     return JsonResponse({'code': 404, "msg":"报告添加异常"})
