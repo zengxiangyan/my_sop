@@ -28,7 +28,7 @@ def sql_date_info(start_date,end_date,date_by):
             AND `date`<'{end_date}'
             and source in (1,2,11,7,8)
             and "sp一级类目" in ('护肤','身体')
-            group by "一级类目",quarter,"platform",alias_all_bid
+            group by "一级类目",date_by,"platform",alias_all_bid
         )
         SELECT t1."一级类目"
         ,t1.date_by as "日期"
@@ -55,9 +55,13 @@ def get_data(start_date,end_date,date_by):
     return result
 
 def run(start_date,end_date,params):
-    date_by = params.get('date_by','')
+    date_by_dict = {'quarter':"toString(toYear(pkey)) || 'Q' || toString(toQuarter(pkey))",'year':"toYear(pkey)",'month':"toMonth(pkey)"}
+    if params:
+        date_by = date_by_dict[params.get('date_by','')]
+    else:
+        date_by = date_by_dict['quarter']
     try:
-        file_path = r'../media/batch210/'
+        file_path = r'./media/batch210/'
         file_name = '【{}】batch210_贝德玛_by_quarter数据.csv'.format(str(datetime.fromtimestamp(time.time()))[0:10].replace('-', ''))
         df = get_data(start_date,end_date,date_by)
         if not os.path.exists(file_path):

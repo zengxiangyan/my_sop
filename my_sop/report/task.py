@@ -22,14 +22,16 @@ def run_report(task_id,batchid,PersonInCharge,start_date,end_date,params):
         progress_record, created = report_task.objects.get_or_create(TaskId=task_id,BatchId=batchid
                                                                      ,PersonInCharge=PersonInCharge
                                                                      ,DateRange=start_date + '~' + end_date,Status=0)
-        Status, fileUrl = module.run(start_date, end_date, params)
+        Status, ReportName = module.run(start_date, end_date, params)
         UpdateTime = datetime.datetime.now()
-        progress_record.fileUrl = fileUrl
+        progress_record.fileUrl = f'../media/batch{batchid}/' + ReportName
+        progress_record.ReportName = ReportName
         progress_record.UpdateTime = UpdateTime
         progress_record.Status = Status
-
+        print(Status, ReportName)
         progress_record.save()
 
     except Exception as e:
         raise e
     return 1
+# run_report(1747382433,210,'admin','2025-01-01','2025-04-01','')
