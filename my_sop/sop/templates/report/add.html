@@ -41,6 +41,11 @@
           <span class="input-group-addon" id="end_date">结束时间</span>
           <input class="form-control input-date" id="CleanendTime" type="text" aria-describedby="basic-addon1" autocomplete="off" required>
         </div>
+
+        <div class="input-group md-3" style="margin:10px;">
+          <span class="input-group-addon" id="end_date">params</span>
+          <input class="form-control" id="params" type="text" aria-describedby="basic-addon1" autocomplete="off">
+        </div>
       </div>
 
       <div class="modal-footer">
@@ -62,6 +67,7 @@
             var batch_id = document.getElementById('batchid');
             var start_date = document.getElementById('CleanstartTime');
             var end_date = document.getElementById('CleanendTime');
+            var params = document.getElementById('params');
             if (!batch_id.checkValidity()) {
                 batch_id.reportValidity();
                 return false;
@@ -85,7 +91,7 @@
                     // 在请求头中包含 CSRF 令牌
                     'X-CSRFToken': csrftoken
                 },
-                body: 'batchid=' + encodeURIComponent(batch_id.value) + '&start_date=' + encodeURIComponent(start_date.value) + '&end_date=' + encodeURIComponent(end_date.value)
+                body: 'batchid=' + encodeURIComponent(batch_id.value) + '&start_date=' + encodeURIComponent(start_date.value) + '&end_date=' + encodeURIComponent(end_date.value) + '&params=' + encodeURIComponent(params.value)
             })
             .then(response => {
                 if (!response.ok) {
