@@ -100,7 +100,9 @@ def add(request):
         start_date = request.POST.get('start_date')
         end_date = request.POST.get('end_date')
         params = request.POST.get('params')
-        print(batchid,start_date,end_date,json.loads(params))
+        if params:
+            params = json.loads(params)
+        print(batchid,start_date,end_date,params)
         # try:
         # 使用 batch_id 动态导入模块
         module = dynamic_import(batchid)
