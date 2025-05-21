@@ -2,3 +2,4 @@
 __pycache__/
 *.pyc
 
+my_sop/conf/config.py 
