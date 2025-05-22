@@ -58,7 +58,7 @@ def get_data(start_date,end_date,out_put_file):
     df = connect('chsop',sql)
     df = pd.DataFrame(df)
     df['url'] = df['url'].astype(str)
-    df = df.map(remove_illegal_chars)
+    df = df.applymap(remove_illegal_chars)
     df.rename(columns={"total_price": "price", "total_sales": "sales"}, inplace=True)
     df.to_excel(out_put_file,index=False)
     return
