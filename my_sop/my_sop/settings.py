@@ -74,7 +74,8 @@ RQ_QUEUES = {
         'PORT': 6379,
         'DB': 0,
         'DEFAULT_TIMEOUT': 108000,
-        'PASSWORD': 'nint'
+        'PASSWORD': 'nint',
+        'WORKER_CLASS': 'rq.SimpleWorker'
     },
 }
 
