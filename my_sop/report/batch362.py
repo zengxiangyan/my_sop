@@ -89,17 +89,17 @@ def create_pivot(filename):
     app.quit()
 
 def run(start_date,end_date,params):
-    try:
-        file_path = './media/batch362/'
-        output_file = '【{}】欧莱雅导入版数据报告{}.xlsx'.format(start_date.replace('-',''),str(datetime.fromtimestamp(time.time()))[0:10].replace('-', ''))
-        if not os.path.exists(file_path):
-            os.makedirs(file_path)
-        get_data(start_date,end_date,file_path + output_file)
-        create_pivot(file_path+output_file)
-        return 1,output_file
-    except Exception as e:
-        print(e)
-        return 0,'_'
+    # try:
+    file_path = '../media/batch362/'
+    output_file = '【{}】欧莱雅导入版数据报告{}.xlsx'.format(start_date.replace('-',''),str(datetime.fromtimestamp(time.time()))[0:10].replace('-', ''))
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+    get_data(start_date,end_date,file_path + output_file)
+    create_pivot(file_path+output_file)
+    return 1,output_file
+    # except Exception as e:
+    #     print(e)
+    #     return 0,'_'
 
 if __name__ == '__main__':
     run('2025-03-01','2025-04-01',{})
