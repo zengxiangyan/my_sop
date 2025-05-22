@@ -135,5 +135,5 @@ def run(start_date,end_date,params):
     #     print(e)
     #     return 0,'_'
 
-if __name__ == '__main__':
-    run('2025-03-01','2025-04-01',{})
+# if __name__ == '__main__':
+#     run('2025-03-01','2025-04-01',{})
