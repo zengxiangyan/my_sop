@@ -4,9 +4,11 @@ import pandas as pd
 import sys
 from os.path import abspath, join, dirname
 from datetime import datetime
+from openpyxl import Workbook
 import time
 import os
 import re
+import gc
 
 sys.path.insert(0, join(abspath(dirname(__file__)), '../'))
 
@@ -58,9 +60,25 @@ def get_data(start_date,end_date,out_put_file):
     df = connect('chsop',sql)
     df = pd.DataFrame(df)
     df['url'] = df['url'].astype(str)
-    df = df.applymap(remove_illegal_chars)
+    # 移除字符串列的非法字符
+    for col in df.select_dtypes(include=['object']).columns:
+        df[col] = df[col].apply(remove_illegal_chars)
     df.rename(columns={"total_price": "price", "total_sales": "sales"}, inplace=True)
-    df.to_excel(out_put_file,index=False)
+    df.rename(columns={"total_price": "price", "total_sales": "sales"}, inplace=True)
+    # 用openpyxl一行一行写入
+    wb = Workbook()
+    ws = wb.active
+    ws.title = 'Sheet1'
+    # 写表头
+    ws.append(list(df.columns))
+    # 写数据
+    print("开始写入")
+    for row in df.itertuples(index=False, name=None):
+        ws.append(row)
+    wb.save(out_put_file)
+    wb.close()
+    del df
+    gc.collect()
     return
 
 def create_pivot(filename):
@@ -92,7 +110,7 @@ def create_pivot(filename):
     pivot_table.RepeatAllLabels(True)
 
     # 关闭所有行字段的分类汇总（Subtotals）
-    pivot_table.PivotFields('Category').Subtotals = [False] * 12
+    # pivot_table.PivotFields('Category').Subtotals = [False] * 12
     pivot_table.PivotFields('SubCategory').Subtotals = [False] * 12
     pivot_table.PivotFields('SubCategorySegment').Subtotals = [False] * 12
 
