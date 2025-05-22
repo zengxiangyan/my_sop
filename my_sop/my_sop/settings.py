@@ -69,6 +69,13 @@ RQ_QUEUES = {
         'DEFAULT_TIMEOUT': 108000,
         'PASSWORD': 'nint'
     },
+    'report130': {
+        'HOST': '117.72.45.190',
+        'PORT': 6379,
+        'DB': 0,
+        'DEFAULT_TIMEOUT': 108000,
+        'PASSWORD': 'nint'
+    },
 }
 
 # Celery configuration

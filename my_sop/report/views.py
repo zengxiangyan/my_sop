@@ -109,7 +109,10 @@ def add(request):
         if module:
             # 如果模块导入成功，可以使用该模块
             task_id = int(datetime.datetime.now().timestamp())
-            queue = django_rq.get_queue('report')
+            if int(batchid) == 362:
+                queue = django_rq.get_queue('report130')
+            else:
+                queue = django_rq.get_queue('report')
             pvPanelInfo = report_task.objects.filter(BatchId=batchid).order_by('-UpdateTime').values("UseModel","ReportName","PersonInCharge").first()
             if pvPanelInfo:
                 UseModel, ReportName, PersonInCharge = pvPanelInfo['UseModel'],pvPanelInfo['ReportName'],pvPanelInfo['PersonInCharge']

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import xlwings as xw
+import xlsxwriter
 import pandas as pd
 import sys
 from os.path import abspath, join, dirname
@@ -123,7 +124,7 @@ def create_pivot(filename):
 
 def run(start_date,end_date,params):
     # try:
-    file_path = '../media/batch362/'
+    file_path = './media/batch362/'
     output_file = '【{}】欧莱雅导入版数据报告{}.xlsx'.format(start_date.replace('-',''),str(datetime.fromtimestamp(time.time()))[0:10].replace('-', ''))
     if not os.path.exists(file_path):
         os.makedirs(file_path)
