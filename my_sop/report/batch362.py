@@ -58,14 +58,13 @@ def get_data(start_date,end_date,out_put_file):
     df = connect('chsop',sql)
     df = pd.DataFrame(df)
     df['url'] = df['url'].astype(str)
-    df = df.applymap(remove_illegal_chars)
+    df = df.map(remove_illegal_chars)
     df.rename(columns={"total_price": "price", "total_sales": "sales"}, inplace=True)
     df.to_excel(out_put_file,index=False)
     return
 
 def create_pivot(filename):
-    # 创建透视表
-    app = xw.App(visible=True)   # 可见Excel
+    app = xw.App(visible=False)
     wb = app.books.open(filename)
     ws_data = wb.sheets['Sheet1']
     ws_pivot = wb.sheets.add('导入版透视表')
@@ -78,16 +77,24 @@ def create_pivot(filename):
     pivot_table = pivot_cache.CreatePivotTable(TableDestination=ws_pivot.range('A3').api, TableName='我的透视表')
 
     # 设置字段
-    fields = [f.Name for f in pivot_table.PivotFields()]
     pivot_table.PivotFields('platform').Orientation = 3  # 筛选字段
     pivot_table.PivotFields('FS ShopType').Orientation = 3  # 筛选字段
     pivot_table.PivotFields('Category').Orientation = 1  # 行字段
     pivot_table.PivotFields('SubCategory').Orientation = 1  # 行字段
     pivot_table.PivotFields('SubCategorySegment').Orientation = 1  # 行字段
     pivot_table.PivotFields('sales').Orientation = 4  # 求和项
-    pivot_table.PivotFields('Category').AutoSort(2, '求和项:sales')  # 按'sales'降序排序行标签
-    pivot_table.PivotFields('SubCategory').AutoSort(2, '求和项:sales')  # 按'sales'降序排序行标签
-    pivot_table.PivotFields('SubCategorySegment').AutoSort(2, '求和项:sales')  # 按'sales'降序排序行标签
+
+    # 关键：设置表格型布局
+    pivot_table.RowAxisLayout(1)  # 1 = xlTabularRow
+
+    # 可选：字段标题行等
+    pivot_table.DisplayFieldCaptions = True
+    pivot_table.RepeatAllLabels(True)
+
+    # 关闭所有行字段的分类汇总（Subtotals）
+    pivot_table.PivotFields('Category').Subtotals = [False] * 12
+    pivot_table.PivotFields('SubCategory').Subtotals = [False] * 12
+    pivot_table.PivotFields('SubCategorySegment').Subtotals = [False] * 12
 
     # 删除Sheet1
     wb.sheets['Sheet1'].delete()
@@ -109,5 +116,5 @@ def run(start_date,end_date,params):
     #     print(e)
     #     return 0,'_'
 
-# if __name__ == '__main__':
-#     run('2025-03-01','2025-04-01',{})
+if __name__ == '__main__':
+    run('2025-03-01','2025-04-01',{})
