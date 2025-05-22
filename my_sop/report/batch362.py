@@ -47,10 +47,17 @@ def sql_date_info(start_date,end_date):
             """.format(start_date=start_date,end_date=end_date)
     return sql
 
+def remove_illegal_chars(value):
+    if isinstance(value, str):
+        return re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', value)
+    return value
+
 def get_data(start_date,end_date,out_put_file):
     sql = sql_date_info(start_date,end_date)
     df = connect('chsop',sql)
     df = pd.DataFrame(df)
+    df['url'] = df['url'].astype(str)
+    df = df.applymap(remove_illegal_chars)
     df.rename(columns={"total_price": "price", "total_sales": "sales"}, inplace=True)
     df.to_excel(out_put_file,index=False)
     return
@@ -101,5 +108,5 @@ def run(start_date,end_date,params):
     #     print(e)
     #     return 0,'_'
 
-if __name__ == '__main__':
-    run('2025-03-01','2025-04-01',{})
+# if __name__ == '__main__':
+#     run('2025-03-01','2025-04-01',{})
