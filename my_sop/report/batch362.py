@@ -6,6 +6,7 @@ from os.path import abspath, join, dirname
 from datetime import datetime
 import time
 import os
+import re
 
 sys.path.insert(0, join(abspath(dirname(__file__)), '../'))
 
