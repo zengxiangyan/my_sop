@@ -121,7 +121,7 @@ def add(request):
             else:
                 report_task.objects.create(TaskId=task_id,BatchId=batchid, UseModel='-', ReportName='-',DateRange=start_date + '~' + end_date
                                            , PersonInCharge=request.user, Status=0)
-            job = queue.enqueue(run_report,task_id, batchid, request.user, start_date, end_date,params)
+            job = queue.enqueue(run_report,task_id, batchid, request.user.id, start_date, end_date,params)
             return JsonResponse({'code': 200, "msg":"正在制作报告"})
         # except:
         #     return JsonResponse({'code': 404, "msg":"报告添加异常"})

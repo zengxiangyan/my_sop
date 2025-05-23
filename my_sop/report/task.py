@@ -3,6 +3,7 @@
 import importlib
 import datetime
 from sop.models import report_task
+from django.contrib.auth import get_user_model
 
 def dynamic_import(batch_id):
     module_name = f"batch{batch_id}"
@@ -17,6 +18,8 @@ def dynamic_import(batch_id):
 
 # @shared_task(bind=True,time_limit=3000, soft_time_limit=2500)
 def run_report(task_id,batchid,PersonInCharge,start_date,end_date,params):
+    User = get_user_model()
+    PersonInCharge = User.objects.get(id=PersonInCharge)
     try:
         module = dynamic_import(batchid)
         progress_record, created = report_task.objects.get_or_create(TaskId=task_id,BatchId=batchid

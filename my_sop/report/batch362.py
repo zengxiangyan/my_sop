@@ -20,7 +20,7 @@ def sql_date_info(start_date,end_date):
             --主报告导入版
             SELECT
             `clean_props.value`[indexOf(`clean_props.name`,'platform')] as platform,
-            argMax(uuid2 , (sales,uuid2)) as `no`,
+            argMax(uuid2 , clean_sales) as `no`,
             `date` as `time` ,
             name,
             `clean_props.value`[indexOf(`clean_props.name`,'url')] as url,
@@ -66,74 +66,79 @@ def get_data(start_date,end_date,out_put_file):
         df[col] = df[col].apply(remove_illegal_chars)
     df.rename(columns={"total_price": "price", "total_sales": "sales"}, inplace=True)
     df.rename(columns={"total_price": "price", "total_sales": "sales"}, inplace=True)
-    # 用openpyxl一行一行写入
-    wb = Workbook()
-    ws = wb.active
-    ws.title = 'Sheet1'
-    # 写表头
-    ws.append(list(df.columns))
-    # 写数据
-    print("开始写入")
-    for row in df.itertuples(index=False, name=None):
-        ws.append(row)
-    wb.save(out_put_file)
-    wb.close()
-    del df
-    gc.collect()
+    df.to_csv(out_put_file, index=False,encoding='utf-8-sig')
+    # # 用openpyxl一行一行写入
+    # wb = Workbook()
+    # ws = wb.active
+    # ws.title = 'Sheet1'
+    # # 写表头
+    # ws.append(list(df.columns))
+    # # 写数据
+    # print("开始写入")
+    # for row in df.itertuples(index=False, name=None):
+    #     ws.append(row)
+    # wb.save(out_put_file)
+    # wb.close()
+    # del df
+    # gc.collect()
     return
 
 def create_pivot(filename):
     app = xw.App(visible=False)
     wb = app.books.open(filename)
-    ws_data = wb.sheets['Sheet1']
-    ws_pivot = wb.sheets.add('导入版透视表')
+    try:
+        ws_data = wb.sheets[filename.split('/')[-1].split('.')[0]]
+        ws_pivot = wb.sheets.add('导入版透视表')
 
-    last_row = ws_data.range('A1').expand('down').last_cell.row
-    last_col = ws_data.range('A1').expand('right').last_cell.column
-    data_range = ws_data.range((1,1), (last_row, last_col))
+        last_row = ws_data.range('A1').expand('down').last_cell.row
+        last_col = ws_data.range('A1').expand('right').last_cell.column
+        data_range = ws_data.range((1,1), (last_row, last_col))
 
-    pivot_cache = wb.api.PivotCaches().Create(SourceType=1, SourceData=data_range.api)
-    pivot_table = pivot_cache.CreatePivotTable(TableDestination=ws_pivot.range('A3').api, TableName='我的透视表')
+        pivot_cache = wb.api.PivotCaches().Create(SourceType=1, SourceData=data_range.api)
+        pivot_table = pivot_cache.CreatePivotTable(TableDestination=ws_pivot.range('A3').api, TableName='我的透视表')
 
-    # 设置字段
-    pivot_table.PivotFields('platform').Orientation = 3  # 筛选字段
-    pivot_table.PivotFields('FS ShopType').Orientation = 3  # 筛选字段
-    pivot_table.PivotFields('Category').Orientation = 1  # 行字段
-    pivot_table.PivotFields('SubCategory').Orientation = 1  # 行字段
-    pivot_table.PivotFields('SubCategorySegment').Orientation = 1  # 行字段
-    pivot_table.PivotFields('sales').Orientation = 4  # 求和项
+        # 设置字段
+        pivot_table.PivotFields('platform').Orientation = 3  # 筛选字段
+        pivot_table.PivotFields('FS ShopType').Orientation = 3  # 筛选字段
+        pivot_table.PivotFields('Category').Orientation = 1  # 行字段
+        pivot_table.PivotFields('SubCategory').Orientation = 1  # 行字段
+        pivot_table.PivotFields('SubCategorySegment').Orientation = 1  # 行字段
+        pivot_table.PivotFields('sales').Orientation = 4  # 求和项
 
-    # 关键：设置表格型布局
-    pivot_table.RowAxisLayout(1)  # 1 = xlTabularRow
+        # 关键：设置表格型布局
+        pivot_table.RowAxisLayout(1)  # 1 = xlTabularRow
 
-    # 可选：字段标题行等
-    pivot_table.DisplayFieldCaptions = True
-    pivot_table.RepeatAllLabels(True)
+        # 可选：字段标题行等
+        pivot_table.DisplayFieldCaptions = True
+        pivot_table.RepeatAllLabels(True)
 
-    # 关闭所有行字段的分类汇总（Subtotals）
-    # pivot_table.PivotFields('Category').Subtotals = [False] * 12
-    pivot_table.PivotFields('SubCategory').Subtotals = [False] * 12
-    pivot_table.PivotFields('SubCategorySegment').Subtotals = [False] * 12
+        # 关闭所有行字段的分类汇总（Subtotals）
+        # pivot_table.PivotFields('Category').Subtotals = [False] * 12
+        pivot_table.PivotFields('SubCategory').Subtotals = [False] * 12
+        pivot_table.PivotFields('SubCategorySegment').Subtotals = [False] * 12
 
-    # 删除Sheet1
-    wb.sheets['Sheet1'].delete()
+        # 删除Sheet1
+        wb.sheets[filename.split('/')[-1].split('.')[0]].delete()
 
-    wb.save()
+        wb.save(filename.replace('csv', 'xlsx'))
+    except Exception as e:
+        print(e)
     wb.close()
     app.quit()
 
 def run(start_date,end_date,params):
-    # try:
-    file_path = './media/batch362/'
-    output_file = '【{}】欧莱雅导入版数据报告{}.xlsx'.format(start_date.replace('-',''),str(datetime.fromtimestamp(time.time()))[0:10].replace('-', ''))
-    if not os.path.exists(file_path):
-        os.makedirs(file_path)
-    get_data(start_date,end_date,file_path + output_file)
-    create_pivot(file_path+output_file)
-    return 1,output_file
-    # except Exception as e:
-    #     print(e)
-    #     return 0,'_'
+    try:
+        file_path = './media/batch362/'
+        # 数据量太大，导excel格式容易有问题，文件可能打不开，cvs更快
+        output_file = '【{}】欧莱雅导入版数据报告{}.csv'.format(start_date.replace('-',''),str(datetime.fromtimestamp(time.time()))[0:10].replace('-', ''))
+        if not os.path.exists(file_path):
+            os.makedirs(file_path)
+        get_data(start_date,end_date,file_path + output_file)
+        create_pivot(file_path+output_file)
+        return 1,output_file.replace('csv','xlsx') #透视表必须换成xlsx保存
+    except Exception as e:
+        print(e)
+        return 0,'_'
 
 # if __name__ == '__main__':
-#     run('2025-03-01','2025-04-01',{})
+#     run('2025-04-01','2025-05-01',{})
