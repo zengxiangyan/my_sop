@@ -5,6 +5,7 @@ import datetime
 from sop.models import report_task
 from django.contrib.auth import get_user_model
 from cleaning.mail import Email
+import socket
 
 def dynamic_import(batch_id):
     module_name = f"batch{batch_id}"
@@ -16,6 +17,16 @@ def dynamic_import(batch_id):
         # 处理导入错误
         print(f"Error importing module: {e}")
         return None
+
+def get_local_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # 这里并不会真的连接到8.8.8.8，只是用来获取本机IP
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+    finally:
+        s.close()
+    return ip
 
 # @shared_task(bind=True,time_limit=3000, soft_time_limit=2500)
 def run_report(task_id,batchid,PersonInCharge,start_date,end_date,params):
@@ -39,7 +50,7 @@ def run_report(task_id,batchid,PersonInCharge,start_date,end_date,params):
         print(Status, ReportName)
         progress_record.save()
         cl = Email(int(batchid))
-        cl.mail('batch:{} 自动化报告任务{}全部完成'.format(batchid, task_id), start_date + '~' + end_date,user=email_user)
+        cl.mail('batch:{} 自动化报告任务{}全部完成'.format(batchid, task_id), f'下载报告（浏览器打开）：{get_local_ip()}:3000/report/media/batch{batchid}/' + ReportName,user=email_user)
     except Exception as e:
         cl = Email(int(batchid))
         cl.mail('batch:{} 自动化报告任务{}失败，请自行重试或找开发查看原因'.format(batchid, task_id), start_date + '~' + end_date, user=email_user)
