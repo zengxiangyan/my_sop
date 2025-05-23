@@ -4,6 +4,7 @@ import importlib
 import datetime
 from sop.models import report_task
 from django.contrib.auth import get_user_model
+from cleaning.mail import Email
 
 def dynamic_import(batch_id):
     module_name = f"batch{batch_id}"
@@ -20,6 +21,10 @@ def dynamic_import(batch_id):
 def run_report(task_id,batchid,PersonInCharge,start_date,end_date,params):
     User = get_user_model()
     PersonInCharge = User.objects.get(id=PersonInCharge)
+    if PersonInCharge != 'admin':
+        email_user = [PersonInCharge]
+    else:
+        email_user = []
     try:
         module = dynamic_import(batchid)
         progress_record, created = report_task.objects.get_or_create(TaskId=task_id,BatchId=batchid
@@ -33,8 +38,11 @@ def run_report(task_id,batchid,PersonInCharge,start_date,end_date,params):
         progress_record.Status = Status
         print(Status, ReportName)
         progress_record.save()
-
+        cl = Email(int(batchid))
+        cl.mail('batch:{} 自动化报告任务{}全部完成'.format(batchid, task_id), start_date + '~' + end_date,user=email_user)
     except Exception as e:
+        cl = Email(int(batchid))
+        cl.mail('batch:{} 自动化报告任务{}失败，请自行重试或找开发查看原因'.format(batchid, task_id), start_date + '~' + end_date, user=email_user)
         raise e
     return 1
 # run_report(1747382433,210,'admin','2025-01-01','2025-04-01','')
