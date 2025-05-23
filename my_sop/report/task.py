@@ -50,7 +50,7 @@ def run_report(task_id,batchid,PersonInCharge,start_date,end_date,params):
         print(Status, ReportName)
         progress_record.save()
         cl = Email(int(batchid))
-        cl.mail('batch:{} 自动化报告任务{}全部完成'.format(batchid, task_id), f'下载报告（浏览器打开）：{get_local_ip()}:3000/report/media/batch{batchid}/' + ReportName,user=email_user)
+        cl.mail('batch:{} 自动化报告任务{}全部完成'.format(batchid, task_id), f'下载报告（浏览器打开）：http://{get_local_ip()}:3000/report/media/batch{batchid}/' + ReportName,user=email_user)
     except Exception as e:
         cl = Email(int(batchid))
         cl.mail('batch:{} 自动化报告任务{}失败，请自行重试或找开发查看原因'.format(batchid, task_id), start_date + '~' + end_date, user=email_user)
