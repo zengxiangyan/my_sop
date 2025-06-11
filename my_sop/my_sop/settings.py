@@ -148,7 +148,7 @@ DATABASES = {
         'NAME': 'my_sop',
         'USER': 'zeng.xiangyan',
         'PASSWORD': 'nint@2024',
-        'HOST': '123.249.120.233',
+        'HOST': '10.21.200.200',
         # 'USER': 'zxy',
         # 'PASSWORD': '13639054279zxy',
         # 'HOST': '10.21.90.130',
