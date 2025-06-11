@@ -150,7 +150,7 @@ def cleaning(batch_id, task_id, scripts):
     cpu_max = 14
 
     cmds = {k:[
-        'python3', dic["script"],
+        'python3.10', dic["script"],
         '--process_where', process_where,
         '--cpu_max', str(cpu_max),
         '--task_id',str(task_id),
@@ -302,5 +302,9 @@ if __name__ == "__main__":
     print(1111)
     # process_log(53845728)
 
-    # cleaning('362', 1746605649, {'import_brand': {'path': '/程序/1程序/1程序/', 'script': 'import_brand.py'}})
-    # convert_brand()
+    cleaning('362', 1749107955, {'import_brand': {'path': '/程序/1程序/1程序/', 'script': 'import_brand.py'},
+                                 "import_tshop": {"path": '/程序/1程序/1程序/', "script": 'import_tshop.py'},
+                                "三级类目": {"path": '/程序/1程序/1程序/', "script": 'run.dy1.all.202400509.py'},
+                                "四级类目": {"path": '/程序/zfh_scirpt/console/', "script": 'OrealCategory.py'},
+                                "清洗品牌1": {"path": '/程序/1程序/1程序/', "script": 'run.dy.brand_20240509.py'},
+                                "清洗品牌2": {"path": '/程序/1程序/1程序/', "script": 'run.dy.brand2_20240509.py'}})
