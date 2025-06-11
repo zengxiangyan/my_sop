@@ -147,7 +147,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'my_sop',
         'USER': 'zeng.xiangyan',
-        'PASSWORD': 'nint@2024',
+        'PASSWORD': 'Nint@2024',
         'HOST': '10.21.200.200',
         # 'USER': 'zxy',
         # 'PASSWORD': '13639054279zxy',
