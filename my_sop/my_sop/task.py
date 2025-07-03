@@ -35,7 +35,7 @@ def download_file_from_django(url, save_path):
 
 @shared_task(bind=True,time_limit=3000, soft_time_limit=2500)
 def rules_save(self,batchId):
-    url = f'https://sop.zxy-console.cn/share/{batchId}'  # 替换为实际的 URL
+    url = f'http://10.21.200.200:3000/share/{batchId}'  # 替换为实际的 URL
     print(f"开始下载文件: {url}")
     save_path = './cleaning/model/plugins/batch{}/rules/rules.xlsx'.format(batchId)
     download_file_from_django(url, save_path)

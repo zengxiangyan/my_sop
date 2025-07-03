@@ -446,7 +446,7 @@ def create_clean_task(request,id):
         print("清洗状态检查：",check)
         if check:
             js = {
-                "300": 0,
+                "code": 300,
                 "errmsg": "batchId{}正在清洗中，请不要重复添加".format(batch_id)
             }
             return JsonResponse(js)

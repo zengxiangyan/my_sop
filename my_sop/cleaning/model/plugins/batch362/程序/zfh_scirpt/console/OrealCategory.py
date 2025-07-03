@@ -20,7 +20,7 @@ file='../data/美发四级关键词.xlsx'
 # 文件可以代码里指定 例如 file='../data/美发四级关键词.xlsx'
 table_name = 'makeupall2'# 测试：'makeupall22'；正式：'makeupall2'
 #date = None
-date = '2025-04-01'  # 时间不写就是跑全量
+date = '2025-06-01'  # 时间不写就是跑全量
 
 
 async def main():
@@ -118,7 +118,7 @@ async def do_rule_search(rule):
         where = 'name > %s'
         if date:
             param.append(date)
-            where += ' and time = %s'
+            where += ' and time = %s '
         if rule['c4'] != '':
             param.append(rule['c4'])
             where += ' and c4 = %s'
@@ -162,9 +162,9 @@ def rule_decision(name, rule):
             if condition['value'] == '':
                 break
             if condition['type'] == '包含':
-                flag = re.match(rf"^.*?{condition['value']}.*?$", name) is not None
+                flag = re.match(rf"^.*?({condition['value']}).*?$", name) is not None
             elif condition['type'] == '不包含':
-                flag = re.match(rf"^(?!.*?{condition['value']}).*?$", name) is not None
+                flag = re.match(rf"^(?!.*?({condition['value']})).*?$", name) is not None
             if not flag:
                 break
         if flag:
