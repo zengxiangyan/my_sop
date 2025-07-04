@@ -1,0 +1,4 @@
+2025-05-22 23:33:56,428 - rq.worker - INFO - Worker rq:worker:997c633f112746aea050cec83f95b0a4 started with PID 27740, version 2.3.3
+2025-05-22 23:33:56,428 - rq.worker - INFO - Subscribing to channel rq:pubsub:997c633f112746aea050cec83f95b0a4
+2025-05-22 23:33:56,603 - rq.worker - INFO - *** Listening on report130...
+2025-05-22 23:33:56,668 - rq.worker - INFO - Cleaning registries for queue: report130
