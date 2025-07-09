@@ -68,7 +68,7 @@ def convert_brand(job):
 
 def get_info_by_newno(newno):
     # try:
-    db = app.connect_db('wq')
+    db = app.connect_db('oulaiya')
     sql = """ select platform, newno, `no`, `time`, c4, name, brand, url, shopname, unitold, priceold, salesold, unit, price, sales, unitlive, pricelive, c6, Category, SubCategory, SubCategorySegment, BrandName, BrandCN, BrandEN, `User`, ShopType1, ShopType2, Manufacturer, Division, Selectivity, BrandLRL, 
     trade_props_name, trade_props_value,
     cid,brand_id,item_id,sid,shopnamefull,shopurl,shop_create_time,real_num,real_sales,subplatform,img

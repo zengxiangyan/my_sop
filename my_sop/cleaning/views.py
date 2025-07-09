@@ -116,7 +116,10 @@ def clean_process(request):
         batchId = request.POST.get('batchId')
         uuid2 = request.POST.get('uuid')
         define = request.POST.get('define')
-        define_json = json.loads(define)
+        if define:
+            define_json = json.loads(define)
+        else:
+            define_json = {}
         print(define_json)
         module = dynamic_import(batchId)
         if module:
