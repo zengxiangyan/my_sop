@@ -56,21 +56,21 @@ INSTALLED_APPS = [
 
 RQ_QUEUES = {
     'default': {
-        'HOST': '117.72.45.190',
+        'HOST': '10.21.200.200',
         'PORT': 6379,
         'DB': 0,
         'DEFAULT_TIMEOUT': 36000,
         'PASSWORD': 'nint'
     },
     'report': {
-        'HOST': '117.72.45.190',
+        'HOST': '10.21.200.200',
         'PORT': 6379,
         'DB': 0,
         'DEFAULT_TIMEOUT': 108000,
         'PASSWORD': 'nint'
     },
     'report130': {
-        'HOST': '117.72.45.190',
+        'HOST': '10.21.200.200',
         'PORT': 6379,
         'DB': 0,
         'DEFAULT_TIMEOUT': 108000,
@@ -80,8 +80,8 @@ RQ_QUEUES = {
 }
 
 # Celery configuration
-CELERY_BROKER_URL = 'redis://:nint@117.72.45.190:6379/0'
-CELERY_RESULT_BACKEND = 'redis://:nint@117.72.45.190:6379/0'
+CELERY_BROKER_URL = 'redis://:nint@10.21.200.200:6379/0'
+CELERY_RESULT_BACKEND = 'redis://:nint@10.21.200.200:6379/0'
 CELERY_TASK_RESULT_EXPIRES = None
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
